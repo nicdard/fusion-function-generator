@@ -1,0 +1,41 @@
+\section*{Motivation}
+
+SMT solvers are extensively used in formal methods, most notably in software verification, systematic test case generation, and program synthesis. Due to their high degree of complexity, even mature solvers still contain many correctness issues. Their wide applicability amplifies the severity of any such issue. In particular, soundness bugs in SMT solvers shatter their users' trust and can have severe consequences in safety-critical and security-critical domains.
+
+\section*{Related Work}
+
+Previous research from Mansur et al. (STORM) \cite{STORM} has explored the possibility of generating new satisfiable formulas by recombining sub-expressions from an initial pool of seeds. While their approach is applicable to formulas containing multiple theories, individual sub-expressions can only be combined at the Boolean operator level. Another approach that avoids differential testing is Semantic Fusion by Winterer et al. \cite{SemFusion}, which makes use of satisfiability-preserving metamorphism. Its implementation, yinyang, concatenatenates two equisatisfiable seed formulas. Next, fresh variables are introduced to connect the free variable sets from both seeds using manually designed fusion functions. Finally, some occurrences of the chosen seed variables are redefined as the inverse of the respective fusion function. Its main limitation is the necessity to manually specify fusion functions. \\
+\\
+Other methods such as Type-Aware Operator Mutation \cite{TAOM} replace operators by randomly chosen ones of the same (sub)type. Generative Type-Aware Mutation \cite{GTAM} expands on this by replacing a sub-expression of type $T$ with the application of a randomly chosen operator returning the same type $T$ over sub-expressions of matching argument types. However, these techniques do not provide any satisfiability guarantees and therefore rely on differential testing. Despite this, operator mutation has proved to be highly effective at discovering critical bugs.
+
+\section*{Approach}
+To overcome the main limitation of Semantic Fusion, Type-Aware Operator Mutation and STORM, we propose a consolidation of ideas from all three. The goal of our approach is to automatically generate fusion functions, which can then be used by yinyang for Semantic Fusion. Critically, our approach will guarantee the existence of and find a corresponding inverse function to retrieve each input from the output of the fusion function. We achieve this in the following way. 
+\\ \\
+A fusion function can be naturally represented by a tree of operators and their inputs. The internal nodes of such a tree only consists of simple operators, while leaves are made up of constants and free variables, serving as an input to the operators. The root of the tree represents the output of the fusion function. Each edge of the tree represent the result of the sub-tree rooted in the child node, thus having the type of the output of the child node operator. The tree will be subject to the following constraints:
+
+\begin{enumerate}
+    \item Each operator node has a defined inverse operation
+    \item Each free variable only appears in a single leaf
+    \item Each edge is type-consistent, namely having a type matching the one of the input parameter of the parent operator it is feeded into.
+\end{enumerate}
+
+ \noindent From these three properties, we can guarantee that there exists a unique path from the root to each free variable. Informally speaking, the unique path property allows us to ``undo'' each operation in order to retrieve an expression for the variable values from the root output without introducing self-dependencies between branches. This allows us to automatically infer the inverse of the tree w.r.t. each free variable. More specifically, we inductively apply syntactic rewriting rules along the unique path from root to leaf. 
+\\ \\
+Fulfilling the first tree constraint requires manual specification. For a given solver theory, we identify basic invertible operators. For example, the inverses of the addition operator \lstinline{(= c (+ a b))} are \lstinline{(= a (- c b))} and \lstinline{(= b (- c a))}. These basic operators can then be used as operator nodes. To this end, we will encode a definition of invertible operators in a static file for each theory. We will refer to them as definition files from here on.
+\\ \\
+The second part of our approach will consist of building a general tool, which will take the definition files as input. It is then able to automatically generate random operator trees fulfilling the last two constraints. Note that the first constraint has already been fulfilled by our choice of usable operators, which only needs to be defined once for each theory. Given the properties described above, the tool will also automatically generate an inversion function for each free variable.
+\\ \\
+The tool will be made compatible with yinyang by exporting generated functions and their inverses in SMT-LIB syntax. The tool can either be run ahead of time as stand-alone or integrated into the Semantic Fusion fuzzer of yinyang directly. This approach can be developed incrementally both in terms of the set of operators and theories supported.
+
+\section*{Timeline}
+
+\begin{multicols}{2}
+\begin{itemize}
+    \item 15.04. Initial implementation
+    \item 26.04. First evaluation results
+    \item 29.04. Progress report
+    \item 07.05. Refinement and further evaluation
+    \item 27.05. Final evaluation results 
+    \item 06.06. Final report
+\end{itemize}
+\end{multicols}
