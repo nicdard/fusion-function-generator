@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Dict, List
 
 
-class Operator(ABC):
+class _Operator(ABC):
     @abstractmethod
-    def invert(self, output: 'Operator') -> Dict[str, 'Operator']:
+    def invert(self, output: '_Operator') -> Dict[str, '_Operator']:
         return {}
 
 
