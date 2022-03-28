@@ -21,4 +21,13 @@ theories: Dict[str, Dict[str, Union[str, int]]] = {
         "Variable": "name: str",
         "Equality": 2
     },
+    "Real": {
+        "Addition"      : 2,
+        "Subtraction"   : 2,
+        "Multiplication": 2,
+        "Division"      : 2,
+        "Constant": "value: int",
+        "Variable": "name: str",
+        "Equality": 2
+    }
 }
