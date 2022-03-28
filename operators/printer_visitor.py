@@ -16,8 +16,18 @@ from operators.gen.integer_theory import (
     IntegerEquality,
     IntegerVisitor
 )
+from operators.gen.real_theory import (             
+    RealAddition,
+    RealSubtraction,
+    RealMultiplication,
+    RealDivision,
+    RealConstant,
+    RealVariable,
+    RealEquality,             
+    RealVisitor             
+)
 
-class PrinterVisitor(BooleanVisitor, IntegerVisitor):
+class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
     def visitBooleanXOR(self, operator: BooleanXOR):
         return f"(xor {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
@@ -52,4 +62,25 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor):
         return operator.name
 
     def visitIntegerEquality(self, operator: IntegerEquality):
+        return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+    
+    def visitRealAddition(self, operator: RealAddition):
+        return f"(+ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visitRealSubtraction(self, operator: RealSubtraction):
+        return f"(- {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visitRealMultiplication(self, operator: RealMultiplication):
+        return f"(* {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visitRealDivision(self, operator: RealDivision):
+        return f"(/ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visitRealConstant(self, operator: RealConstant):
+        return str(operator.value)
+
+    def visitRealVariable(self, operator: RealVariable):
+        return operator.name
+
+    def visitRealEquality(self, operator: RealEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
