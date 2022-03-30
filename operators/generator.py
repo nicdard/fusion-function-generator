@@ -2,6 +2,7 @@ import os
 import pathlib
 import sys
 from typing import List
+from gen_configuration import theories_declaration
 
 WARNING_MESSAGE = "# WARNING: This file has been generated and it shouldn't be edited manually!\n# Look at the README to learn more.\n\n"
 
@@ -32,7 +33,7 @@ def define_visitor_interface(type: str) -> List[str]:
     class_name = f"{type.capitalize()}Visitor"
     # Extract all names from the dictionary of the operations for a given theory and
     # construct the full operation name for each of them. 
-    generate_opname = lambda type : (map(lambda op : type + op, theories[type].keys()))
+    generate_opname = lambda type : (map(lambda op : type + op, theories_declaration[type].keys()))
     content = []
     content.extend([
         "",
@@ -50,8 +51,8 @@ def define_ast(base_name: str):
     """
     Generates class hierarchy for a given operator.  
     """
-    for type in theories.keys():
-        operators = theories[type]
+    for type in theories_declaration.keys():
+        operators = theories_declaration[type]
         path = base_name.joinpath(type.lower() + "_theory.py")    
         content = [
             WARNING_MESSAGE,
@@ -116,22 +117,22 @@ def define_visitor(output_dir: pathlib.Path, name: str):
     path = output_dir.joinpath(file_name)
     # Extract all names from the dictionary of the operations for a given theory and
     # construct the full operation name for each of them. 
-    generate_opname = lambda type : (map(lambda op : type + op, theories[type].keys()))
+    generate_opname = lambda type : (map(lambda op : type + op, theories_declaration[type].keys()))
     generate_import_opname = lambda type : ",\n".join(map(lambda op : "    " + op, generate_opname(type)))
     content = [
         f"from operators.gen.{type.lower()}_theory import ( \
             \n{generate_import_opname(type)}, \
             \n    {type.capitalize()}Visitor \
             \n)" \
-            for type in theories.keys()
+            for type in theories_declaration.keys()
     ]
-    extends = ", ".join([ f"{type.capitalize()}Visitor" for type in theories.keys() ])
+    extends = ", ".join([ f"{type.capitalize()}Visitor" for type in theories_declaration.keys() ])
     # content.append("from operators.gen.visitor import Visitor")
     content.extend([
         "",
         f"class {class_name}({extends}):",
     ])
-    for type in theories.keys():
+    for type in theories_declaration.keys():
         for operator in generate_opname(type):
             content.append(f"    def visit{operator}(self, operator: {operator}):")
             content.append(f"        pass")
