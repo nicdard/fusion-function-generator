@@ -15,7 +15,7 @@ class IntegerOperator(Operator):
     def accept(self, visitor: 'IntegerVisitor'):
         pass
 
-class IntegerAddition(IntegerOperator):
+class IntegerAdditionOperator(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -23,7 +23,7 @@ class IntegerAddition(IntegerOperator):
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visitIntegerAddition(self)
 
-class IntegerSubtraction(IntegerOperator):
+class IntegerSubtractionOperator(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -31,7 +31,7 @@ class IntegerSubtraction(IntegerOperator):
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visitIntegerSubtraction(self)
 
-class IntegerMultiplication(IntegerOperator):
+class IntegerMultiplicationOperator(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -39,7 +39,7 @@ class IntegerMultiplication(IntegerOperator):
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visitIntegerMultiplication(self)
 
-class IntegerDivision(IntegerOperator):
+class IntegerDivisionOperator(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -47,21 +47,21 @@ class IntegerDivision(IntegerOperator):
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visitIntegerDivision(self)
 
-class IntegerConstant(IntegerOperator):
+class IntegerConstantOperator(IntegerOperator):
     def __init__(self, value: int):
         self.value = value
 
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visitIntegerConstant(self)
 
-class IntegerVariable(IntegerOperator):
+class IntegerVariableOperator(IntegerOperator):
     def __init__(self, name: str):
         self.name = name
 
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visitIntegerVariable(self)
 
-class IntegerEquality(IntegerOperator):
+class IntegerEqualityOperator(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -72,29 +72,29 @@ class IntegerEquality(IntegerOperator):
 
 class IntegerVisitor(ABC):
     @abstractmethod
-    def visitIntegerAddition(self, operator: IntegerAddition):
+    def visitIntegerAddition(self, operator: IntegerAdditionOperator):
         pass
 
     @abstractmethod
-    def visitIntegerSubtraction(self, operator: IntegerSubtraction):
+    def visitIntegerSubtraction(self, operator: IntegerSubtractionOperator):
         pass
 
     @abstractmethod
-    def visitIntegerMultiplication(self, operator: IntegerMultiplication):
+    def visitIntegerMultiplication(self, operator: IntegerMultiplicationOperator):
         pass
 
     @abstractmethod
-    def visitIntegerDivision(self, operator: IntegerDivision):
+    def visitIntegerDivision(self, operator: IntegerDivisionOperator):
         pass
 
     @abstractmethod
-    def visitIntegerConstant(self, operator: IntegerConstant):
+    def visitIntegerConstant(self, operator: IntegerConstantOperator):
         pass
 
     @abstractmethod
-    def visitIntegerVariable(self, operator: IntegerVariable):
+    def visitIntegerVariable(self, operator: IntegerVariableOperator):
         pass
 
     @abstractmethod
-    def visitIntegerEquality(self, operator: IntegerEquality):
+    def visitIntegerEquality(self, operator: IntegerEqualityOperator):
         pass

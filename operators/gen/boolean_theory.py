@@ -15,7 +15,7 @@ class BooleanOperator(Operator):
     def accept(self, visitor: 'BooleanVisitor'):
         pass
 
-class BooleanXOR(BooleanOperator):
+class BooleanXOROperator(BooleanOperator):
     def __init__(self, input_1: BooleanOperator, input_2: BooleanOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -23,28 +23,28 @@ class BooleanXOR(BooleanOperator):
     def accept(self, visitor: 'BooleanVisitor'):
         return visitor.visitBooleanXOR(self)
 
-class BooleanNOT(BooleanOperator):
+class BooleanNOTOperator(BooleanOperator):
     def __init__(self, input_1: BooleanOperator):
         self.operator_1 = input_1
 
     def accept(self, visitor: 'BooleanVisitor'):
         return visitor.visitBooleanNOT(self)
 
-class BooleanConstant(BooleanOperator):
+class BooleanConstantOperator(BooleanOperator):
     def __init__(self, value: bool):
         self.value = value
 
     def accept(self, visitor: 'BooleanVisitor'):
         return visitor.visitBooleanConstant(self)
 
-class BooleanVariable(BooleanOperator):
+class BooleanVariableOperator(BooleanOperator):
     def __init__(self, name: str):
         self.name = name
 
     def accept(self, visitor: 'BooleanVisitor'):
         return visitor.visitBooleanVariable(self)
 
-class BooleanEquality(BooleanOperator):
+class BooleanEqualityOperator(BooleanOperator):
     def __init__(self, input_1: BooleanOperator, input_2: BooleanOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -55,21 +55,21 @@ class BooleanEquality(BooleanOperator):
 
 class BooleanVisitor(ABC):
     @abstractmethod
-    def visitBooleanXOR(self, operator: BooleanXOR):
+    def visitBooleanXOR(self, operator: BooleanXOROperator):
         pass
 
     @abstractmethod
-    def visitBooleanNOT(self, operator: BooleanNOT):
+    def visitBooleanNOT(self, operator: BooleanNOTOperator):
         pass
 
     @abstractmethod
-    def visitBooleanConstant(self, operator: BooleanConstant):
+    def visitBooleanConstant(self, operator: BooleanConstantOperator):
         pass
 
     @abstractmethod
-    def visitBooleanVariable(self, operator: BooleanVariable):
+    def visitBooleanVariable(self, operator: BooleanVariableOperator):
         pass
 
     @abstractmethod
-    def visitBooleanEquality(self, operator: BooleanEquality):
+    def visitBooleanEquality(self, operator: BooleanEqualityOperator):
         pass

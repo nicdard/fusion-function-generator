@@ -1,8 +1,7 @@
 import os
 import pathlib
 import sys
-from typing import Dict, List, Union
-from gen_configuration import theories
+from typing import List
 
 WARNING_MESSAGE = "# WARNING: This file has been generated and it shouldn't be edited manually!\n# Look at the README to learn more.\n\n"
 
@@ -41,7 +40,7 @@ def define_visitor_interface(type: str) -> List[str]:
     ])
     for operator in generate_opname(type):
         content.append(f"    @abstractmethod")
-        content.append(f"    def visit{operator}(self, operator: {operator}):")
+        content.append(f"    def visit{operator}(self, operator: {operator}Operator):")
         content.append(f"        pass")
         content.append(f"")
     return content 
@@ -78,7 +77,7 @@ def define_ast(base_name: str):
             else:
                 params += operators[operator]
             content.extend([
-                f"class {type}{operator}({type}Operator):",
+                f"class {type}{operator}Operator({type}Operator):",
                 f"    def __init__(self{params}):",
             ])
             if isinstance(operators[operator], int):
