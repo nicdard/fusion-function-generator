@@ -118,7 +118,7 @@ def define_visitor(output_dir: pathlib.Path, name: str):
     # Extract all names from the dictionary of the operations for a given theory and
     # construct the full operation name for each of them. 
     generate_opname = lambda type : (map(lambda op : type + op, theories_declaration[type].keys()))
-    generate_import_opname = lambda type : ",\n".join(map(lambda op : "    " + op, generate_opname(type)))
+    generate_import_opname = lambda type : ",\n".join(map(lambda op : "    " + op + "Operator", generate_opname(type)))
     content = [
         f"from operators.gen.{type.lower()}_theory import ( \
             \n{generate_import_opname(type)}, \
@@ -134,7 +134,7 @@ def define_visitor(output_dir: pathlib.Path, name: str):
     ])
     for type in theories_declaration.keys():
         for operator in generate_opname(type):
-            content.append(f"    def visit{operator}(self, operator: {operator}):")
+            content.append(f"    def visit{operator}(self, operator: {operator}Operator):")
             content.append(f"        pass")
             content.append(f"")
     with open(path, 'w+', encoding='utf-8') as f:
