@@ -1,29 +1,29 @@
 from operators.gen.boolean_theory import (             
-    BooleanXOR,
-    BooleanNOT,
-    BooleanConstant,
-    BooleanVariable,
-    BooleanEquality,
+    BooleanXOROperator,
+    BooleanNOTOperator,
+    BooleanConstantOperator,
+    BooleanVariableOperator,
+    BooleanEqualityOperator,
     BooleanVisitor
 )
 from operators.gen.integer_theory import (             
-    IntegerAddition,
-    IntegerSubtraction,
-    IntegerMultiplication,
-    IntegerDivision,
-    IntegerConstant,
-    IntegerVariable,
-    IntegerEquality,
+    IntegerAdditionOperator,
+    IntegerSubtractionOperator,
+    IntegerMultiplicationOperator,
+    IntegerDivisionOperator,
+    IntegerConstantOperator,
+    IntegerVariableOperator,
+    IntegerEqualityOperator,
     IntegerVisitor
 )
 from operators.gen.real_theory import (             
-    RealAddition,
-    RealSubtraction,
-    RealMultiplication,
-    RealDivision,
-    RealConstant,
-    RealVariable,
-    RealEquality,             
+    RealAdditionOperator,
+    RealSubtractionOperator,
+    RealMultiplicationOperator,
+    RealDivisionOperator,
+    RealConstantOperator,
+    RealVariableOperator,
+    RealEqualityOperator,             
     RealVisitor             
 )
 
@@ -31,113 +31,113 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
     def __init__(self):
         self.output = {}
 
-    def visitBooleanXOR(self, operator: BooleanXOR):
+    def visitBooleanXOR(self, operator: BooleanXOROperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = BooleanXOR(operator.operator_2, output)
-        self.output[operator.operator_2] = BooleanXOR(operator.operator_1, output)
+        self.output[operator.operator_1] = BooleanXOROperator(operator.operator_2, output)
+        self.output[operator.operator_2] = BooleanXOROperator(operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2
 
-    def visitBooleanNOT(self, operator: BooleanNOT):
+    def visitBooleanNOT(self, operator: BooleanNOTOperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = BooleanNOT(output)
+        self.output[operator.operator_1] = BooleanNOTOperator(output)
         return operator.operator_1.accept(self)
 
-    def visitBooleanConstant(self, operator: BooleanConstant):
+    def visitBooleanConstant(self, operator: BooleanConstantOperator):
         return {}
 
-    def visitBooleanVariable(self, operator: BooleanVariable):
+    def visitBooleanVariable(self, operator: BooleanVariableOperator):
         return {operator: self.output[operator]}
         
-    def visitBooleanEquality(self, operator: BooleanEquality):
+    def visitBooleanEquality(self, operator: BooleanEqualityOperator):
         self.output[operator.operator_2] = operator.operator_1
         inverse_dict = operator.operator_2.accept(self)
-        return [BooleanEquality(var, operator) for var, operator in inverse_dict.items()]
+        return [BooleanEqualityOperator(var, operator) for var, operator in inverse_dict.items()]
 
-    def visitIntegerAddition(self, operator: IntegerAddition):
+    def visitIntegerAddition(self, operator: IntegerAdditionOperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = IntegerSubtraction(output, operator.operator_2)
-        self.output[operator.operator_2] = IntegerSubtraction(output, operator.operator_1)
+        self.output[operator.operator_1] = IntegerSubtractionOperator(output, operator.operator_2)
+        self.output[operator.operator_2] = IntegerSubtractionOperator(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2
 
-    def visitIntegerSubtraction(self, operator: IntegerSubtraction):
+    def visitIntegerSubtraction(self, operator: IntegerSubtractionOperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = IntegerAddition(output, operator.operator_2)
-        self.output[operator.operator_2] = IntegerSubtraction(operator.operator_1, output)
+        self.output[operator.operator_1] = IntegerAdditionOperator(output, operator.operator_2)
+        self.output[operator.operator_2] = IntegerSubtractionOperator(operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2
 
-    def visitIntegerMultiplication(self, operator: IntegerMultiplication):
+    def visitIntegerMultiplication(self, operator: IntegerMultiplicationOperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = IntegerDivision(output, operator.operator_2)
-        self.output[operator.operator_2] = IntegerDivision(output, operator.operator_1)
+        self.output[operator.operator_1] = IntegerDivisionOperator(output, operator.operator_2)
+        self.output[operator.operator_2] = IntegerDivisionOperator(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2
 
-    def visitIntegerDivision(self, operator: IntegerDivision):
+    def visitIntegerDivision(self, operator: IntegerDivisionOperator):
         return {}
 
-    def visitIntegerConstant(self, operator: IntegerConstant):
+    def visitIntegerConstant(self, operator: IntegerConstantOperator):
         return {}
 
-    def visitIntegerVariable(self, operator: IntegerVariable):
+    def visitIntegerVariable(self, operator: IntegerVariableOperator):
         return {operator: self.output[operator]}
 
-    def visitIntegerEquality(self, operator: IntegerEquality):
+    def visitIntegerEquality(self, operator: IntegerEqualityOperator):
         self.output[operator.operator_2] = operator.operator_1
         inverse_dict = operator.operator_2.accept(self)
         # Prepare the visitor to be reused
         self.output = {} 
-        return [IntegerEquality(var, operator) for var, operator in inverse_dict.items()]
+        return [IntegerEqualityOperator(var, operator) for var, operator in inverse_dict.items()]
     
-    def visitRealAddition(self, operator: RealAddition):
+    def visitRealAddition(self, operator: RealAdditionOperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = RealSubtraction(output, operator.operator_2)
-        self.output[operator.operator_2] = RealSubtraction(output, operator.operator_1)
+        self.output[operator.operator_1] = RealSubtractionOperator(output, operator.operator_2)
+        self.output[operator.operator_2] = RealSubtractionOperator(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2
 
-    def visitRealSubtraction(self, operator: RealSubtraction):
+    def visitRealSubtraction(self, operator: RealSubtractionOperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = RealAddition(output, operator.operator_2)
-        self.output[operator.operator_2] = RealSubtraction(operator.operator_1, output)
+        self.output[operator.operator_1] = RealAdditionOperator(output, operator.operator_2)
+        self.output[operator.operator_2] = RealSubtractionOperator(operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2
 
-    def visitRealMultiplication(self, operator: RealMultiplication):
+    def visitRealMultiplication(self, operator: RealMultiplicationOperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = RealDivision(output, operator.operator_2)
-        self.output[operator.operator_2] = RealDivision(output, operator.operator_1)
+        self.output[operator.operator_1] = RealDivisionOperator(output, operator.operator_2)
+        self.output[operator.operator_2] = RealDivisionOperator(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2
 
-    def visitRealDivision(self, operator: RealDivision):
+    def visitRealDivision(self, operator: RealDivisionOperator):
         output = self.output[operator]
-        self.output[operator.operator_1] = RealMultiplication(output, operator.operator_2)
-        self.output[operator.operator_2] = RealDivision(output, operator.operator_1)
+        self.output[operator.operator_1] = RealMultiplicationOperator(output, operator.operator_2)
+        self.output[operator.operator_2] = RealDivisionOperator(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2
 
-    def visitRealConstant(self, operator: RealConstant):
+    def visitRealConstant(self, operator: RealConstantOperator):
         return {}
 
-    def visitRealVariable(self, operator: RealVariable):
+    def visitRealVariable(self, operator: RealVariableOperator):
         return {operator: self.output[operator]}
 
-    def visitRealEquality(self, operator: RealEquality):
+    def visitRealEquality(self, operator: RealEqualityOperator):
         self.output[operator.operator_2] = operator.operator_1
         inverse_dict = operator.operator_2.accept(self)
         # Prepare the visitor to be reused
         self.output = {} 
-        return [RealEquality(var, operator) for var, operator in inverse_dict.items()]
+        return [RealEqualityOperator(var, operator) for var, operator in inverse_dict.items()]
 
 

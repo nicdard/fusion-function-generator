@@ -15,7 +15,7 @@ class RealOperator(Operator):
     def accept(self, visitor: 'RealVisitor'):
         pass
 
-class RealAddition(RealOperator):
+class RealAdditionOperator(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -23,7 +23,7 @@ class RealAddition(RealOperator):
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealAddition(self)
 
-class RealSubtraction(RealOperator):
+class RealSubtractionOperator(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -31,7 +31,7 @@ class RealSubtraction(RealOperator):
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealSubtraction(self)
 
-class RealMultiplication(RealOperator):
+class RealMultiplicationOperator(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -39,7 +39,7 @@ class RealMultiplication(RealOperator):
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealMultiplication(self)
 
-class RealDivision(RealOperator):
+class RealDivisionOperator(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -47,21 +47,21 @@ class RealDivision(RealOperator):
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealDivision(self)
 
-class RealConstant(RealOperator):
+class RealConstantOperator(RealOperator):
     def __init__(self, value: int):
         self.value = value
 
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealConstant(self)
 
-class RealVariable(RealOperator):
+class RealVariableOperator(RealOperator):
     def __init__(self, name: str):
         self.name = name
 
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealVariable(self)
 
-class RealEquality(RealOperator):
+class RealEqualityOperator(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -72,29 +72,29 @@ class RealEquality(RealOperator):
 
 class RealVisitor(ABC):
     @abstractmethod
-    def visitRealAddition(self, operator: RealAddition):
+    def visitRealAddition(self, operator: RealAdditionOperator):
         pass
 
     @abstractmethod
-    def visitRealSubtraction(self, operator: RealSubtraction):
+    def visitRealSubtraction(self, operator: RealSubtractionOperator):
         pass
 
     @abstractmethod
-    def visitRealMultiplication(self, operator: RealMultiplication):
+    def visitRealMultiplication(self, operator: RealMultiplicationOperator):
         pass
 
     @abstractmethod
-    def visitRealDivision(self, operator: RealDivision):
+    def visitRealDivision(self, operator: RealDivisionOperator):
         pass
 
     @abstractmethod
-    def visitRealConstant(self, operator: RealConstant):
+    def visitRealConstant(self, operator: RealConstantOperator):
         pass
 
     @abstractmethod
-    def visitRealVariable(self, operator: RealVariable):
+    def visitRealVariable(self, operator: RealVariableOperator):
         pass
 
     @abstractmethod
-    def visitRealEquality(self, operator: RealEquality):
+    def visitRealEquality(self, operator: RealEqualityOperator):
         pass
