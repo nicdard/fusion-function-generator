@@ -15,10 +15,12 @@ def define_generic(output_dir: pathlib.Path):
     with open(path, 'w+', encoding='utf-8') as f:
         f.write("\n".join([
             WARNING_MESSAGE,
-            "from abc import ABC",
+            "from abc import ABC, abstractmethod",
             "\n",
             "class Operator(ABC):",
-            "    pass",
+            "    @abstractmethod",
+            "    def accept(self, visitor):",
+            "        pass",
             "",
         ]))
         # for type in types.keys():
