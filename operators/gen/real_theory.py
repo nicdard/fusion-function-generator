@@ -1,21 +1,11 @@
-# WARNING: This file has been generated and it shouldn't be edited manually!
+# WARNING: This file has been generated and shouldn't be edited manually!
 # Look at the README to learn more.
-
-
+import random
 from abc import ABC, abstractmethod
-from operators.gen.generic import Operator
+from operators.gen.generic import RealOperator
 
 
-class RealOperator(Operator):
-    @abstractmethod
-    def __init__(self, *inputs):
-        pass
-
-    @abstractmethod
-    def accept(self, visitor: 'RealVisitor'):
-        pass
-
-class RealAdditionOperator(RealOperator):
+class RealAddition(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -23,7 +13,8 @@ class RealAdditionOperator(RealOperator):
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealAddition(self)
 
-class RealSubtractionOperator(RealOperator):
+
+class RealSubtraction(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -31,7 +22,8 @@ class RealSubtractionOperator(RealOperator):
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealSubtraction(self)
 
-class RealMultiplicationOperator(RealOperator):
+
+class RealMultiplication(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -39,7 +31,8 @@ class RealMultiplicationOperator(RealOperator):
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealMultiplication(self)
 
-class RealDivisionOperator(RealOperator):
+
+class RealDivision(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -47,21 +40,24 @@ class RealDivisionOperator(RealOperator):
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealDivision(self)
 
-class RealConstantOperator(RealOperator):
-    def __init__(self, value: int):
-        self.value = value
+
+class RealConstant(RealOperator):
+    def __init__(self):
+        self.value = random.random() * 1000
 
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealConstant(self)
 
-class RealVariableOperator(RealOperator):
+
+class RealVariable(RealOperator):
     def __init__(self, name: str):
         self.name = name
 
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visitRealVariable(self)
 
-class RealEqualityOperator(RealOperator):
+
+class RealEquality(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
@@ -72,29 +68,29 @@ class RealEqualityOperator(RealOperator):
 
 class RealVisitor(ABC):
     @abstractmethod
-    def visitRealAddition(self, operator: RealAdditionOperator):
+    def visitRealAddition(self, operator: RealAddition):
         pass
 
     @abstractmethod
-    def visitRealSubtraction(self, operator: RealSubtractionOperator):
+    def visitRealSubtraction(self, operator: RealSubtraction):
         pass
 
     @abstractmethod
-    def visitRealMultiplication(self, operator: RealMultiplicationOperator):
+    def visitRealMultiplication(self, operator: RealMultiplication):
         pass
 
     @abstractmethod
-    def visitRealDivision(self, operator: RealDivisionOperator):
+    def visitRealDivision(self, operator: RealDivision):
         pass
 
     @abstractmethod
-    def visitRealConstant(self, operator: RealConstantOperator):
+    def visitRealConstant(self, operator: RealConstant):
         pass
 
     @abstractmethod
-    def visitRealVariable(self, operator: RealVariableOperator):
+    def visitRealVariable(self, operator: RealVariable):
         pass
 
     @abstractmethod
-    def visitRealEquality(self, operator: RealEqualityOperator):
+    def visitRealEquality(self, operator: RealEquality):
         pass

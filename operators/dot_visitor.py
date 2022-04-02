@@ -1,93 +1,93 @@
-from operators.gen.boolean_theory import (             
-    BooleanXOROperator,
-    BooleanNOTOperator,
-    BooleanConstantOperator,
-    BooleanVariableOperator,
-    BooleanEqualityOperator,             
+from operators.gen.boolean_theory import (
+    BooleanXOR,
+    BooleanNOT,
+    BooleanConstant,
+    BooleanVariable,
+    BooleanEquality,
     BooleanVisitor             
 )
 from operators.gen.generic import Operator
-from operators.gen.integer_theory import (             
-    IntegerAdditionOperator,
-    IntegerSubtractionOperator,
-    IntegerMultiplicationOperator,
-    IntegerDivisionOperator,
-    IntegerConstantOperator,
-    IntegerVariableOperator,
-    IntegerEqualityOperator,             
+from operators.gen.integer_theory import (
+    IntegerAddition,
+    IntegerSubtraction,
+    IntegerMultiplication,
+    IntegerDivision,
+    IntegerConstant,
+    IntegerVariable,
+    IntegerEquality,
     IntegerVisitor             
 )
-from operators.gen.real_theory import (             
-    RealAdditionOperator,
-    RealSubtractionOperator,
-    RealMultiplicationOperator,
-    RealDivisionOperator,
-    RealConstantOperator,
-    RealVariableOperator,
-    RealEqualityOperator,             
+from operators.gen.real_theory import (
+    RealAddition,
+    RealSubtraction,
+    RealMultiplication,
+    RealDivision,
+    RealConstant,
+    RealVariable,
+    RealEquality,
     RealVisitor             
 )
 
+
 class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
-    
     def __init__(self):
         self.id = 0
 
-    def visitBooleanXOR(self, operator: BooleanXOROperator):
+    def visitBooleanXOR(self, operator: BooleanXOR):
         return self.visitBinaryOperator("XOR", operator)
 
-    def visitBooleanNOT(self, operator: BooleanNOTOperator):
+    def visitBooleanNOT(self, operator: BooleanNOT):
         return self.visitUnaryOperator("NOT", operator)
 
-    def visitBooleanConstant(self, operator: BooleanConstantOperator):
+    def visitBooleanConstant(self, operator: BooleanConstant):
         return self.visitConstant(operator)
 
-    def visitBooleanVariable(self, operator: BooleanVariableOperator):
+    def visitBooleanVariable(self, operator: BooleanVariable):
         return self.visitVariable(operator)
 
-    def visitBooleanEquality(self, operator: BooleanEqualityOperator):
+    def visitBooleanEquality(self, operator: BooleanEquality):
         return self.visitRoot("EQ", operator)
 
-    def visitIntegerAddition(self, operator: IntegerAdditionOperator):
+    def visitIntegerAddition(self, operator: IntegerAddition):
         return self.visitBinaryOperator("INT_ADD", operator)
 
-    def visitIntegerSubtraction(self, operator: IntegerSubtractionOperator):
+    def visitIntegerSubtraction(self, operator: IntegerSubtraction):
         return self.visitBinaryOperator("INT_SUB", operator)
 
-    def visitIntegerMultiplication(self, operator: IntegerMultiplicationOperator):
+    def visitIntegerMultiplication(self, operator: IntegerMultiplication):
         return self.visitBinaryOperator("INT_MUL", operator)
 
-    def visitIntegerDivision(self, operator: IntegerDivisionOperator):
+    def visitIntegerDivision(self, operator: IntegerDivision):
         return self.visitBinaryOperator("INT_DIV", operator)
 
-    def visitIntegerConstant(self, operator: IntegerConstantOperator):
+    def visitIntegerConstant(self, operator: IntegerConstant):
         return self.visitConstant(operator)
 
-    def visitIntegerVariable(self, operator: IntegerVariableOperator):
+    def visitIntegerVariable(self, operator: IntegerVariable):
         return self.visitVariable(operator)
 
-    def visitIntegerEquality(self, operator: IntegerEqualityOperator):
+    def visitIntegerEquality(self, operator: IntegerEquality):
         return self.visitRoot("INT_EQ", operator)
 
-    def visitRealAddition(self, operator: RealAdditionOperator):
+    def visitRealAddition(self, operator: RealAddition):
         return self.visitBinaryOperator("REAL_ADD", operator)
 
-    def visitRealSubtraction(self, operator: RealSubtractionOperator):
+    def visitRealSubtraction(self, operator: RealSubtraction):
         return self.visitBinaryOperator("REAL_SUB", operator)
 
-    def visitRealMultiplication(self, operator: RealMultiplicationOperator):
+    def visitRealMultiplication(self, operator: RealMultiplication):
         return self.visitBinaryOperator("REAL_MUL", operator)
 
-    def visitRealDivision(self, operator: RealDivisionOperator):
+    def visitRealDivision(self, operator: RealDivision):
         return self.visitBinaryOperator("REAL_DIV", operator)
 
-    def visitRealConstant(self, operator: RealConstantOperator):
+    def visitRealConstant(self, operator: RealConstant):
         return self.visitConstant(operator)
 
-    def visitRealVariable(self, operator: RealVariableOperator):
+    def visitRealVariable(self, operator: RealVariable):
         return self.visitVariable(operator)
 
-    def visitRealEquality(self, operator: RealEqualityOperator):
+    def visitRealEquality(self, operator: RealEquality):
         return self.visitRoot("REAL_EQ", operator)
 
     def visitRoot(self, label: str, operator: Operator):

@@ -9,3 +9,33 @@ class Operator(ABC):
     @abstractmethod
     def accept(self, visitor):
         pass
+
+
+class BooleanOperator(Operator):
+    @abstractmethod
+    def __init__(self, *inputs):
+        pass
+
+    @abstractmethod
+    def accept(self, visitor):
+        pass
+
+
+class IntegerOperator(Operator):
+    @abstractmethod
+    def __init__(self, *inputs):
+        pass
+
+    @abstractmethod
+    def accept(self, visitor):
+        pass
+
+
+class RealOperator(Operator):
+    @abstractmethod
+    def __init__(self, *inputs):
+        pass
+
+    @abstractmethod
+    def accept(self, visitor):
+        pass
