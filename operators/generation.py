@@ -1,10 +1,11 @@
-import random
 from typing import List, Tuple
-
 from operators import gen_configuration
+# ==================================================================
+# necessary for operators to be in global namespace for generation
 from operators.gen.boolean_theory import *
 from operators.gen.integer_theory import *
 from operators.gen.real_theory import *
+# ==================================================================
 
 
 # Ordered Tree Encoding:
@@ -47,8 +48,15 @@ def generate_arity_tree(root: int, n: int, bounds: Tuple[int, int]):
     return tree
 
 
+def get_operator_class(name):
+    return globals()[name]
+
+
 def generate_operator_tree(arity_tree, num_variables):
     num_leaves = len([n for n in arity_tree if n == 0])
+
+    if num_leaves < num_variables:
+        raise ValueError("Not enough leaves to accommodate requested number of variables.")
 
     def recursive_generation(idx, operator_type):
         nonlocal num_leaves, num_variables
@@ -77,14 +85,14 @@ def generate_operator_tree(arity_tree, num_variables):
                 param, idx = recursive_generation(idx, operator_type)
                 params.append(param)
 
-        return globals()[op_name](*params), idx
+        return get_operator_class(op_name)(*params), idx
 
     root_type = random.choice(gen_configuration.get_theories())
     operator_tree, _ = recursive_generation(0, root_type)
     root_name = gen_configuration.get_root(root_type)
 
-    output_var = globals()[gen_configuration.get_variable(root_type)]("x0")
-    root = globals()[root_name](output_var, operator_tree)
+    output_var = get_operator_class(gen_configuration.get_variable(root_type))("y")
+    root = get_operator_class(root_name)(output_var, operator_tree)
 
     return root
 
