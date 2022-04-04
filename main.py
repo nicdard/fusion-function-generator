@@ -1,7 +1,7 @@
 from operators.dot_visitor import DotVisitor
 from operators.printer_visitor import PrinterVisitor
 from operators.rewrite_visitor import RewriteVisitor
-from operators.generation import generate_arity_tree, generate_operator_tree
+from operators.tree_generation import generate_arity_tree, generate_operator_tree
 
 
 def main():
