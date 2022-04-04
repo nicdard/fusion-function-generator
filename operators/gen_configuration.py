@@ -7,40 +7,34 @@ from typing import Dict, List
 # Insert here new theories and their operations!
 theories_declaration: Dict[str, Dict[str, List[str]]] = {
     "BooleanOperator": {
-        "BooleanXOR": ["BooleanOperator", "BooleanOperator"],
-        "BooleanNOT": ["BooleanOperator"],
-        "BooleanConstant": ["bool"],
-        "BooleanVariable": ["str"],
+        "BooleanXor": ["BooleanOperator", "BooleanOperator"],
+        "BooleanNot": ["BooleanOperator"],
     },
     "IntegerOperator": {
         "IntegerAddition": ["IntegerOperator", "IntegerOperator"],
         "IntegerSubtraction": ["IntegerOperator", "IntegerOperator"],
         "IntegerMultiplication": ["IntegerOperator", "IntegerOperator"],
         "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
-        "IntegerConstant": ["int"],
-        "IntegerVariable": ["str"],
     },
     "RealOperator": {
         "RealAddition": ["RealOperator", "RealOperator"],
         "RealSubtraction": ["RealOperator", "RealOperator"],
         "RealMultiplication": ["RealOperator", "RealOperator"],
         "RealDivision": ["RealOperator", "RealOperator"],
-        "RealConstant": ["float"],
-        "RealVariable": ["str"],
     }
 }
 
 leaf_operators = {
     "BooleanOperator": {
-        "BooleanConstant": bool,
+        "BooleanConstant": "random.random() > 0.5",
         "BooleanVariable": str,
     },
     "IntegerOperator": {
-        "IntegerConstant": int,
+        "IntegerConstant": "random.randint(0, 1000)",
         "IntegerVariable": str,
     },
     "RealOperator": {
-        "RealConstant": float,
+        "RealConstant": "random.random() * 1000",
         "RealVariable": str,
     }
 }
@@ -56,6 +50,14 @@ def get_theories():
     return list(theories_declaration.keys())
 
 
+def get_operators(theory: str):
+    return list(theories_declaration[theory].keys())
+
+
+def get_operator_parameters(theory: str, operator: str):
+    return theories_declaration[theory][operator]
+
+
 def get_leaf(operator_type):
     theory = leaf_operators[operator_type]
     op = random.choice(list(theory.keys()))
@@ -65,6 +67,9 @@ def get_leaf(operator_type):
 def get_constant(operator_type):
     return list(leaf_operators[operator_type].keys())[0]
 
+
+def get_constant_initializer(operator_type):
+    return leaf_operators[operator_type][get_constant(operator_type)]
 
 def get_variable(operator_type):
     return list(leaf_operators[operator_type].keys())[1]
@@ -87,3 +92,8 @@ def get_eligible_operator(operator_type, arity):
             operator_choices.append(operator)
 
     return random.choice(operator_choices)
+
+
+def get_theory_name(theory: str) -> str:
+    return theory.split("Operator")[0]
+

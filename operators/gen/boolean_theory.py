@@ -1,25 +1,33 @@
 # WARNING: This file has been generated and it shouldn't be edited manually!
 # Look at the README to learn more.
+
 import random
 from abc import ABC, abstractmethod
 from operators.gen.generic import BooleanOperator
 
 
-class BooleanXOR(BooleanOperator):
+class BooleanXor(BooleanOperator):
     def __init__(self, input_1: BooleanOperator, input_2: BooleanOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 
     def accept(self, visitor: 'BooleanVisitor'):
-        return visitor.visitBooleanXOR(self)
+        return visitor.visit_boolean_xor(self)
 
 
-class BooleanNOT(BooleanOperator):
+class BooleanNot(BooleanOperator):
     def __init__(self, input_1: BooleanOperator):
         self.operator_1 = input_1
 
     def accept(self, visitor: 'BooleanVisitor'):
-        return visitor.visitBooleanNOT(self)
+        return visitor.visit_boolean_not(self)
+
+
+class BooleanVariable(BooleanOperator):
+    def __init__(self, name: str):
+        self.name = name
+    def accept(self, visitor: 'BooleanVisitor'):
+        return visitor.visit_boolean_variable(self)
 
 
 class BooleanConstant(BooleanOperator):
@@ -27,15 +35,7 @@ class BooleanConstant(BooleanOperator):
         self.value = random.random() > 0.5
 
     def accept(self, visitor: 'BooleanVisitor'):
-        return visitor.visitBooleanConstant(self)
-
-
-class BooleanVariable(BooleanOperator):
-    def __init__(self, name: str):
-        self.name = name
-
-    def accept(self, visitor: 'BooleanVisitor'):
-        return visitor.visitBooleanVariable(self)
+        return visitor.visit_boolean_constant(self)
 
 
 class BooleanEquality(BooleanOperator):
@@ -44,26 +44,27 @@ class BooleanEquality(BooleanOperator):
         self.operator_2 = input_2
 
     def accept(self, visitor: 'BooleanVisitor'):
-        return visitor.visitBooleanEquality(self)
+        return visitor.visit_boolean_equality(self)
 
 
 class BooleanVisitor(ABC):
     @abstractmethod
-    def visitBooleanXOR(self, operator: BooleanXOR):
+    def visit_boolean_xor(self, operator: BooleanXor):
         pass
 
     @abstractmethod
-    def visitBooleanNOT(self, operator: BooleanNOT):
+    def visit_boolean_not(self, operator: BooleanNot):
         pass
 
     @abstractmethod
-    def visitBooleanConstant(self, operator: BooleanConstant):
+    def visit_boolean_variable(self, operator: BooleanVariable):
         pass
 
     @abstractmethod
-    def visitBooleanVariable(self, operator: BooleanVariable):
+    def visit_boolean_constant(self, operator: BooleanConstant):
         pass
 
     @abstractmethod
-    def visitBooleanEquality(self, operator: BooleanEquality):
+    def visit_boolean_equality(self, operator: BooleanEquality):
         pass
+

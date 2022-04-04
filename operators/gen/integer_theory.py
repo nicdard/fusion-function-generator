@@ -1,8 +1,9 @@
-# WARNING: This file has been generated and shouldn't be edited manually!
+# WARNING: This file has been generated and it shouldn't be edited manually!
 # Look at the README to learn more.
+
 import random
 from abc import ABC, abstractmethod
-from operators.gen.generic import BooleanOperator, IntegerOperator
+from operators.gen.generic import IntegerOperator
 
 
 class IntegerAddition(IntegerOperator):
@@ -11,7 +12,7 @@ class IntegerAddition(IntegerOperator):
         self.operator_2 = input_2
 
     def accept(self, visitor: 'IntegerVisitor'):
-        return visitor.visitIntegerAddition(self)
+        return visitor.visit_integer_addition(self)
 
 
 class IntegerSubtraction(IntegerOperator):
@@ -20,7 +21,7 @@ class IntegerSubtraction(IntegerOperator):
         self.operator_2 = input_2
 
     def accept(self, visitor: 'IntegerVisitor'):
-        return visitor.visitIntegerSubtraction(self)
+        return visitor.visit_integer_subtraction(self)
 
 
 class IntegerMultiplication(IntegerOperator):
@@ -29,7 +30,7 @@ class IntegerMultiplication(IntegerOperator):
         self.operator_2 = input_2
 
     def accept(self, visitor: 'IntegerVisitor'):
-        return visitor.visitIntegerMultiplication(self)
+        return visitor.visit_integer_multiplication(self)
 
 
 class IntegerDivision(IntegerOperator):
@@ -38,7 +39,14 @@ class IntegerDivision(IntegerOperator):
         self.operator_2 = input_2
 
     def accept(self, visitor: 'IntegerVisitor'):
-        return visitor.visitIntegerDivision(self)
+        return visitor.visit_integer_division(self)
+
+
+class IntegerVariable(IntegerOperator):
+    def __init__(self, name: str):
+        self.name = name
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_integer_variable(self)
 
 
 class IntegerConstant(IntegerOperator):
@@ -46,51 +54,44 @@ class IntegerConstant(IntegerOperator):
         self.value = random.randint(0, 1000)
 
     def accept(self, visitor: 'IntegerVisitor'):
-        return visitor.visitIntegerConstant(self)
+        return visitor.visit_integer_constant(self)
 
 
-class IntegerVariable(IntegerOperator):
-    def __init__(self, name: str):
-        self.name = name
-
-    def accept(self, visitor: 'IntegerVisitor'):
-        return visitor.visitIntegerVariable(self)
-
-
-class IntegerEquality(BooleanOperator):
+class IntegerEquality(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 
     def accept(self, visitor: 'IntegerVisitor'):
-        return visitor.visitIntegerEquality(self)
+        return visitor.visit_integer_equality(self)
 
 
 class IntegerVisitor(ABC):
     @abstractmethod
-    def visitIntegerAddition(self, operator: IntegerAddition):
+    def visit_integer_addition(self, operator: IntegerAddition):
         pass
 
     @abstractmethod
-    def visitIntegerSubtraction(self, operator: IntegerSubtraction):
+    def visit_integer_subtraction(self, operator: IntegerSubtraction):
         pass
 
     @abstractmethod
-    def visitIntegerMultiplication(self, operator: IntegerMultiplication):
+    def visit_integer_multiplication(self, operator: IntegerMultiplication):
         pass
 
     @abstractmethod
-    def visitIntegerDivision(self, operator: IntegerDivision):
+    def visit_integer_division(self, operator: IntegerDivision):
         pass
 
     @abstractmethod
-    def visitIntegerConstant(self, operator: IntegerConstant):
+    def visit_integer_variable(self, operator: IntegerVariable):
         pass
 
     @abstractmethod
-    def visitIntegerVariable(self, operator: IntegerVariable):
+    def visit_integer_constant(self, operator: IntegerConstant):
         pass
 
     @abstractmethod
-    def visitIntegerEquality(self, operator: IntegerEquality):
+    def visit_integer_equality(self, operator: IntegerEquality):
         pass
+

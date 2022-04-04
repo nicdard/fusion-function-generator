@@ -1,6 +1,6 @@
 from operators.gen.boolean_theory import (
-    BooleanXOR,
-    BooleanNOT,
+    BooleanXor,
+    BooleanNot,
     BooleanConstant,
     BooleanVariable,
     BooleanEquality,
@@ -28,59 +28,59 @@ from operators.gen.real_theory import (
 )
 
 class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
-    def visitBooleanXOR(self, operator: BooleanXOR):
+    def visit_boolean_xor(self, operator: BooleanXor):
         return f"(xor {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitBooleanNOT(self, operator: BooleanNOT):
+    def visit_boolean_not(self, operator: BooleanNot):
         return f"(not {operator.operator_1.accept(self)})"
 
-    def visitBooleanConstant(self, operator: BooleanConstant):
+    def visit_boolean_constant(self, operator: BooleanConstant):
         return str(operator.value)
 
-    def visitBooleanVariable(self, operator: BooleanVariable):
+    def visit_boolean_variable(self, operator: BooleanVariable):
         return operator.name
 
-    def visitBooleanEquality(self, operator: BooleanEquality):
+    def visit_boolean_equality(self, operator: BooleanEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerAddition(self, operator: IntegerAddition):
+    def visit_integer_addition(self, operator: IntegerAddition):
         return f"(+ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerSubtraction(self, operator: IntegerSubtraction):
+    def visit_integer_subtraction(self, operator: IntegerSubtraction):
         return f"(- {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerMultiplication(self, operator: IntegerMultiplication):
+    def visit_integer_multiplication(self, operator: IntegerMultiplication):
         return f"(* {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerDivision(self, operator: IntegerDivision):
+    def visit_integer_division(self, operator: IntegerDivision):
         return f"(div {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerConstant(self, operator: IntegerConstant):
+    def visit_integer_constant(self, operator: IntegerConstant):
         return str(operator.value)
 
-    def visitIntegerVariable(self, operator: IntegerVariable):
+    def visit_integer_variable(self, operator: IntegerVariable):
         return operator.name
 
-    def visitIntegerEquality(self, operator: IntegerEquality):
+    def visit_integer_equality(self, operator: IntegerEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
     
-    def visitRealAddition(self, operator: RealAddition):
+    def visit_real_addition(self, operator: RealAddition):
         return f"(+ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitRealSubtraction(self, operator: RealSubtraction):
+    def visit_real_subtraction(self, operator: RealSubtraction):
         return f"(- {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitRealMultiplication(self, operator: RealMultiplication):
+    def visit_real_multiplication(self, operator: RealMultiplication):
         return f"(* {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitRealDivision(self, operator: RealDivision):
+    def visit_real_division(self, operator: RealDivision):
         return f"(/ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitRealConstant(self, operator: RealConstant):
+    def visit_real_constant(self, operator: RealConstant):
         return str(operator.value)
 
-    def visitRealVariable(self, operator: RealVariable):
+    def visit_real_variable(self, operator: RealVariable):
         return operator.name
 
-    def visitRealEquality(self, operator: RealEquality):
+    def visit_real_equality(self, operator: RealEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
