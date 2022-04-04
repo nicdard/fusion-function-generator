@@ -1,92 +1,99 @@
-from typing import Dict, List, Union
+import random
+from typing import Dict, List
 
 # A map from theories name to theory operation.
 # Each operation specifies either the number of input parameters (having the same theory operator type).
 # or the list of parameters with the names and types of each one.
 # Insert here new theories and their operations!
-theories_declaration: Dict[str, Dict[str, Union[str, int]]] = {
-    "Boolean": {
-        "XOR": 2,
-        "NOT": 1,
-        "Constant": "value: bool",
-        "Variable": "name: str",
-        "Equality": 2
+theories_declaration: Dict[str, Dict[str, List[str]]] = {
+    "BooleanOperator": {
+        "BooleanXor": ["BooleanOperator", "BooleanOperator"],
+        "BooleanNot": ["BooleanOperator"],
     },
-    "Integer": {
-        "Addition"      : 2,
-        "Subtraction"   : 2,
-        "Multiplication": 2,
-        "Division"      : 2,
-        "Constant": "value: int",
-        "Variable": "name: str",
-        "Equality": 2
+    "IntegerOperator": {
+        "IntegerAddition": ["IntegerOperator", "IntegerOperator"],
+        "IntegerSubtraction": ["IntegerOperator", "IntegerOperator"],
+        "IntegerMultiplication": ["IntegerOperator", "IntegerOperator"],
+        "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
     },
-    "Real": {
-        "Addition"      : 2,
-        "Subtraction"   : 2,
-        "Multiplication": 2,
-        "Division"      : 2,
-        "Constant": "value: int",
-        "Variable": "name: str",
-        "Equality": 2
+    "RealOperator": {
+        "RealAddition": ["RealOperator", "RealOperator"],
+        "RealSubtraction": ["RealOperator", "RealOperator"],
+        "RealMultiplication": ["RealOperator", "RealOperator"],
+        "RealDivision": ["RealOperator", "RealOperator"],
     }
 }
 
+leaf_operators = {
+    "BooleanOperator": {
+        "BooleanConstant": "random.random() > 0.5",
+        "BooleanVariable": str,
+    },
+    "IntegerOperator": {
+        "IntegerConstant": "random.randint(0, 1000)",
+        "IntegerVariable": str,
+    },
+    "RealOperator": {
+        "RealConstant": "random.random() * 1000",
+        "RealVariable": str,
+    }
+}
 
-theories = theories_declaration.keys()
+root_operators: Dict[str, str] = {
+    "BooleanOperator": "BooleanEquality",
+    "IntegerOperator": "IntegerEquality",
+    "RealOperator": "RealEquality",
+}
 
-def reverse_theory_dict() -> Dict[int, Dict[str, List[str]]]:
-    """
-    Returns a reverse dictionary from the (arity, theory) to operators.
-    Note: When counting the arity we take into account only operator
-    parameters, not str, int ...
-    """
-    parse_arity = lambda params : len(params) != 0 \
-        if len(list(filter(lambda p : \
-            p.__contains__("Operator"), params.split(",")))) \
-        else 0
-    arity_map = {}
-    for theory in theories_declaration.keys():
-        theory_ops = theories_declaration[theory]
-        # We assume to have at least one bnary operator in a theory, 
-        # since we want to be able to fuse functions. Including theories
-        # without such an operation would be useless.
-        for op in theory_ops:
-            args = theory_ops[op]
-            arity = parse_arity(args) if isinstance(args, str) else args
-            if arity in arity_map.keys():
-                if theory in arity_map[arity]:
-                    arity_map[arity][theory].append(op)
-                else:
-                    arity_map[arity][theory] = [op]
-            else:
-                arity_map[arity] = {}
-                arity_map[arity][theory] = []
-    return arity_map
 
-def reverse_operation_dict() -> Dict[str, Dict[int, List[str]]]:
-    """
-    Returns a reverse dictionary from the (theory, theory) to operators.
-    Note: When counting the arity we take into account only operator
-    parameters, not str, int ...
-    """
-    parse_arity = lambda params : len(params) != 0 \
-        if len(filter(lambda p : \
-            p.__contains__("Operator"), params.split(","))) \
-        else 0
-    arity_map = {}
-    for theory in theories_declaration.keys():
-        theory = theories_declaration[theory]
-        arity_map[theory] = {}
-        # We assume to have at least one bnary operator in a theory, 
-        # since we want to be able to fuse functions. Including theories
-        # without such an operation would be useless.
-        for op in theory:
-            args = theory[op]
-            arity = parse_arity(args) if isinstance(args, str) else args
-            if arity in arity_map[theory]:
-                arity_map[theory][arity].append(op)
-            else:
-                arity_map[theory][arity] = [op]
-    return arity_map
+def get_theories():
+    return list(theories_declaration.keys())
+
+
+def get_operators(theory: str):
+    return list(theories_declaration[theory].keys())
+
+
+def get_operator_parameters(theory: str, operator: str):
+    return theories_declaration[theory][operator]
+
+
+def get_leaf(operator_type):
+    theory = leaf_operators[operator_type]
+    op = random.choice(list(theory.keys()))
+    return op, "variable" in op.lower()
+
+
+def get_constant(operator_type):
+    return list(leaf_operators[operator_type].keys())[0]
+
+
+def get_constant_initializer(operator_type):
+    return leaf_operators[operator_type][get_constant(operator_type)]
+
+def get_variable(operator_type):
+    return list(leaf_operators[operator_type].keys())[1]
+
+
+def get_root(operator_type):
+    return root_operators[operator_type]
+
+
+def get_eligible_operator(operator_type, arity):
+    if operator_type is None:
+        operator_type = random.choice(list(theories_declaration.keys()))
+
+    theory = theories_declaration[operator_type]
+    operator_choices = []
+
+    for operator in theory.keys():
+        n = len([p for p in theory[operator] if "operator" in p.lower()])
+        if n == arity:
+            operator_choices.append(operator)
+
+    return random.choice(operator_choices)
+
+
+def get_theory_name(theory: str) -> str:
+    return theory.split("Operator")[0]
 

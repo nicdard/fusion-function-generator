@@ -1,100 +1,97 @@
 # WARNING: This file has been generated and it shouldn't be edited manually!
 # Look at the README to learn more.
 
-
+import random
 from abc import ABC, abstractmethod
-from operators.gen.generic import Operator
+from operators.gen.generic import RealOperator
 
 
-class RealOperator(Operator):
-    @abstractmethod
-    def __init__(self, *inputs):
-        pass
-
-    @abstractmethod
-    def accept(self, visitor: 'RealVisitor'):
-        pass
-
-class RealAdditionOperator(RealOperator):
+class RealAddition(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 
     def accept(self, visitor: 'RealVisitor'):
-        return visitor.visitRealAddition(self)
+        return visitor.visit_real_addition(self)
 
-class RealSubtractionOperator(RealOperator):
+
+class RealSubtraction(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 
     def accept(self, visitor: 'RealVisitor'):
-        return visitor.visitRealSubtraction(self)
+        return visitor.visit_real_subtraction(self)
 
-class RealMultiplicationOperator(RealOperator):
+
+class RealMultiplication(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 
     def accept(self, visitor: 'RealVisitor'):
-        return visitor.visitRealMultiplication(self)
+        return visitor.visit_real_multiplication(self)
 
-class RealDivisionOperator(RealOperator):
+
+class RealDivision(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 
     def accept(self, visitor: 'RealVisitor'):
-        return visitor.visitRealDivision(self)
+        return visitor.visit_real_division(self)
 
-class RealConstantOperator(RealOperator):
-    def __init__(self, value: int):
-        self.value = value
 
-    def accept(self, visitor: 'RealVisitor'):
-        return visitor.visitRealConstant(self)
-
-class RealVariableOperator(RealOperator):
+class RealVariable(RealOperator):
     def __init__(self, name: str):
         self.name = name
+    def accept(self, visitor: 'RealVisitor'):
+        return visitor.visit_real_variable(self)
+
+
+class RealConstant(RealOperator):
+    def __init__(self):
+        self.value = random.random() * 1000
 
     def accept(self, visitor: 'RealVisitor'):
-        return visitor.visitRealVariable(self)
+        return visitor.visit_real_constant(self)
 
-class RealEqualityOperator(RealOperator):
+
+class RealEquality(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 
     def accept(self, visitor: 'RealVisitor'):
-        return visitor.visitRealEquality(self)
+        return visitor.visit_real_equality(self)
 
 
 class RealVisitor(ABC):
     @abstractmethod
-    def visitRealAddition(self, operator: RealAdditionOperator):
+    def visit_real_addition(self, operator: RealAddition):
         pass
 
     @abstractmethod
-    def visitRealSubtraction(self, operator: RealSubtractionOperator):
+    def visit_real_subtraction(self, operator: RealSubtraction):
         pass
 
     @abstractmethod
-    def visitRealMultiplication(self, operator: RealMultiplicationOperator):
+    def visit_real_multiplication(self, operator: RealMultiplication):
         pass
 
     @abstractmethod
-    def visitRealDivision(self, operator: RealDivisionOperator):
+    def visit_real_division(self, operator: RealDivision):
         pass
 
     @abstractmethod
-    def visitRealConstant(self, operator: RealConstantOperator):
+    def visit_real_variable(self, operator: RealVariable):
         pass
 
     @abstractmethod
-    def visitRealVariable(self, operator: RealVariableOperator):
+    def visit_real_constant(self, operator: RealConstant):
         pass
 
     @abstractmethod
-    def visitRealEquality(self, operator: RealEqualityOperator):
+    def visit_real_equality(self, operator: RealEquality):
         pass
+

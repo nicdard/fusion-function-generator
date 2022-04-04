@@ -1,86 +1,86 @@
-from operators.gen.boolean_theory import (             
-    BooleanXOROperator,
-    BooleanNOTOperator,
-    BooleanConstantOperator,
-    BooleanVariableOperator,
-    BooleanEqualityOperator,
+from operators.gen.boolean_theory import (
+    BooleanXor,
+    BooleanNot,
+    BooleanConstant,
+    BooleanVariable,
+    BooleanEquality,
     BooleanVisitor
 )
-from operators.gen.integer_theory import (             
-    IntegerAdditionOperator,
-    IntegerSubtractionOperator,
-    IntegerMultiplicationOperator,
-    IntegerDivisionOperator,
-    IntegerConstantOperator,
-    IntegerVariableOperator,
-    IntegerEqualityOperator,
+from operators.gen.integer_theory import (
+    IntegerAddition,
+    IntegerSubtraction,
+    IntegerMultiplication,
+    IntegerDivision,
+    IntegerConstant,
+    IntegerVariable,
+    IntegerEquality,
     IntegerVisitor
 )
-from operators.gen.real_theory import (             
-    RealAdditionOperator,
-    RealSubtractionOperator,
-    RealMultiplicationOperator,
-    RealDivisionOperator,
-    RealConstantOperator,
-    RealVariableOperator,
-    RealEqualityOperator,             
+from operators.gen.real_theory import (
+    RealAddition,
+    RealSubtraction,
+    RealMultiplication,
+    RealDivision,
+    RealConstant,
+    RealVariable,
+    RealEquality,
     RealVisitor             
 )
 
 class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
-    def visitBooleanXOR(self, operator: BooleanXOROperator):
+    def visit_boolean_xor(self, operator: BooleanXor):
         return f"(xor {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitBooleanNOT(self, operator: BooleanNOTOperator):
+    def visit_boolean_not(self, operator: BooleanNot):
         return f"(not {operator.operator_1.accept(self)})"
 
-    def visitBooleanConstant(self, operator: BooleanConstantOperator):
+    def visit_boolean_constant(self, operator: BooleanConstant):
         return str(operator.value)
 
-    def visitBooleanVariable(self, operator: BooleanVariableOperator):
+    def visit_boolean_variable(self, operator: BooleanVariable):
         return operator.name
 
-    def visitBooleanEquality(self, operator: BooleanEqualityOperator):
+    def visit_boolean_equality(self, operator: BooleanEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerAddition(self, operator: IntegerAdditionOperator):
+    def visit_integer_addition(self, operator: IntegerAddition):
         return f"(+ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerSubtraction(self, operator: IntegerSubtractionOperator):
+    def visit_integer_subtraction(self, operator: IntegerSubtraction):
         return f"(- {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerMultiplication(self, operator: IntegerMultiplicationOperator):
+    def visit_integer_multiplication(self, operator: IntegerMultiplication):
         return f"(* {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerDivision(self, operator: IntegerDivisionOperator):
+    def visit_integer_division(self, operator: IntegerDivision):
         return f"(div {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitIntegerConstant(self, operator: IntegerConstantOperator):
+    def visit_integer_constant(self, operator: IntegerConstant):
         return str(operator.value)
 
-    def visitIntegerVariable(self, operator: IntegerVariableOperator):
+    def visit_integer_variable(self, operator: IntegerVariable):
         return operator.name
 
-    def visitIntegerEquality(self, operator: IntegerEqualityOperator):
+    def visit_integer_equality(self, operator: IntegerEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
     
-    def visitRealAddition(self, operator: RealAdditionOperator):
+    def visit_real_addition(self, operator: RealAddition):
         return f"(+ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitRealSubtraction(self, operator: RealSubtractionOperator):
+    def visit_real_subtraction(self, operator: RealSubtraction):
         return f"(- {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitRealMultiplication(self, operator: RealMultiplicationOperator):
+    def visit_real_multiplication(self, operator: RealMultiplication):
         return f"(* {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitRealDivision(self, operator: RealDivisionOperator):
+    def visit_real_division(self, operator: RealDivision):
         return f"(/ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visitRealConstant(self, operator: RealConstantOperator):
+    def visit_real_constant(self, operator: RealConstant):
         return str(operator.value)
 
-    def visitRealVariable(self, operator: RealVariableOperator):
+    def visit_real_variable(self, operator: RealVariable):
         return operator.name
 
-    def visitRealEquality(self, operator: RealEqualityOperator):
+    def visit_real_equality(self, operator: RealEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"

@@ -1,10 +1,33 @@
 import os
 import pathlib
 import sys
+import re
 from typing import List
-from gen_configuration import theories_declaration
+from gen_configuration import (
+    get_constant, 
+    get_constant_initializer, 
+    get_operator_parameters, 
+    get_operators,
+    get_root, 
+    get_variable, 
+    theories_declaration, 
+    get_theories, 
+    get_theory_name
+)
 
-WARNING_MESSAGE = "# WARNING: This file has been generated and it shouldn't be edited manually!\n# Look at the README to learn more.\n\n"
+
+WARNING_MESSAGE = "# WARNING: This file has been generated and it shouldn't be edited manually!\n# Look at the README to learn more.\n"
+
+
+caml_case_pattern = re.compile(r'(?<!^)(?=[A-Z])')
+
+
+def caml_to_snake_case(s: str) -> str:
+    """
+    Converts from caml case to snake case.
+    """
+    return caml_case_pattern.sub('_', s).lower()
+
 
 def define_generic(output_dir: pathlib.Path):
     """
@@ -23,85 +46,104 @@ def define_generic(output_dir: pathlib.Path):
             "        pass",
             "",
         ]))
-        # for type in types.keys():
+        for theory in get_theories():
+            f.write("\n".join([
+                "\n",
+                f"class {theory}(Operator):",
+                "    @abstractmethod",
+                "    def __init__(self, *inputs):",
+                "        pass",
+                "",
+                "    @abstractmethod",
+                "    def accept(self, visitor):",
+                "        pass",
+                "",
+            ]))
             
 
-def define_visitor_interface(type: str) -> List[str]:
+def define_visitor_interface(theory: str) -> List[str]:
     """
     Generates a visitor interface for a given theory.
     """
-    # We could use generics to give the right type information (https://docs.python.org/3/library/typing.html#typing.Generic), 
-    # but it seems overkilling.
-    class_name = f"{type.capitalize()}Visitor"
-    # Extract all names from the dictionary of the operations for a given theory and
-    # construct the full operation name for each of them. 
-    generate_opname = lambda type : (map(lambda op : type + op, theories_declaration[type].keys()))
     content = []
     content.extend([
-        "",
-        f"class {class_name}(ABC):",
+        f"class {get_theory_name(theory)}Visitor(ABC):",
     ])
-    for operator in generate_opname(type):
+    for operator in [ *get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory) ]:
         content.append(f"    @abstractmethod")
-        content.append(f"    def visit{operator}(self, operator: {operator}Operator):")
+        content.append(f"    def visit_{caml_to_snake_case(operator)}(self, operator: {operator}):")
         content.append(f"        pass")
         content.append(f"")
+    content.append("")
     return content 
 
 
-def define_ast(base_name: str):
+def define_ast(base_name: pathlib.Path):
     """
     Generates class hierarchy for a given operator.  
     """
-    for type in theories_declaration.keys():
-        operators = theories_declaration[type]
-        path = base_name.joinpath(type.lower() + "_theory.py")    
+    for theory in get_theories():
+        path = base_name.joinpath(get_theory_name(theory).lower() + "_theory.py")    
         content = [
             WARNING_MESSAGE,
+            "import random",
             "from abc import ABC, abstractmethod",
-            "from operators.gen.generic import Operator",
-            "\n"
+            f"from operators.gen.generic import {theory}",
+            "\n",
         ]
-        content.extend([
-           f"class {type}Operator(Operator):",
-            "    @abstractmethod",
-            "    def __init__(self, *inputs):",
-            "        pass",
-            "",
-            "    @abstractmethod",
-           f"    def accept(self, visitor: '{type}Visitor'):",
-            "        pass",
-            ""
-        ])
-        for operator in operators.keys():
+        def accept_fun(operator):
+            return [
+                f"    def accept(self, visitor: '{get_theory_name(theory)}Visitor'):",
+                f"        return visitor.visit_{caml_to_snake_case(operator)}(self)"
+                "\n"
+            ]
+        operators = get_operators(theory)
+        for operator in operators:
             params = ", "
-            if isinstance(operators[operator], int):
-                params += ", ".join([f"input_{i}: {type}Operator" for i in range(1, operators[operator] + 1) ])
-            else:
-                params += operators[operator]
+            params += ", ".join([ f"input_{i + 1}: {ptype}" for i, ptype in enumerate(get_operator_parameters(theory, operator)) ])
             content.extend([
-                f"class {type}{operator}Operator({type}Operator):",
+                f"class {operator}({theory}):",
                 f"    def __init__(self{params}):",
             ])
-            if isinstance(operators[operator], int):
-                content.extend([
-                    f"        self.operator_{i} = input_{i}" for i in range(1, operators[operator] + 1)
-                ])
-            else:
-                parameters = map(
-                    lambda s: s.split(":")[0],
-                    operators[operator].split(",")
-                )
-                content.extend([
-                    f"        self.{pname} = {pname}" for pname in parameters
-                ])
-            content.append("")
             content.extend([
-                f"    def accept(self, visitor: '{type}Visitor'):",
-                f"        return visitor.visit{type}{operator}(self)"
-                "\n"
+                f"        self.operator_{i} = input_{i}" for i in range(1, len(get_operator_parameters(theory, operator)) + 1)
             ])
-        content.extend(define_visitor_interface(type))
+            content.extend([
+                "", 
+                *accept_fun(operator),
+                "",
+            ])
+        # Create variable class.
+        content.extend([
+            f"class {get_variable(theory)}({theory}):",
+            f"    def __init__(self, name: str):",
+            f"        self.name = name"
+            "",
+            *accept_fun(get_variable(theory)),
+            "",
+        ])
+        # Create constant class.
+        content.extend([
+            f"class {get_constant(theory)}({theory}):",
+            f"    def __init__(self):",
+            f"        self.value = {get_constant_initializer(theory)}"
+            "\n",
+            *accept_fun(get_constant(theory)),
+            "",
+        ])
+        # Create root operator class.
+        content.extend([
+            f"class {get_root(theory)}({theory}):",
+            f"    def __init__(self, input_1: {theory}, input_2: {theory}):",
+            f"        self.operator_1 = input_1",
+            f"        self.operator_2 = input_2",
+        ])
+        content.extend([
+            "", 
+            *accept_fun(get_root(theory)),
+            "",
+        ])
+        content.extend(define_visitor_interface(theory))
         with open(path, 'w+', encoding='utf-8') as f:
             f.write("\n".join(content))
 
@@ -117,26 +159,29 @@ def define_visitor(output_dir: pathlib.Path, name: str):
     file_name = f"{name.lower()}_visitor.py"
     class_name = f"{name.capitalize()}Visitor"
     path = output_dir.joinpath(file_name)
-    # Extract all names from the dictionary of the operations for a given theory and
-    # construct the full operation name for each of them. 
-    generate_opname = lambda type : (map(lambda op : type + op, theories_declaration[type].keys()))
-    generate_import_opname = lambda type : ",\n".join(map(lambda op : "    " + op + "Operator", generate_opname(type)))
-    content = [
-        f"from operators.gen.{type.lower()}_theory import ( \
-            \n{generate_import_opname(type)}, \
-            \n    {type.capitalize()}Visitor \
-            \n)" \
-            for type in theories_declaration.keys()
-    ]
-    extends = ", ".join([ f"{type.capitalize()}Visitor" for type in theories_declaration.keys() ])
-    # content.append("from operators.gen.visitor import Visitor")
+    
+    content = []
+    extends = []
+
+    for theory in get_theories():
+        visitor_name = f"{get_theory_name(theory)}Visitor"
+        extends.append(f"{visitor_name}")
+        
+        content.append(f"from operators.gen.{get_theory_name(theory).lower()}_theory import (")
+        for operator in [ *get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory) ]:
+            content.append(f"    {operator},")
+        content.append(f"    {visitor_name}")
+        content.append(")")
+    
+    extends = ", ".join(extends)
+
     content.extend([
-        "",
+        "\n",
         f"class {class_name}({extends}):",
     ])
-    for type in theories_declaration.keys():
-        for operator in generate_opname(type):
-            content.append(f"    def visit{operator}(self, operator: {operator}Operator):")
+    for theory in get_theories():
+        for operator in [ *get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory) ]:
+            content.append(f"    def visit_{caml_to_snake_case(operator)}(self, operator: {operator}):")
             content.append(f"        pass")
             content.append(f"")
     with open(path, 'w+', encoding='utf-8') as f:
