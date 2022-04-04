@@ -45,6 +45,7 @@ class RealDivision(RealOperator):
 class RealVariable(RealOperator):
     def __init__(self, name: str):
         self.name = name
+
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visit_real_variable(self)
 
@@ -94,4 +95,3 @@ class RealVisitor(ABC):
     @abstractmethod
     def visit_real_equality(self, operator: RealEquality):
         pass
-

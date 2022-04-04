@@ -4,20 +4,18 @@ import sys
 import re
 from typing import List
 from gen_configuration import (
-    get_constant, 
-    get_constant_initializer, 
-    get_operator_parameters, 
+    get_constant,
+    get_constant_initializer,
+    get_operator_parameters,
     get_operators,
-    get_root, 
-    get_variable, 
-    theories_declaration, 
-    get_theories, 
+    get_root,
+    get_variable,
+    get_theories,
     get_theory_name
 )
 
-
-WARNING_MESSAGE = "# WARNING: This file has been generated and it shouldn't be edited manually!\n# Look at the README to learn more.\n"
-
+WARNING_MESSAGE = "# WARNING: This file has been generated and it shouldn't be edited manually!\n" \
+                  "# Look at the README to learn more.\n"
 
 caml_case_pattern = re.compile(r'(?<!^)(?=[A-Z])')
 
@@ -59,7 +57,7 @@ def define_generic(output_dir: pathlib.Path):
                 "        pass",
                 "",
             ]))
-            
+
 
 def define_visitor_interface(theory: str) -> List[str]:
     """
@@ -69,13 +67,12 @@ def define_visitor_interface(theory: str) -> List[str]:
     content.extend([
         f"class {get_theory_name(theory)}Visitor(ABC):",
     ])
-    for operator in [ *get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory) ]:
+    for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
         content.append(f"    @abstractmethod")
         content.append(f"    def visit_{caml_to_snake_case(operator)}(self, operator: {operator}):")
         content.append(f"        pass")
         content.append(f"")
-    content.append("")
-    return content 
+    return content
 
 
 def define_ast(base_name: pathlib.Path):
@@ -83,7 +80,7 @@ def define_ast(base_name: pathlib.Path):
     Generates class hierarchy for a given operator.  
     """
     for theory in get_theories():
-        path = base_name.joinpath(get_theory_name(theory).lower() + "_theory.py")    
+        path = base_name.joinpath(get_theory_name(theory).lower() + "_theory.py")
         content = [
             WARNING_MESSAGE,
             "import random",
@@ -91,25 +88,29 @@ def define_ast(base_name: pathlib.Path):
             f"from operators.gen.generic import {theory}",
             "\n",
         ]
+
         def accept_fun(operator):
             return [
                 f"    def accept(self, visitor: '{get_theory_name(theory)}Visitor'):",
                 f"        return visitor.visit_{caml_to_snake_case(operator)}(self)"
                 "\n"
             ]
+
         operators = get_operators(theory)
         for operator in operators:
             params = ", "
-            params += ", ".join([ f"input_{i + 1}: {ptype}" for i, ptype in enumerate(get_operator_parameters(theory, operator)) ])
+            params += ", ".join(
+                [f"input_{i + 1}: {ptype}" for i, ptype in enumerate(get_operator_parameters(theory, operator))])
             content.extend([
                 f"class {operator}({theory}):",
                 f"    def __init__(self{params}):",
             ])
             content.extend([
-                f"        self.operator_{i} = input_{i}" for i in range(1, len(get_operator_parameters(theory, operator)) + 1)
+                f"        self.operator_{i} = input_{i}" for i in
+                range(1, len(get_operator_parameters(theory, operator)) + 1)
             ])
             content.extend([
-                "", 
+                "",
                 *accept_fun(operator),
                 "",
             ])
@@ -118,7 +119,7 @@ def define_ast(base_name: pathlib.Path):
             f"class {get_variable(theory)}({theory}):",
             f"    def __init__(self, name: str):",
             f"        self.name = name"
-            "",
+            "\n",
             *accept_fun(get_variable(theory)),
             "",
         ])
@@ -139,7 +140,7 @@ def define_ast(base_name: pathlib.Path):
             f"        self.operator_2 = input_2",
         ])
         content.extend([
-            "", 
+            "",
             *accept_fun(get_root(theory)),
             "",
         ])
@@ -159,20 +160,20 @@ def define_visitor(output_dir: pathlib.Path, name: str):
     file_name = f"{name.lower()}_visitor.py"
     class_name = f"{name.capitalize()}Visitor"
     path = output_dir.joinpath(file_name)
-    
+
     content = []
     extends = []
 
     for theory in get_theories():
         visitor_name = f"{get_theory_name(theory)}Visitor"
         extends.append(f"{visitor_name}")
-        
+
         content.append(f"from operators.gen.{get_theory_name(theory).lower()}_theory import (")
-        for operator in [ *get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory) ]:
+        for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
             content.append(f"    {operator},")
         content.append(f"    {visitor_name}")
         content.append(")")
-    
+
     extends = ", ".join(extends)
 
     content.extend([
@@ -180,7 +181,7 @@ def define_visitor(output_dir: pathlib.Path, name: str):
         f"class {class_name}({extends}):",
     ])
     for theory in get_theories():
-        for operator in [ *get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory) ]:
+        for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
             content.append(f"    def visit_{caml_to_snake_case(operator)}(self, operator: {operator}):")
             content.append(f"        pass")
             content.append(f"")
@@ -199,13 +200,13 @@ def main():
         print("Usage: \
             \n-gen : generates (overwrites) the gen subfolder. \
             \n-stub [NAME]: generates a new visitor stub with the given NAME. Also generates the gen folder.")
-        os._exit(64)
+        sys.exit(64)
 
     if not (sys.argv[1] == "gen" or
-        (sys.argv[1] == "stub" and len(sys.argv) >= 3)):
-        os._exit(64)    
-    
-    # Ensure that the gen folder exists.
+            (sys.argv[1] == "stub" and len(sys.argv) >= 3)):
+        sys.exit(64)
+
+        # Ensure that the gen folder exists.
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
 
     define_generic(output_dir)
@@ -214,6 +215,7 @@ def main():
     print(sys.argv[1])
     if sys.argv[1] == "stub":
         define_visitor(script_path, sys.argv[2])
+
 
 if __name__ == '__main__':
     main()

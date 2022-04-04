@@ -45,6 +45,7 @@ class IntegerDivision(IntegerOperator):
 class IntegerVariable(IntegerOperator):
     def __init__(self, name: str):
         self.name = name
+
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visit_integer_variable(self)
 
@@ -94,4 +95,3 @@ class IntegerVisitor(ABC):
     @abstractmethod
     def visit_integer_equality(self, operator: IntegerEquality):
         pass
-

@@ -26,6 +26,7 @@ class BooleanNot(BooleanOperator):
 class BooleanVariable(BooleanOperator):
     def __init__(self, name: str):
         self.name = name
+
     def accept(self, visitor: 'BooleanVisitor'):
         return visitor.visit_boolean_variable(self)
 
@@ -67,4 +68,3 @@ class BooleanVisitor(ABC):
     @abstractmethod
     def visit_boolean_equality(self, operator: BooleanEquality):
         pass
-
