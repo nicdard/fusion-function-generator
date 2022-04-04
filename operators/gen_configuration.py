@@ -54,11 +54,11 @@ def get_operators(theory: str):
     return list(theories_declaration[theory].keys())
 
 
-def get_arities(theory: str):
-    arities = set()
+def get_arities(theory: str) -> List[int]:
+    arities = []
 
     for op in get_operators(theory):
-        arities.add(len(get_operator_parameters(theory, op)))
+        arities.append(len(get_operator_parameters(theory, op)))
 
     return arities
 
