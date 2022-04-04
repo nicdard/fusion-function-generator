@@ -54,6 +54,15 @@ def get_operators(theory: str):
     return list(theories_declaration[theory].keys())
 
 
+def get_arities(theory: str):
+    arities = set()
+
+    for op in get_operators(theory):
+        arities.add(len(get_operator_parameters(theory, op)))
+
+    return arities
+
+
 def get_operator_parameters(theory: str, operator: str):
     return theories_declaration[theory][operator]
 
@@ -61,7 +70,7 @@ def get_operator_parameters(theory: str, operator: str):
 def get_leaf(operator_type):
     theory = leaf_operators[operator_type]
     op = random.choice(list(theory.keys()))
-    return op, "variable" in op.lower()
+    return op, "Variable" in op
 
 
 def get_constant(operator_type):
@@ -70,6 +79,7 @@ def get_constant(operator_type):
 
 def get_constant_initializer(operator_type):
     return leaf_operators[operator_type][get_constant(operator_type)]
+
 
 def get_variable(operator_type):
     return list(leaf_operators[operator_type].keys())[1]
@@ -81,13 +91,13 @@ def get_root(operator_type):
 
 def get_eligible_operator(operator_type, arity):
     if operator_type is None:
-        operator_type = random.choice(list(theories_declaration.keys()))
+        operator_type = random.choice(get_theories())
 
     theory = theories_declaration[operator_type]
     operator_choices = []
 
     for operator in theory.keys():
-        n = len([p for p in theory[operator] if "operator" in p.lower()])
+        n = len([p for p in theory[operator] if "Operator" in p])
         if n == arity:
             operator_choices.append(operator)
 
@@ -96,4 +106,3 @@ def get_eligible_operator(operator_type, arity):
 
 def get_theory_name(theory: str) -> str:
     return theory.split("Operator")[0]
-

@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Set
 from operators import gen_configuration
 # ==================================================================
 # necessary for operators to be in global namespace for generation
@@ -17,15 +17,14 @@ from operators.gen.real_theory import *
 # The last node of the tree is thus tn, so tn = 0
 # and ti is in [0, n - 1].
 # Note: we use a list for simplicity/efficiency.
-def generate_arity_tree(root: int, n: int, bounds: Tuple[int, int]):
+def _generate_arity_tree(size: int, arities: Set[int]):
     """
     Generates a list of integers representing a tree containing n
     nodes. The first node is already set to root.
     Note: the algorithm creates a tree of n - 1 nodes, counting also the
     root, and the last 0 of the tuple is dangling.
     """
-    if root < bounds[0] or root > bounds[1]:
-        raise ValueError(f"The root of the tree should be an operator taking a number of arguments in ({bounds})")
+    root = random.choice(list(arities))
     tree = [root]
     
     def expected_nodes():
@@ -34,11 +33,9 @@ def generate_arity_tree(root: int, n: int, bounds: Tuple[int, int]):
     def missing_nodes():
         return expected_nodes() - len(tree)
     
-    while len(tree) < n:
-        remaining = n - expected_nodes()
-        lower = bounds[0]
-        upper = min(bounds[1], remaining)
-        branching_choices = list(range(lower, upper+1))
+    while len(tree) < size:
+        remaining = size - expected_nodes()
+        branching_choices = [n for n in arities if n <= remaining]
         
         if not (missing_nodes() == 1 and remaining > 1):
             branching_choices.append(0)
@@ -52,7 +49,7 @@ def get_operator_class(name):
     return globals()[name]
 
 
-def generate_operator_tree(arity_tree, num_variables):
+def _generate_operator_tree(theory, arity_tree, num_variables):
     num_leaves = len([n for n in arity_tree if n == 0])
 
     if num_leaves < num_variables:
@@ -87,14 +84,18 @@ def generate_operator_tree(arity_tree, num_variables):
 
         return get_operator_class(op_name)(*params), idx
 
-    root_type = random.choice(gen_configuration.get_theories())
-    operator_tree, _ = recursive_generation(0, root_type)
-    root_name = gen_configuration.get_root(root_type)
+    operator_tree, _ = recursive_generation(0, theory)
+    root_name = gen_configuration.get_root(theory)
 
-    output_var = get_operator_class(gen_configuration.get_variable(root_type))("y")
+    output_var = get_operator_class(gen_configuration.get_variable(theory))("y")
     root = get_operator_class(root_name)(output_var, operator_tree)
 
     return root
+
+
+def generate_tree(theory: str, size: int, num_variables: int):
+    tree = _generate_arity_tree(size, gen_configuration.get_arities(theory))
+    return _generate_operator_tree(theory, tree, num_variables)
 
 
 def validate(tree: List[int]) -> bool:
