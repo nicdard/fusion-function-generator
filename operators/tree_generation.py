@@ -51,9 +51,13 @@ def get_operator_class(name):
 
 def _generate_operator_tree(theory, arity_tree, num_variables):
     num_leaves = len([n for n in arity_tree if n == 0])
+    num_constants = num_leaves - num_variables
 
     if num_leaves < num_variables:
         raise ValueError("Not enough leaves to accommodate requested number of variables.")
+
+    leaves = [False] * num_constants + [True] * num_variables
+    random.shuffle(leaves)
 
     def recursive_generation(idx, operator_type):
         nonlocal num_leaves, num_variables
@@ -62,19 +66,15 @@ def _generate_operator_tree(theory, arity_tree, num_variables):
         params = []
 
         if n == 0:
-            if num_variables == 0:
-                op_name = gen_configuration.get_constant(operator_type)
-                is_variable = False
-            elif num_variables < num_leaves:
-                op_name, is_variable = gen_configuration.get_leaf(operator_type)
-            else:
-                op_name = gen_configuration.get_variable(operator_type)
-                is_variable = True
-
             num_leaves -= 1
+            is_variable = leaves[num_leaves]
+
             if is_variable:
+                op_name = gen_configuration.get_variable(operator_type)
                 params.append(f"x{num_variables}")
                 num_variables -= 1
+            else:
+                op_name = gen_configuration.get_constant(operator_type)
         else:
             op_name = gen_configuration.get_eligible_operator(operator_type, n)
 
@@ -94,7 +94,12 @@ def _generate_operator_tree(theory, arity_tree, num_variables):
 
 
 def generate_tree(theory: str, size: int, num_variables: int):
-    tree = _generate_arity_tree(size, gen_configuration.get_arities(theory))
+    arities = gen_configuration.get_arities(theory)
+
+    if (size - num_variables) * (max(arities) - 1) + 1 < num_variables:
+        raise ValueError("tree size too small to accomodate all variables")
+
+    tree = _generate_arity_tree(size, arities)
     return _generate_operator_tree(theory, tree, num_variables)
 
 
