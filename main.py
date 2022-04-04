@@ -12,13 +12,21 @@ def main():
     printer = PrinterVisitor()
     dot_exporter = DotVisitor()
 
-    theory = random.choice(gen_configuration.get_theories())
-    t = generate_tree(theory, 15, 3)
-    print(t.accept(printer))
-    # print(t.accept(dot_exporter))
+    operator_types = gen_configuration.get_theories()
+    print(operator_types)
 
-    for inverse in t.accept(rewriter):
+    root_type = random.choice(operator_types)
+    t = generate_tree(root_type, 25, 3)
+    print(t.accept(printer))
+
+    with open('tree.dot', 'w') as file:
+        print(t.accept(dot_exporter), file=file)
+
+    for i, inverse in enumerate(t.accept(rewriter)):
         print(inverse.accept(printer))
+
+        with open(f'inv_tree_{i+1}.dot', 'w') as file:
+            print(inverse.accept(dot_exporter), file=file)
 
 
 if __name__ == '__main__':
