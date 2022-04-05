@@ -206,7 +206,7 @@ def main():
             (sys.argv[1] == "stub" and len(sys.argv) >= 3)):
         sys.exit(64)
 
-        # Ensure that the gen folder exists.
+    # Ensure that the gen folder exists.
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
 
     define_generic(output_dir)
