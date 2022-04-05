@@ -15,11 +15,11 @@ def main():
     operator_types = gen_configuration.get_theories()
     print(operator_types)
 
-    root_type = operator_types[0]
+    root_type = operator_types[2]
     # root_type = random.choice(operator_types)
-    print(root_type)
+    # print(root_type)
 
-    t = generate_tree(root_type, 5, 3)
+    t = generate_tree(root_type, 100, 3)
     print(t.accept(printer))
 
     with open('tree.dot', 'w') as file:

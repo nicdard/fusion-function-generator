@@ -22,12 +22,12 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
     """
     Generates a list of integers representing a tree containing n
     nodes. The first node is already set to root.
-    Note: the algorithm creates a tree of n - 1 nodes, counting also the
-    root, and the last 0 of the tuple is dangling.
     """
     tree = []
     rem_leaves = min_leaves
-    
+    min_op_arity = min(arities)
+    max_op_arity = max(arities)
+
     def expected_nodes():
         return sum(tree) + 1
 
@@ -36,9 +36,16 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
     
     while len(tree) < size:
         remaining = size - expected_nodes()
+
+        if remaining in range(1, min_op_arity):
+            discrepancy = min_op_arity - remaining
+            print(f"Cannot match tree size {size} exactly, increasing to {size + discrepancy}...")
+            size += discrepancy
+            remaining += discrepancy
+
         rem_operators = size - len(tree) - rem_leaves
-        max_sub_leaves = (rem_operators - 1) * (max(arities) - 1) + 1
-        min_arity = rem_leaves - missing_nodes() - max_sub_leaves + 2
+        max_sub_leaves = (rem_operators - 1) * (max_op_arity - 1) + 1
+        min_arity = max(1, rem_leaves - missing_nodes() - max_sub_leaves + 2)
 
         branching_choices = [n for n in arities if n in range(min_arity, remaining+1)]
         
