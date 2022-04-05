@@ -40,10 +40,10 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         return self.visit_unary_operator("NOT", operator)
 
     def visit_boolean_constant(self, operator: BooleanConstant):
-        return self.visitConstant(operator)
+        return self.visit_constant(operator)
 
     def visit_boolean_variable(self, operator: BooleanVariable):
-        return self.visitVariable(operator)
+        return self.visit_variable(operator)
 
     def visit_boolean_equality(self, operator: BooleanEquality):
         return self.visitRoot("EQ", operator)
@@ -61,10 +61,10 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         return self.visit_binary_operator("INT_DIV", operator)
 
     def visit_integer_constant(self, operator: IntegerConstant):
-        return self.visitConstant(operator)
+        return self.visit_constant(operator)
 
     def visit_integer_variable(self, operator: IntegerVariable):
-        return self.visitVariable(operator)
+        return self.visit_variable(operator)
 
     def visit_integer_equality(self, operator: IntegerEquality):
         return self.visitRoot("INT_EQ", operator)
@@ -82,10 +82,10 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         return self.visit_binary_operator("REAL_DIV", operator)
 
     def visit_real_constant(self, operator: RealConstant):
-        return self.visitConstant(operator)
+        return self.visit_constant(operator)
 
     def visit_real_variable(self, operator: RealVariable):
-        return self.visitVariable(operator)
+        return self.visit_variable(operator)
 
     def visit_real_equality(self, operator: RealEquality):
         return self.visitRoot("REAL_EQ", operator)
@@ -93,7 +93,7 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
     def visitRoot(self, label: str, operator: Operator):
         heading = "digraph {\n"
         ending = "\n}"
-        id = self.generateNodeName()
+        id = self.generate_node_name()
         (op_1, children_1, edges_1) = operator.operator_1.accept(self)
         (op_2, children_2, edges_2) = operator.operator_2.accept(self)
         nodes = {id: label} | children_1 | children_2
@@ -106,7 +106,7 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
     def visit_binary_operator(self, label: str, operator: Operator):
         (op_id_1, op_1, edges_1) = operator.operator_1.accept(self)
         (op_id_2, op_2, edges_2) = operator.operator_2.accept(self)
-        id = self.generateNodeName()
+        id = self.generate_node_name()
         return (
             id,
             { id: label } | op_1 | op_2,
@@ -115,21 +115,21 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
 
     def visit_unary_operator(self, label: str, operator: Operator):
         (op_id_1, op_1, edges_1) = operator.operator_1.accept(self)
-        id = self.generateNodeName()
+        id = self.generate_node_name()
         return (
             id, 
             { id: label } | op_1,
             { id: [op_id_1] } | edges_1
         )
     
-    def visitConstant(self, operator: Operator):
-        id = self.generateNodeName()
+    def visit_constant(self, operator: Operator):
+        id = self.generate_node_name()
         return (id, { id: operator.value }, {})
     
-    def visitVariable(self, operator: Operator):
-        id = self.generateNodeName()
+    def visit_variable(self, operator: Operator):
+        id = self.generate_node_name()
         return (id, { id: operator.name }, {})
     
-    def generateNodeName(self):
+    def generate_node_name(self):
         self.id += 1
         return f"n{self.id}"
