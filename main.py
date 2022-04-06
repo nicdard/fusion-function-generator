@@ -15,8 +15,11 @@ def main():
     operator_types = gen_configuration.get_theories()
     print(operator_types)
 
-    root_type = random.choice(operator_types)
-    t = generate_tree(root_type, 25, 3)
+    root_type = operator_types[2]
+    # root_type = random.choice(operator_types)
+    # print(root_type)
+
+    t = generate_tree(root_type, 100, 3)
     print(t.accept(printer))
 
     with open('tree.dot', 'w') as file:
@@ -25,7 +28,7 @@ def main():
     for i, inverse in enumerate(t.accept(rewriter)):
         print(inverse.accept(printer))
 
-        with open(f'inv_tree_{i+1}.dot', 'w') as file:
+        with open(f'inv_tree_{inverse.operator_1.name}.dot', 'w') as file:
             print(inverse.accept(dot_exporter), file=file)
 
 

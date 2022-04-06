@@ -1,3 +1,4 @@
+from math import ceil
 from typing import List, Set
 from operators import gen_configuration
 # ==================================================================
@@ -17,16 +18,16 @@ from operators.gen.real_theory import *
 # The last node of the tree is thus tn, so tn = 0
 # and ti is in [0, n - 1].
 # Note: we use a list for simplicity/efficiency.
-def _generate_arity_tree(size: int, arities: Set[int]):
+def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
     """
     Generates a list of integers representing a tree containing n
     nodes. The first node is already set to root.
-    Note: the algorithm creates a tree of n - 1 nodes, counting also the
-    root, and the last 0 of the tuple is dangling.
     """
-    root = random.choice(list(arities))
-    tree = [root]
-    
+    tree = []
+    rem_leaves = min_leaves
+    min_op_arity = min(arities)
+    max_op_arity = max(arities)
+
     def expected_nodes():
         return sum(tree) + 1
 
@@ -35,13 +36,28 @@ def _generate_arity_tree(size: int, arities: Set[int]):
     
     while len(tree) < size:
         remaining = size - expected_nodes()
-        branching_choices = [n for n in arities if n <= remaining]
+
+        if remaining in range(1, min_op_arity):
+            discrepancy = min_op_arity - remaining
+            print(f"Cannot match tree size {size} exactly, increasing to {size + discrepancy}...")
+            size += discrepancy
+            remaining += discrepancy
+
+        rem_operators = size - len(tree) - rem_leaves
+        max_sub_leaves = (rem_operators - 1) * (max_op_arity - 1) + 1
+        min_arity = max(1, rem_leaves - missing_nodes() - max_sub_leaves + 2)
+
+        branching_choices = [n for n in arities if n in range(min_arity, remaining+1)]
         
-        if not (missing_nodes() == 1 and remaining > 1):
-            branching_choices.append(0)
-        
-        tree.append(random.choice(branching_choices))
-    
+        if not (missing_nodes() == 1 and remaining > 0):
+            branching_choices.extend([0, 0])  # two different leaf operators
+
+        arity = random.choice(branching_choices)
+        tree.append(arity)
+
+        if arity == 0:
+            rem_leaves -= 1
+
     return tree
 
 
@@ -51,9 +67,13 @@ def get_operator_class(name):
 
 def _generate_operator_tree(theory, arity_tree, num_variables):
     num_leaves = len([n for n in arity_tree if n == 0])
+    num_constants = num_leaves - num_variables
 
     if num_leaves < num_variables:
         raise ValueError("Not enough leaves to accommodate requested number of variables.")
+
+    leaves = [False] * num_constants + [True] * num_variables
+    random.shuffle(leaves)
 
     def recursive_generation(idx, operator_type):
         nonlocal num_leaves, num_variables
@@ -62,19 +82,15 @@ def _generate_operator_tree(theory, arity_tree, num_variables):
         params = []
 
         if n == 0:
-            if num_variables == 0:
-                op_name = gen_configuration.get_constant(operator_type)
-                is_variable = False
-            elif num_variables < num_leaves:
-                op_name, is_variable = gen_configuration.get_leaf(operator_type)
-            else:
-                op_name = gen_configuration.get_variable(operator_type)
-                is_variable = True
-
             num_leaves -= 1
+            is_variable = leaves[num_leaves]
+
             if is_variable:
+                op_name = gen_configuration.get_variable(operator_type)
                 params.append(f"x{num_variables}")
                 num_variables -= 1
+            else:
+                op_name = gen_configuration.get_constant(operator_type)
         else:
             op_name = gen_configuration.get_eligible_operator(operator_type, n)
 
@@ -94,7 +110,12 @@ def _generate_operator_tree(theory, arity_tree, num_variables):
 
 
 def generate_tree(theory: str, size: int, num_variables: int):
-    tree = _generate_arity_tree(size, gen_configuration.get_arities(theory))
+    arities = gen_configuration.get_arities(theory)
+
+    if (size - num_variables) * (max(arities) - 1) + 1 < num_variables:
+        raise ValueError("Tree size too small to accommodate all variables")
+
+    tree = _generate_arity_tree(size, arities, num_variables)
     return _generate_operator_tree(theory, tree, num_variables)
 
 
