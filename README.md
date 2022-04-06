@@ -1,5 +1,7 @@
 # fusion-function-generator
 
+Automatic generation of [Fusion Functions](https://yinyang.readthedocs.io/en/latest/fusion.html#fusion-functions) used by [yinyang](https://yinyang.readthedocs.io/en/latest/index.html) fuzzer for [Semantic Fusion](https://yinyang.readthedocs.io/en/latest/fusion.html).
+
 ## Adding a new theory
 
 The script [generator.py](operators/generator.py) folder is used to generate all the code under operators/gen.
