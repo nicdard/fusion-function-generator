@@ -1,12 +1,10 @@
-import os
-import pathlib
 from src.operators.generic import Operator
 from src.visitors.printer_visitor import PrinterVisitor
 from src.visitors.rewrite_visitor import RewriteVisitor
 from src.visitors.variable_visitor import VariableVisitor
 
 
-def emit(operator: Operator, filename: str = "fusion_functions.txt", output_dir: pathlib.Path = None):
+def emit(tree: Operator, file):
     """
     Emits the fusion functions and its inverses to yinyang's configuration file:
         #begin
@@ -22,27 +20,23 @@ def emit(operator: Operator, filename: str = "fusion_functions.txt", output_dir:
     https://yinyang.readthedocs.io/en/latest/fusion.html#fusion-functions
     """
 
-    if output_dir is None:
-        output_dir = pathlib.Path(__file__).parent.parent.parent.resolve().joinpath("out")
-    
-    output_path = output_dir.joinpath(filename)
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    rewriter = RewriteVisitor()
+    printer = PrinterVisitor()
+    variables = tree.accept(VariableVisitor())
 
-    with open(output_path, 'a', encoding='utf-8') as file:
-        rewriter = RewriteVisitor()
-        inverses = operator.accept(rewriter)
-        printer = PrinterVisitor()
-        variable_visitor = VariableVisitor()
-        variables = operator.accept(variable_visitor)
-        # Block begin
-        print("#begin", file=file)
-        # Variable declarations
-        for variable in variables.keys():
-            print(f"(declare-const {variable} {variables[variable]})", file=file)
-        # Fusion function
-        print(f"(assert {operator.accept(printer)})", file=file)
-        # Inverses
-        for inverse_root in inverses:
-            print(f"(assert {inverse_root.accept(printer)})", file=file)
-        # Block end
-        print("#end\n", file=file)
+    # Block begin
+    print("#begin", file=file)
+
+    # Variable declarations
+    for variable, definition in variables.items():
+        print(f"(declare-const {variable} {definition})", file=file)
+
+    # Fusion function
+    print(f"(assert {tree.accept(printer)})", file=file)
+
+    # Inverses
+    for inverse_root in tree.accept(rewriter):
+        print(f"(assert {inverse_root.accept(printer)})", file=file)
+
+    # Block end
+    print("#end\n", file=file)
