@@ -1,5 +1,5 @@
 from math import ceil
-from typing import List, Set
+from typing import List, Set, Union
 from operators import gen_configuration
 # ==================================================================
 # necessary for operators to be in global namespace for generation
@@ -65,8 +65,9 @@ def get_operator_class(name):
     return globals()[name]
 
 
-def _generate_operator_tree(theory, arity_tree, num_variables):
+def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
     num_leaves = len([n for n in arity_tree if n == 0])
+    num_variables = len(in_variables)
     num_constants = num_leaves - num_variables
 
     if num_leaves < num_variables:
@@ -87,8 +88,8 @@ def _generate_operator_tree(theory, arity_tree, num_variables):
 
             if is_variable:
                 op_name = gen_configuration.get_variable(operator_type)
-                params.append(f"x{num_variables}")
                 num_variables -= 1
+                params.append(in_variables[num_variables])
             else:
                 op_name = gen_configuration.get_constant(operator_type)
         else:
@@ -103,20 +104,24 @@ def _generate_operator_tree(theory, arity_tree, num_variables):
     operator_tree, _ = recursive_generation(0, theory)
     root_name = gen_configuration.get_root(theory)
 
-    output_var = get_operator_class(gen_configuration.get_variable(theory))("y")
+    output_var = get_operator_class(gen_configuration.get_variable(theory))(out_variable)
     root = get_operator_class(root_name)(output_var, operator_tree)
 
     return root
 
 
-def generate_tree(theory: str, size: int, num_variables: int):
+def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 2, out_variable: str = 'z'):
+    if isinstance(in_variables, int):
+        in_variables = [f'x{i+1}' for i in range(in_variables)]
+
+    num_variables = len(in_variables)
     arities = gen_configuration.get_arities(theory)
 
     if (size - num_variables) * (max(arities) - 1) + 1 < num_variables:
         raise ValueError("Tree size too small to accommodate all variables")
 
     tree = _generate_arity_tree(size, arities, num_variables)
-    return _generate_operator_tree(theory, tree, num_variables)
+    return _generate_operator_tree(theory, tree, in_variables, out_variable)
 
 
 def validate(tree: List[int]) -> bool:
