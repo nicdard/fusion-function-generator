@@ -106,3 +106,7 @@ def get_eligible_operator(operator_type, arity):
 
 def get_theory_name(theory: str) -> str:
     return theory.split("Operator")[0]
+
+
+def get_module_name(theory: str) -> str:
+    return get_theory_name(theory).lower() + "_theory"
