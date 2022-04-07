@@ -5,7 +5,7 @@ from typing import Dict, List
 # Each operation specifies either the number of input parameters (having the same theory operator type).
 # or the list of parameters with the names and types of each one.
 # Insert here new theories and their operations!
-theories_declaration: Dict[str, Dict[str, List[str]]] = {
+main_operators: Dict[str, Dict[str, List[str]]] = {
     "BooleanOperator": {
         "BooleanXor": ["BooleanOperator", "BooleanOperator"],
         "BooleanNot": ["BooleanOperator"],
@@ -14,7 +14,6 @@ theories_declaration: Dict[str, Dict[str, List[str]]] = {
         "IntegerAddition": ["IntegerOperator", "IntegerOperator"],
         "IntegerSubtraction": ["IntegerOperator", "IntegerOperator"],
         "IntegerMultiplication": ["IntegerOperator", "IntegerOperator"],
-        "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
     },
     "RealOperator": {
         "RealAddition": ["RealOperator", "RealOperator"],
@@ -23,6 +22,18 @@ theories_declaration: Dict[str, Dict[str, List[str]]] = {
         "RealDivision": ["RealOperator", "RealOperator"],
     }
 }
+
+# These operators are not invertible and thus not used in generation, but necessary
+# to define the inverse of some main operators
+fringe_operators: Dict[str, Dict[str, List[str]]] = {
+    "BooleanOperator": {},
+    "IntegerOperator": {
+        "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
+    },
+    "RealOperator": {}
+}
+
+theory_declarations = {k: main_operators[k] | fringe_operators[k] for k in main_operators}
 
 leaf_operators = {
     "BooleanOperator": {
@@ -47,11 +58,11 @@ root_operators: Dict[str, str] = {
 
 
 def get_theories():
-    return list(theories_declaration.keys())
+    return list(theory_declarations.keys())
 
 
 def get_operators(theory: str):
-    return list(theories_declaration[theory].keys())
+    return list(theory_declarations[theory].keys())
 
 
 def get_arities(theory: str) -> List[int]:
@@ -64,13 +75,7 @@ def get_arities(theory: str) -> List[int]:
 
 
 def get_operator_parameters(theory: str, operator: str):
-    return theories_declaration[theory][operator]
-
-
-def get_leaf(operator_type):
-    theory = leaf_operators[operator_type]
-    op = random.choice(list(theory.keys()))
-    return op, "Variable" in op
+    return theory_declarations[theory][operator]
 
 
 def get_constant(operator_type):
@@ -93,7 +98,7 @@ def get_eligible_operator(operator_type, arity):
     if operator_type is None:
         operator_type = random.choice(get_theories())
 
-    theory = theories_declaration[operator_type]
+    theory = main_operators[operator_type]
     operator_choices = []
 
     for operator in theory.keys():
