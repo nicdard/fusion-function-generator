@@ -15,17 +15,17 @@ from gen_configuration import (
     get_module_name
 )
 
-WARNING_MESSAGE = "# WARNING: This file has been generated and it shouldn't be edited manually!\n" \
+WARNING_MESSAGE = "# WARNING: This file has been generated and shouldn't be edited manually!\n" \
                   "# Look at the README to learn more.\n"
 
-caml_case_pattern = re.compile(r'(?<!^)(?=[A-Z])')
+camel_case_pattern = re.compile(r'(?<!^)(?=[A-Z])')
 
 
-def caml_to_snake_case(s: str) -> str:
+def camel_to_snake_case(s: str) -> str:
     """
-    Converts from caml case to snake case.
+    Converts from CamelCase to snake_case.
     """
-    return caml_case_pattern.sub('_', s).lower()
+    return camel_case_pattern.sub('_', s).lower()
 
 
 def define_generic(output_dir: pathlib.Path):
@@ -70,7 +70,7 @@ def define_visitor_interface(theory: str) -> List[str]:
     ])
     for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
         content.append(f"    @abstractmethod")
-        content.append(f"    def visit_{caml_to_snake_case(operator)}(self, operator: {operator}):")
+        content.append(f"    def visit_{camel_to_snake_case(operator)}(self, operator: {operator}):")
         content.append(f"        pass")
         content.append(f"")
     return content
@@ -90,10 +90,10 @@ def define_ast(base_name: pathlib.Path):
             "\n",
         ]
 
-        def accept_fun(operator):
+        def accept_fun(op_name):
             return [
                 f"    def accept(self, visitor: '{get_theory_name(theory)}Visitor'):",
-                f"        return visitor.visit_{caml_to_snake_case(operator)}(self)"
+                f"        return visitor.visit_{camel_to_snake_case(op_name)}(self)"
                 "\n"
             ]
 
@@ -153,8 +153,8 @@ def define_ast(base_name: pathlib.Path):
 def define_visitor(output_dir: pathlib.Path, name: str):
     """
     Generates a stub implementation of all visitors of all theories.
-    The visitor implementation is generated in the operators folder
-    as it will edited manually.
+    The visitor implementation is generated in the 'operators' folder
+    as it will be edited manually.
     """
     # We could use generics to give the right type information
     # (https://docs.python.org/3/library/typing.html#typing.Generic),
@@ -184,7 +184,7 @@ def define_visitor(output_dir: pathlib.Path, name: str):
     ])
     for theory in get_theories():
         for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
-            content.append(f"    def visit_{caml_to_snake_case(operator)}(self, operator: {operator}):")
+            content.append(f"    def visit_{camel_to_snake_case(operator)}(self, operator: {operator}):")
             content.append(f"        pass")
             content.append(f"")
     with open(path, 'w+', encoding='utf-8') as f:
@@ -200,7 +200,7 @@ def main():
 
     if len(sys.argv) < 2:
         print("Usage: \
-            \n-gen : generates (overwrites) the gen subfolder. \
+            \n-gen : generates (overwrites) the gen subdirectory. \
             \n-stub [NAME]: generates a new visitor stub with the given NAME. Also generates the gen folder.")
         sys.exit(64)
 

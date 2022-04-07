@@ -27,6 +27,7 @@ from operators.gen.real_theory import (
     RealVisitor             
 )
 
+
 class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
     def visit_boolean_xor(self, operator: BooleanXor):
         return f"(xor {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"

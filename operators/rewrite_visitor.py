@@ -27,6 +27,7 @@ from operators.gen.real_theory import (
     RealVisitor             
 )
 
+
 class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
     def __init__(self):
         self.output = {}
@@ -139,5 +140,3 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         # Prepare the visitor to be reused
         self.output = {} 
         return [RealEquality(var, operator) for var, operator in inverse_dict.items()]
-
-
