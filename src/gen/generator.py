@@ -153,8 +153,7 @@ def define_ast(base_name: pathlib.Path):
 def define_visitor(output_dir: pathlib.Path, name: str):
     """
     Generates a stub implementation of all visitors of all theories.
-    The visitor implementation is generated in the 'src/visitor' folder
-    as it will be edited manually.
+    The visitor implementation is generated in the folder specified by output_dir.
     """
     # We could use generics to give the right type information
     # (https://docs.python.org/3/library/typing.html#typing.Generic),
@@ -193,7 +192,7 @@ def define_visitor(output_dir: pathlib.Path, name: str):
 
 def main():
     """
-    A utility to generate src definitions together with the Visitor interface.
+    A utility to generate operator definitions together with the Visitor interface.
     """
     script_path = pathlib.Path(__file__).parent.resolve()
     output_dir = script_path.parent.joinpath("operators")

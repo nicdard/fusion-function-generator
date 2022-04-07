@@ -46,7 +46,7 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
         branching_choices = [n for n in arities if n in range(min_arity, remaining+1)]
         
         if not (missing_nodes() == 1 and remaining > 0):
-            branching_choices.extend([0, 0])  # two different leaf src
+            branching_choices.extend([0, 0])  # two different leaf operators
 
         arity = random.choice(branching_choices)
         tree.append(arity)

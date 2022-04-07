@@ -9,11 +9,11 @@ used by
 The script [generator.py](src/gen/generator.py) folder is used to generate all the code under [src/operators](src/operators).
 To re-generate everything, type:
 
-> python3 gen/generator.py operators
+> python3 src/gen/generator.py operators
 
 This script can be used also to create a stub implementation of a new visitor in [src/visitors](src/visitors):
 
-> python3 gen/generator.py stub your-visitor-name-here
+> python3 src/gen/generator.py stub your-visitor-name-here
 
 To add a new theory, it is enough to modify the [gen_configuration.py](src/gen/gen_configuration.py). 
 Add the new theory description by following the guideline and examples already there.
