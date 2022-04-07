@@ -3,7 +3,7 @@
 
 import random
 from abc import ABC, abstractmethod
-from operators.gen.generic import BooleanOperator
+from src.operators.generic import BooleanOperator
 
 
 class BooleanXor(BooleanOperator):

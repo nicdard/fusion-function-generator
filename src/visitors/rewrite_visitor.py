@@ -1,4 +1,4 @@
-from operators.gen.boolean_theory import (
+from src.operators.boolean_theory import (
     BooleanXor,
     BooleanNot,
     BooleanConstant,
@@ -6,7 +6,7 @@ from operators.gen.boolean_theory import (
     BooleanEquality,
     BooleanVisitor
 )
-from operators.gen.integer_theory import (
+from src.operators.integer_theory import (
     IntegerAddition,
     IntegerSubtraction,
     IntegerMultiplication,
@@ -16,7 +16,7 @@ from operators.gen.integer_theory import (
     IntegerEquality,
     IntegerVisitor
 )
-from operators.gen.real_theory import (
+from src.operators.real_theory import (
     RealAddition,
     RealSubtraction,
     RealMultiplication,

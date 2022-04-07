@@ -3,7 +3,7 @@
 
 import random
 from abc import ABC, abstractmethod
-from operators.gen.generic import IntegerOperator
+from src.operators.generic import IntegerOperator
 
 
 class IntegerAddition(IntegerOperator):

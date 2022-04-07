@@ -2,7 +2,7 @@ import random
 import importlib
 
 from typing import List, Union
-from operators import gen_configuration
+from src.gen import gen_configuration
 
 
 # Ordered Tree Encoding:
@@ -46,7 +46,7 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
         branching_choices = [n for n in arities if n in range(min_arity, remaining+1)]
         
         if not (missing_nodes() == 1 and remaining > 0):
-            branching_choices.extend([0, 0])  # two different leaf operators
+            branching_choices.extend([0, 0])  # two different leaf src
 
         arity = random.choice(branching_choices)
         tree.append(arity)
@@ -59,7 +59,7 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
 
 def get_operator_class(theory, name):
     module_name = gen_configuration.get_module_name(theory)
-    module = importlib.import_module('operators.gen.' + module_name)
+    module = importlib.import_module('src.operators.' + module_name)
     return getattr(module, name)
 
 

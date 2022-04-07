@@ -3,7 +3,7 @@
 
 import random
 from abc import ABC, abstractmethod
-from operators.gen.generic import RealOperator
+from src.operators.generic import RealOperator
 
 
 class RealAddition(RealOperator):

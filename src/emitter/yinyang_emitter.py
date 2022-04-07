@@ -1,9 +1,9 @@
 import os
 import pathlib
-from operators.gen.generic import Operator
-from operators.printer_visitor import PrinterVisitor
-from operators.rewrite_visitor import RewriteVisitor
-from operators.variable_visitor import VariableVisitor
+from src.operators.generic import Operator
+from src.visitors.printer_visitor import PrinterVisitor
+from src.visitors.rewrite_visitor import RewriteVisitor
+from src.visitors.variable_visitor import VariableVisitor
 
 
 def emit(operator: Operator, filename: str = "fusion_functions.txt", output_dir: pathlib.Path = None):
@@ -23,7 +23,7 @@ def emit(operator: Operator, filename: str = "fusion_functions.txt", output_dir:
     """
 
     if output_dir is None:
-        output_dir = pathlib.Path(__file__).parent.parent.parent.resolve().joinpath("fusion_functions")
+        output_dir = pathlib.Path(__file__).parent.parent.parent.resolve().joinpath("out")
     
     output_path = output_dir.joinpath(filename)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
