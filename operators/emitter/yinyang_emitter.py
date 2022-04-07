@@ -8,8 +8,7 @@ from operators.variable_visitor import VariableVisitor
 
 def emit(operator: Operator, filename: str = "fusion_functions.txt", output_dir: pathlib.Path = None):
     """
-    Emits the fusion functions and it's inverses to a yinynag's
-    configuration file:
+    Emits the fusion functions and its inverses to yinyang's configuration file:
         #begin
         <declaration of x>
         <declaration of y>
@@ -28,9 +27,8 @@ def emit(operator: Operator, filename: str = "fusion_functions.txt", output_dir:
     
     output_path = output_dir.joinpath(filename)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    mode = "a" if os.path.isfile(output_path) else "w"
-    
-    with open(output_path, mode, encoding='utf-8') as file:
+
+    with open(output_path, 'a', encoding='utf-8') as file:
         rewriter = RewriteVisitor()
         inverses = operator.accept(rewriter)
         printer = PrinterVisitor()
