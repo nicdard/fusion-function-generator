@@ -1,12 +1,8 @@
-from math import ceil
-from typing import List, Set, Union
+import random
+import importlib
+
+from typing import List, Union
 from operators import gen_configuration
-# ==================================================================
-# necessary for operators to be in global namespace for generation
-from operators.gen.boolean_theory import *
-from operators.gen.integer_theory import *
-from operators.gen.real_theory import *
-# ==================================================================
 
 
 # Ordered Tree Encoding:
@@ -61,8 +57,10 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
     return tree
 
 
-def get_operator_class(name):
-    return globals()[name]
+def get_operator_class(theory, name):
+    module_name = gen_configuration.get_module_name(theory)
+    module = importlib.import_module('operators.gen.' + module_name)
+    return getattr(module, name)
 
 
 def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
@@ -99,13 +97,13 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
                 param, idx = recursive_generation(idx, operator_type)
                 params.append(param)
 
-        return get_operator_class(op_name)(*params), idx
+        return get_operator_class(theory, op_name)(*params), idx
 
     operator_tree, _ = recursive_generation(0, theory)
     root_name = gen_configuration.get_root(theory)
 
-    output_var = get_operator_class(gen_configuration.get_variable(theory))(out_variable)
-    root = get_operator_class(root_name)(output_var, operator_tree)
+    output_var = get_operator_class(theory, gen_configuration.get_variable(theory))(out_variable)
+    root = get_operator_class(theory, root_name)(output_var, operator_tree)
 
     return root
 

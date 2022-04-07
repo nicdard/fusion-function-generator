@@ -11,7 +11,8 @@ from gen_configuration import (
     get_root,
     get_variable,
     get_theories,
-    get_theory_name
+    get_theory_name,
+    get_module_name
 )
 
 WARNING_MESSAGE = "# WARNING: This file has been generated and it shouldn't be edited manually!\n" \
@@ -80,7 +81,7 @@ def define_ast(base_name: pathlib.Path):
     Generates class hierarchy for a given operator.  
     """
     for theory in get_theories():
-        path = base_name.joinpath(get_theory_name(theory).lower() + "_theory.py")
+        path = base_name.joinpath(get_module_name(theory) + ".py")
         content = [
             WARNING_MESSAGE,
             "import random",
@@ -155,7 +156,8 @@ def define_visitor(output_dir: pathlib.Path, name: str):
     The visitor implementation is generated in the operators folder
     as it will edited manually.
     """
-    # We could use generics to give the right type information (https://docs.python.org/3/library/typing.html#typing.Generic), 
+    # We could use generics to give the right type information
+    # (https://docs.python.org/3/library/typing.html#typing.Generic),
     # but it seems overkilling.
     file_name = f"{name.lower()}_visitor.py"
     class_name = f"{name.capitalize()}Visitor"
@@ -168,7 +170,7 @@ def define_visitor(output_dir: pathlib.Path, name: str):
         visitor_name = f"{get_theory_name(theory)}Visitor"
         extends.append(f"{visitor_name}")
 
-        content.append(f"from operators.gen.{get_theory_name(theory).lower()}_theory import (")
+        content.append(f"from operators.gen.{get_module_name(theory)} import (")
         for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
             content.append(f"    {operator},")
         content.append(f"    {visitor_name}")
