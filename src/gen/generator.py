@@ -86,7 +86,7 @@ def define_ast(base_name: pathlib.Path):
             WARNING_MESSAGE,
             "import random",
             "from abc import ABC, abstractmethod",
-            f"from operators.gen.generic import {theory}",
+            f"from src.operators.generic import {theory}",
             "\n",
         ]
 
@@ -153,8 +153,7 @@ def define_ast(base_name: pathlib.Path):
 def define_visitor(output_dir: pathlib.Path, name: str):
     """
     Generates a stub implementation of all visitors of all theories.
-    The visitor implementation is generated in the 'operators' folder
-    as it will be edited manually.
+    The visitor implementation is generated in the folder specified by output_dir.
     """
     # We could use generics to give the right type information
     # (https://docs.python.org/3/library/typing.html#typing.Generic),
@@ -170,7 +169,7 @@ def define_visitor(output_dir: pathlib.Path, name: str):
         visitor_name = f"{get_theory_name(theory)}Visitor"
         extends.append(f"{visitor_name}")
 
-        content.append(f"from operators.gen.{get_module_name(theory)} import (")
+        content.append(f"from src.operators.{get_module_name(theory)} import (")
         for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
             content.append(f"    {operator},")
         content.append(f"    {visitor_name}")
@@ -193,22 +192,22 @@ def define_visitor(output_dir: pathlib.Path, name: str):
 
 def main():
     """
-    A utility to generate operators definitions together with the Visitor interface.
+    A utility to generate operator definitions together with the Visitor interface.
     """
     script_path = pathlib.Path(__file__).parent.resolve()
-    output_dir = script_path.joinpath("gen")
+    output_dir = script_path.parent.joinpath("operators")
 
     if len(sys.argv) < 2:
         print("Usage: \
-            \n-gen : generates (overwrites) the gen subdirectory. \
-            \n-stub [NAME]: generates a new visitor stub with the given NAME. Also generates the gen folder.")
+            \n-operators : generates (overwrites) the operators subdirectory. \
+            \n-stub [NAME]: generates a new visitor stub with the given NAME. Also generates the operators folder.")
         sys.exit(64)
 
-    if not (sys.argv[1] == "gen" or
+    if not (sys.argv[1] == "operators" or
             (sys.argv[1] == "stub" and len(sys.argv) >= 3)):
         sys.exit(64)
 
-    # Ensure that the gen folder exists.
+    # Ensure that the 'operators' folder exists.
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
 
     define_generic(output_dir)
@@ -216,7 +215,7 @@ def main():
 
     print(sys.argv[1])
     if sys.argv[1] == "stub":
-        define_visitor(script_path, sys.argv[2])
+        define_visitor(script_path.parent.joinpath("visitors"), sys.argv[2])
 
 
 if __name__ == '__main__':

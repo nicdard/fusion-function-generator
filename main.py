@@ -1,8 +1,8 @@
 import random
 
-from operators import gen_configuration
-from operators.emitter.yinyang_emitter import emit
-from operators.tree_generation import generate_tree
+from src.gen import gen_configuration
+from src.emitter.yinyang_emitter import emit
+from src.gen.tree_generation import generate_tree
 
 
 def main():
