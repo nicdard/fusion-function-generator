@@ -1,4 +1,5 @@
 import random
+import importlib
 from typing import Dict, List
 
 # A map from theories name to theory operation.
@@ -115,3 +116,9 @@ def get_theory_name(theory: str) -> str:
 
 def get_module_name(theory: str) -> str:
     return get_theory_name(theory).lower() + "_theory"
+
+
+def get_operator_class(theory, name):
+    module_name = get_module_name(theory)
+    module = importlib.import_module('src.operators.' + module_name)
+    return getattr(module, name)

@@ -1,8 +1,14 @@
 import random
-import importlib
 
 from typing import List, Union
-from src.gen import gen_configuration
+from src.gen.gen_configuration import (
+    get_constant,
+    get_variable,
+    get_eligible_operator,
+    get_root,
+    get_operator_class,
+    get_arities
+)
 
 
 # Ordered Tree Encoding:
@@ -57,12 +63,6 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
     return tree
 
 
-def get_operator_class(theory, name):
-    module_name = gen_configuration.get_module_name(theory)
-    module = importlib.import_module('src.operators.' + module_name)
-    return getattr(module, name)
-
-
 def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
     num_leaves = len([n for n in arity_tree if n == 0])
     num_variables = len(in_variables)
@@ -85,13 +85,13 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
             is_variable = leaves[num_leaves]
 
             if is_variable:
-                op_name = gen_configuration.get_variable(operator_type)
+                op_name = get_variable(operator_type)
                 num_variables -= 1
                 params.append(in_variables[num_variables])
             else:
-                op_name = gen_configuration.get_constant(operator_type)
+                op_name = get_constant(operator_type)
         else:
-            op_name = gen_configuration.get_eligible_operator(operator_type, n)
+            op_name = get_eligible_operator(operator_type, n)
 
             for _ in range(n):
                 param, idx = recursive_generation(idx, operator_type)
@@ -100,9 +100,9 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
         return get_operator_class(theory, op_name)(*params), idx
 
     operator_tree, _ = recursive_generation(0, theory)
-    root_name = gen_configuration.get_root(theory)
+    root_name = get_root(theory)
 
-    output_var = get_operator_class(theory, gen_configuration.get_variable(theory))(out_variable)
+    output_var = get_operator_class(theory, get_variable(theory))(out_variable)
     root = get_operator_class(theory, root_name)(output_var, operator_tree)
 
     return root
@@ -113,7 +113,7 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
         in_variables = [f'x{i+1}' for i in range(in_variables)]
 
     num_variables = len(in_variables)
-    arities = gen_configuration.get_arities(theory)
+    arities = get_arities(theory)
 
     if (size - num_variables) * (max(arities) - 1) + 1 < num_variables:
         raise ValueError("Tree size too small to accommodate all variables")
