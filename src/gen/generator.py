@@ -93,8 +93,8 @@ def define_ast(base_name: pathlib.Path):
         def accept_fun(op_name):
             return [
                 f"    def accept(self, visitor: '{get_theory_name(theory)}Visitor'):",
-                f"        return visitor.visit_{camel_to_snake_case(op_name)}(self)"
-                "\n"
+                f"        return visitor.visit_{camel_to_snake_case(op_name)}(self)",
+                ""
             ]
 
         operators = get_operators(theory)
@@ -119,8 +119,8 @@ def define_ast(base_name: pathlib.Path):
         content.extend([
             f"class {get_variable(theory)}({theory}):",
             f"    def __init__(self, name: str):",
-            f"        self.name = name"
-            "\n",
+            f"        self.name = name",
+            "",
             *accept_fun(get_variable(theory)),
             "",
         ])
@@ -205,6 +205,7 @@ def main():
 
     if not (sys.argv[1] == "operators" or
             (sys.argv[1] == "stub" and len(sys.argv) >= 3)):
+        print(f"Unknown option: {sys.argv[1]}")
         sys.exit(64)
 
     # Ensure that the 'operators' folder exists.
