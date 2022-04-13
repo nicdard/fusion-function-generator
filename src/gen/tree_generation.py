@@ -1,4 +1,5 @@
 import random
+import re
 
 from typing import List, Union
 from src.gen.gen_configuration import (
@@ -10,6 +11,7 @@ from src.gen.gen_configuration import (
     get_arities
 )
 
+constant_name_pattern = re.compile(r"^c[0-9]+$")
 
 # Ordered Tree Encoding:
 # an n-tuple for a tree of n nodes:
@@ -113,6 +115,13 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
 def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 2, out_variable: str = 'z'):
     if isinstance(in_variables, int):
         in_variables = [f'x{i+1}' for i in range(in_variables)]
+    else:
+        # Check that names do not clash with constant generated names.
+        constains_constant_name = any([ 
+            constant_name_pattern.match(v) != None for v in in_variables 
+        ])
+        if constains_constant_name:
+            ValueError("The list of variables should not contain a name matching the constant name pattern: c[0-9]")
 
     num_variables = len(in_variables)
     arities = get_arities(theory)
