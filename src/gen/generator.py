@@ -127,9 +127,10 @@ def define_ast(base_name: pathlib.Path):
         # Create constant class.
         content.extend([
             f"class {get_constant(theory)}({theory}):",
-            f"    def __init__(self):",
-            f"        self.value = {get_constant_initializer(theory)}"
-            "\n",
+            f"    def __init__(self, name: str):",
+            f"        self.name = name",
+            f"        self.value = {get_constant_initializer(theory)}",
+            "",
             *accept_fun(get_constant(theory)),
             "",
         ])
