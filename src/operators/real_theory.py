@@ -51,7 +51,8 @@ class RealVariable(RealOperator):
 
 
 class RealConstant(RealOperator):
-    def __init__(self):
+    def __init__(self, name: str):
+        self.name = name
         self.value = random.random() * 1000
 
     def accept(self, visitor: 'RealVisitor'):

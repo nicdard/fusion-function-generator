@@ -75,7 +75,7 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
     random.shuffle(leaves)
 
     def recursive_generation(idx, operator_type):
-        nonlocal num_leaves, num_variables
+        nonlocal num_leaves, num_variables, num_constants
         n = arity_tree[idx]
         idx += 1
         params = []
@@ -90,6 +90,8 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
                 params.append(in_variables[num_variables])
             else:
                 op_name = get_constant(operator_type)
+                params.append(f"c{num_constants}")
+                num_constants -= 1
         else:
             op_name = get_eligible_operator(operator_type, n)
 
