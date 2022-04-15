@@ -32,7 +32,8 @@ class BooleanVariable(BooleanOperator):
 
 
 class BooleanConstant(BooleanOperator):
-    def __init__(self):
+    def __init__(self, name: str):
+        self.name = name
         self.value = random.random() > 0.5
 
     def accept(self, visitor: 'BooleanVisitor'):

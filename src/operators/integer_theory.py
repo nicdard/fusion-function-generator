@@ -51,7 +51,8 @@ class IntegerVariable(IntegerOperator):
 
 
 class IntegerConstant(IntegerOperator):
-    def __init__(self):
+    def __init__(self, name: str):
+        self.name = name
         self.value = random.randint(0, 1000)
 
     def accept(self, visitor: 'IntegerVisitor'):

@@ -26,7 +26,7 @@ def main(args):
         for _ in range(args.num_functions):
             root_type = random.choice(operator_types)
             tree = generate_tree(root_type, args.size, ['x', 'y'], 'z')
-            emit(tree, file)
+            emit(tree, file, is_symbolic=False)
 
 
 if __name__ == '__main__':
