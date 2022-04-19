@@ -44,7 +44,7 @@ python3.10 [path-to-yinyang-folder]/bin/yinyang "z3" \
 
 ## Adding a new theory
 
-The script [generator.py](src/gen/generator.py) folder is used to generate all the code under [src/operators](src/operators).
+The [generator.py](src/gen/generator.py) script is used to generate all the code under [src/operators](src/operators).
 To re-generate everything, type:
 
 > python3 src/gen/generator.py operators
