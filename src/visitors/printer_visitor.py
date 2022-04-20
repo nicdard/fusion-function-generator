@@ -36,7 +36,7 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         return f"(not {operator.operator_1.accept(self)})"
 
     def visit_boolean_constant(self, operator: BooleanConstant):
-        return str(operator.value)
+        return str(operator.value).lower()
 
     def visit_boolean_variable(self, operator: BooleanVariable):
         return operator.name

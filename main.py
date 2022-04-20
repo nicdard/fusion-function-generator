@@ -25,7 +25,7 @@ def main(args):
     with open(os.path.join(output_dir, file_name), 'w', encoding='utf-8') as file:
         for _ in range(args.num_functions):
             root_type = random.choice(operator_types)
-            tree = generate_tree(root_type, args.size, ['x', 'y'], 'z')
+            tree = generate_tree(root_type, args.size, ['y', 'x'], 'z')
             emit(tree, file, is_symbolic=False)
 
 
