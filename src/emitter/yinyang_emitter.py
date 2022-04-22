@@ -33,7 +33,7 @@ def emit(tree: Operator, file, is_symbolic: bool = True):
     print("#begin", file=file)
 
     # Variable declarations
-    for variable, type in variables.items():
+    for variable, type in sorted(variables.items()):
         print(f"(declare-const {variable} {type})", file=file)
 
     # Constant declarations
