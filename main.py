@@ -5,10 +5,12 @@ import argparse
 from src.gen import gen_configuration
 from src.emitter.yinyang_emitter import emit
 from src.gen.tree_generation import generate_tree
+from src.visitors.infix_printer_visitor import InfixPrinterVisitor
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate fusion functions.')
+    parser.add_argument('--verbose', '-v', action='store_true', help='print formulas in standard infix notation to stdout')
     parser.add_argument('--size', '-s', type=int, default=25, help='number of operators in each function')
     parser.add_argument('--num_functions', '-n', type=int, default=10, help='number of functions to generate')
     parser.add_argument('--target', '-t', type=str, default='fusion_functions', help='name of the output file')
@@ -23,10 +25,13 @@ def main(args):
     operator_types = gen_configuration.get_theories()
 
     with open(os.path.join(output_dir, file_name), 'w', encoding='utf-8') as file:
-        for _ in range(args.num_functions):
+        infix_printer = InfixPrinterVisitor()
+        for i in range(args.num_functions):
             root_type = random.choice(operator_types)
             tree = generate_tree(root_type, args.size, ['y', 'x'], 'z')
-            emit(tree, file)
+            if args.verbose:
+                print(f"{tree.accept(infix_printer)}\n")
+            emit(tree, file, is_symbolic=True)
 
 
 if __name__ == '__main__':

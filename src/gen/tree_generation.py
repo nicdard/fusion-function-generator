@@ -2,6 +2,7 @@ import random
 import re
 
 from typing import List, Union
+from src.operators.generic import Operator
 from src.gen.gen_configuration import (
     get_constant,
     get_variable,
@@ -65,7 +66,7 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
     return tree
 
 
-def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
+def _generate_operator_tree(theory, arity_tree, in_variables, out_variable) -> Operator:
     num_leaves = len([n for n in arity_tree if n == 0])
     num_variables = len(in_variables)
     num_constants = num_leaves - num_variables
@@ -112,7 +113,7 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable):
     return root
 
 
-def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 2, out_variable: str = 'z'):
+def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 2, out_variable: str = 'z') -> Operator:
     if isinstance(in_variables, int):
         in_variables = [f'x{i+1}' for i in range(in_variables)]
     else:
