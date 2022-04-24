@@ -123,7 +123,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
     def visit_real_division(self, operator: RealDivision):
         output = self.output[operator]
         self.output[operator.operator_1] = RealMultiplication(output, operator.operator_2)
-        self.output[operator.operator_2] = RealDivision(output, operator.operator_1)
+        self.output[operator.operator_2] = RealDivision(operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return inverse_1 | inverse_2

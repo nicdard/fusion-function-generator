@@ -12,7 +12,8 @@ from src.gen.gen_configuration import (
     get_arities
 )
 
-constant_name_pattern = re.compile(r"^c[0-9]+$")
+constant_name_pattern = re.compile(r"^c\d+$")
+
 
 # Ordered Tree Encoding:
 # an n-tuple for a tree of n nodes:
@@ -118,11 +119,9 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
         in_variables = [f'x{i+1}' for i in range(in_variables)]
     else:
         # Check that names do not clash with constant generated names.
-        constains_constant_name = any([ 
-            constant_name_pattern.match(v) != None for v in in_variables 
-        ])
-        if constains_constant_name:
-            ValueError("The list of variables should not contain a name matching the constant name pattern: c[0-9]")
+        for v in in_variables:
+            if constant_name_pattern.match(v) is not None:
+                ValueError("The list of variables should not contain a name matching the constant name pattern: c[0-9]")
 
     num_variables = len(in_variables)
     arities = get_arities(theory)
