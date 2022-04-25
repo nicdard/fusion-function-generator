@@ -1,0 +1,3 @@
+[submodule "semantic_fusion_seeds"]
+	path = semantic_fusion_seeds
+	url = https://github.com/testsmt/semantic-fusion-seeds.git
