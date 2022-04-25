@@ -43,7 +43,10 @@ main_operators: Dict[str, Dict[str, List[str]]] = {
         "RealAddition": ["RealOperator", "RealOperator"],
         "RealSubtraction": ["RealOperator", "RealOperator"],
         "RealMultiplication": ["RealOperator", "RealOperator"],  
-    }
+    },
+    "StringOperator": {
+        "StringConcatenation": ["StringOperator", "StringOperator"],
+    },
 }
 
 # These operators are not invertible and thus not used in generation, but necessary
@@ -52,13 +55,18 @@ fringe_operators: Dict[str, Dict[str, List[str]]] = {
     "BooleanOperator": {},
     "IntegerOperator": {
         "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
+        "StringLength": ["StringOperator"],
     },
     "RealOperator": {
         "RealDivision": ["RealOperator", "RealOperator"],
     },
+    "StringOperator": {
+        "StringReplacement": ["StringOperator", "StringOperator", "StringOperator"],
+        "Substring": ["StringOperator", "IntegerOperator", "IntegerOperator"],
+    },
 }
 
-theory_declarations = {k: { **main_operators[k], **fringe_operators[k] } for k in main_operators}
+theory_declarations = {k: {**main_operators[k], **fringe_operators[k]} for k in main_operators}
 
 leaf_operators = {
     "BooleanOperator": {
@@ -72,13 +80,18 @@ leaf_operators = {
     "RealOperator": {
         "RealConstant": "random.random() * 1000",
         "RealVariable": str,
-    }
+    },
+    "StringOperator": {
+        "StringLiteral": "''.join([chr(random.randint(97, 122)) for _ in range(random.randint(0, 50))])",
+        "StringVariable": str,
+    },
 }
 
 root_operators: Dict[str, str] = {
     "BooleanOperator": "BooleanEquality",
     "IntegerOperator": "IntegerEquality",
     "RealOperator": "RealEquality",
+    "StringOperator": "StringEquality",
 }
 
 
@@ -90,17 +103,30 @@ def get_operators(theory: str):
     return list(theory_declarations[theory].keys())
 
 
+def get_operator_types(theory: str):
+    type_set = {theory}
+
+    for op in theory_declarations[theory]:
+        for in_type in theory_declarations[theory][op]:
+            type_set.add(in_type)
+
+    return list(type_set)
+
+
 def get_arities(theory: str) -> List[int]:
     arities = []
 
-    for op in get_operators(theory):
+    for op in main_operators[theory].keys():
         arities.append(len(get_operator_parameters(theory, op)))
 
     return arities
 
 
 def get_operator_parameters(theory: str, operator: str):
-    return theory_declarations[theory][operator]
+    params = main_operators[theory][operator]
+    for p in params:
+        assert isinstance(p, str)
+    return params
 
 
 def get_constant(operator_type):
@@ -134,15 +160,15 @@ def get_eligible_operator(operator_type, arity):
     return random.choice(operator_choices)
 
 
-def get_theory_name(theory: str) -> str:
-    return theory.split("Operator")[0]
+def get_theory_name(operator_type: str) -> str:
+    return operator_type.split("Operator")[0]
 
 
-def get_module_name(theory: str) -> str:
-    return get_theory_name(theory).lower() + "_theory"
+def get_module_name(operator_type: str) -> str:
+    return get_theory_name(operator_type).lower() + "_theory"
 
 
-def get_operator_class(theory, name):
-    module_name = get_module_name(theory)
+def get_operator_class(operator_type, name):
+    module_name = get_module_name(operator_type)
     module = importlib.import_module('src.operators.' + module_name)
     return getattr(module, name)

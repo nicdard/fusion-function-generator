@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,37 +21,13 @@
 # SOFTWARE.
 
 
-from src.operators.boolean_theory import (
-    BooleanXor,
-    BooleanNot,
-    BooleanConstant,
-    BooleanVariable,
-    BooleanEquality,
-    BooleanVisitor
-)
-from src.operators.integer_theory import (
-    IntegerAddition,
-    IntegerSubtraction,
-    IntegerMultiplication,
-    IntegerDivision,
-    IntegerConstant,
-    IntegerVariable,
-    IntegerEquality,
-    IntegerVisitor
-)
-from src.operators.real_theory import (
-    RealAddition,
-    RealSubtraction,
-    RealMultiplication,
-    RealDivision,
-    RealConstant,
-    RealVariable,
-    RealEquality,
-    RealVisitor             
-)
+from src.operators.boolean_theory import *
+from src.operators.integer_theory import *
+from src.operators.real_theory import *
+from src.operators.string_theory import *
 
 
-class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
+class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
     def __init__(self):
         self.output = {}
 
@@ -73,7 +49,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
 
     def visit_boolean_variable(self, operator: BooleanVariable):
         return {operator: self.output[operator]}
-        
+
     def visit_boolean_equality(self, operator: BooleanEquality):
         self.output[operator.operator_2] = operator.operator_1
         inverse_dict = operator.operator_2.accept(self)
@@ -116,9 +92,9 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = operator.operator_1
         inverse_dict = operator.operator_2.accept(self)
         # Prepare the visitor to be reused
-        self.output = {} 
+        self.output = {}
         return [IntegerEquality(var, operator) for var, operator in inverse_dict.items()]
-    
+
     def visit_real_addition(self, operator: RealAddition):
         output = self.output[operator]
         self.output[operator.operator_1] = RealSubtraction(output, operator.operator_2)
@@ -161,5 +137,51 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = operator.operator_1
         inverse_dict = operator.operator_2.accept(self)
         # Prepare the visitor to be reused
-        self.output = {} 
+        self.output = {}
         return [RealEquality(var, operator) for var, operator in inverse_dict.items()]
+
+    def visit_string_concatenation(self, operator: StringConcatenation):
+        output = self.output[operator]
+        zero = IntegerConstant("0")
+        zero.value = 0
+        empty_string = StringLiteral("\"\"")
+        empty_string.value = ""
+
+        def rule_1():
+            return Substring(output, zero, StringLength(operator.operator_1)), \
+                   Substring(output, StringLength(operator.operator_1), StringLength(operator.operator_2))
+
+        def rule_2():
+            return Substring(output, zero, StringLength(operator.operator_1)), \
+                   StringReplacement(output, operator.operator_1, empty_string)
+
+        rule = random.choice([rule_1, rule_2])
+        output_1, output_2 = rule()
+
+        self.output[operator.operator_1] = output_1
+        self.output[operator.operator_2] = output_2
+
+        inverse_1 = operator.operator_1.accept(self)
+        inverse_2 = operator.operator_2.accept(self)
+
+        return {**inverse_1, **inverse_2}
+
+    def visit_string_length(self, operator: StringLength):
+        return {}
+
+    def visit_substring(self, operator: Substring):
+        return {}
+
+    def visit_string_replacement(self, operator: StringReplacement):
+        return {}
+
+    def visit_string_variable(self, operator: StringVariable):
+        return {operator: self.output[operator]}
+
+    def visit_string_literal(self, operator: StringLiteral):
+        return {}
+
+    def visit_string_equality(self, operator: StringEquality):
+        self.output[operator.operator_2] = operator.operator_1
+        inverse_dict = operator.operator_2.accept(self)
+        return [StringEquality(var, operator) for var, operator in inverse_dict.items()]

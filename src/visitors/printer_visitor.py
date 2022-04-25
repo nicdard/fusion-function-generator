@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,37 +21,13 @@
 # SOFTWARE.
 
 
-from src.operators.boolean_theory import (
-    BooleanXor,
-    BooleanNot,
-    BooleanConstant,
-    BooleanVariable,
-    BooleanEquality,
-    BooleanVisitor
-)
-from src.operators.integer_theory import (
-    IntegerAddition,
-    IntegerSubtraction,
-    IntegerMultiplication,
-    IntegerDivision,
-    IntegerConstant,
-    IntegerVariable,
-    IntegerEquality,
-    IntegerVisitor
-)
-from src.operators.real_theory import (
-    RealAddition,
-    RealSubtraction,
-    RealMultiplication,
-    RealDivision,
-    RealConstant,
-    RealVariable,
-    RealEquality,
-    RealVisitor             
-)
+from src.operators.boolean_theory import *
+from src.operators.integer_theory import *
+from src.operators.real_theory import *
+from src.operators.string_theory import *
 
 
-class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
+class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
     def visit_boolean_xor(self, operator: BooleanXor):
         return f"(xor {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
@@ -87,7 +63,7 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
 
     def visit_integer_equality(self, operator: IntegerEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
-    
+
     def visit_real_addition(self, operator: RealAddition):
         return f"(+ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
@@ -107,4 +83,27 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         return operator.name
 
     def visit_real_equality(self, operator: RealEquality):
+        return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visit_string_concatenation(self, operator: StringConcatenation):
+        return f"(str.++ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visit_string_length(self, operator: StringLength):
+        return f"(str.len {operator.operator_1.accept(self)})"
+
+    def visit_substring(self, operator: Substring):
+        return f"(str.substr {operator.operator_1.accept(self)} " \
+               f"{operator.operator_2.accept(self)} {operator.operator_3.accept(self)})"
+
+    def visit_string_replacement(self, operator: StringReplacement):
+        return f"(str.replace {operator.operator_1.accept(self)} " \
+               f"{operator.operator_2.accept(self)} {operator.operator_3.accept(self)})"
+
+    def visit_string_variable(self, operator: StringVariable):
+        return operator.name
+
+    def visit_string_literal(self, operator: StringLiteral):
+        return f"\"{operator.value}\""
+
+    def visit_string_equality(self, operator: StringEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"

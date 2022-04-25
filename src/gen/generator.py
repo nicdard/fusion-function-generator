@@ -35,7 +35,8 @@ from gen_configuration import (
     get_variable,
     get_theories,
     get_theory_name,
-    get_module_name
+    get_module_name,
+    get_operator_types
 )
 
 WARNING_MESSAGE = "# WARNING: This file has been generated and shouldn't be edited manually!\n" \
@@ -120,12 +121,13 @@ def define_ast(base_name: pathlib.Path, license: str):
     """
     for theory in get_theories():
         path = base_name.joinpath(get_module_name(theory) + ".py")
+        operator_types = get_operator_types(theory)
         content = [
             license,
             WARNING_MESSAGE,
             "import random",
             "from abc import ABC, abstractmethod",
-            f"from src.operators.generic import {theory}",
+            f"from src.operators.generic import {', '.join(operator_types)}",
             "\n",
         ]
 
