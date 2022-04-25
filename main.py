@@ -3,7 +3,7 @@ import random
 import argparse
 
 from src.gen import gen_configuration
-from src.emitter.yinyang_emitter import emit
+from src.emitter.yinyang_emitter import emit, emit_options
 from src.gen.tree_generation import generate_tree
 from src.visitors.infix_printer_visitor import InfixPrinterVisitor
 
@@ -25,6 +25,7 @@ def main(args):
     operator_types = gen_configuration.get_theories()
 
     with open(os.path.join(output_dir, file_name), 'w', encoding='utf-8') as file:
+        emit_options(file, args)
         infix_printer = InfixPrinterVisitor()
         for i in range(args.num_functions):
             root_type = random.choice(operator_types)
