@@ -10,12 +10,13 @@ def emit_options(file, args):
     """
     Emits the options used to generate the functions as comments to the yinyang configuration files.
     """
-    print(f"; number of functions = {args.num_functions} (corresponding to the number of #begin ... #end blocks)", file=file)
-    print(f"; number of operators in each function = {args.size}", file=file)
+    print("; Generated with: https://github.com/nicdard/fusion-function-generator", file=file)
+    print(f"; {args.num_functions} functions (number of #begin ... #end blocks)", file=file)
+    print(f"; {args.size} operators per function", file=file)
     print("", file=file)
 
 
-def emit(tree: Operator, file, is_symbolic: bool = True):
+def emit_function(tree: Operator, file, is_symbolic: bool = True):
     """
     Emits the fusion functions and its inverses to yinyang's configuration file:
         #begin
@@ -46,7 +47,7 @@ def emit(tree: Operator, file, is_symbolic: bool = True):
         print(f"(declare-const {variable} {type})", file=file)
 
     # Constant declarations
-    for constant, type in constants.items():
+    for constant, type in reversed(constants.items()):
         print(f"(declare-const {constant} {type})", file=file)
 
     # Fusion function

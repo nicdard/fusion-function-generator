@@ -3,14 +3,15 @@ import random
 import argparse
 
 from src.gen import gen_configuration
-from src.emitter.yinyang_emitter import emit, emit_options
+from src.emitter.yinyang_emitter import emit_function, emit_options
 from src.gen.tree_generation import generate_tree
 from src.visitors.infix_printer_visitor import InfixPrinterVisitor
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate fusion functions.')
-    parser.add_argument('--verbose', '-v', action='store_true', help='print formulas in standard infix notation to stdout')
+    parser.add_argument('--verbose', '-v', action='store_true',
+                        help='print formulas in standard infix notation to stdout')
     parser.add_argument('--size', '-s', type=int, default=25, help='number of operators in each function')
     parser.add_argument('--num_functions', '-n', type=int, default=10, help='number of functions to generate')
     parser.add_argument('--target', '-t', type=str, default='fusion_functions', help='name of the output file')
@@ -32,7 +33,7 @@ def main(args):
             tree = generate_tree(root_type, args.size, ['y', 'x'], 'z')
             if args.verbose:
                 print(f"{tree.accept(infix_printer)}\n")
-            emit(tree, file, is_symbolic=True)
+            emit_function(tree, file, is_symbolic=True)
 
 
 if __name__ == '__main__':
