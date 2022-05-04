@@ -78,7 +78,7 @@ def define_visitor_interface(theory: str) -> List[str]:
 
 def define_ast(base_name: pathlib.Path):
     """
-    Generates class hierarchy for a given operator.  
+    Generates class hierarchy of operators for all theories.  
     """
     for theory in get_theories():
         path = base_name.joinpath(get_module_name(theory) + ".py")
@@ -96,6 +96,18 @@ def define_ast(base_name: pathlib.Path):
                 f"        return visitor.visit_{camel_to_snake_case(op_name)}(self)",
                 ""
             ]
+        
+        def eq(op_name: str, params: int):
+            eq = [
+                f"    def __eq__(self, other: '{op_name}'):",
+                f"        return \\"
+            ]
+            assertion = []
+            for i in range(1, params + 1):
+                assertion.append(f"            self.operator_{i} == other.operator_{i}")
+            eq.append(" and \\\n".join(assertion))
+            eq.append("")
+            return eq
 
         operators = get_operators(theory)
         for operator in operators:
@@ -112,6 +124,10 @@ def define_ast(base_name: pathlib.Path):
             ])
             content.extend([
                 "",
+                *eq(operator, len(get_operator_parameters(theory, operator))),
+                "    def __hash__(self):",
+                "       return hash(str(self))",
+                "",
                 *accept_fun(operator),
                 "",
             ])
@@ -120,6 +136,12 @@ def define_ast(base_name: pathlib.Path):
             f"class {get_variable(theory)}({theory}):",
             f"    def __init__(self, name: str):",
             f"        self.name = name",
+            "",
+            f"    def __eq__(self, other: '{get_variable(theory)}'):",
+            f"        return self.name == other.name",
+            "",
+            "    def __hash__(self):",
+            "       return hash(self.name)",
             "",
             *accept_fun(get_variable(theory)),
             "",
@@ -130,6 +152,12 @@ def define_ast(base_name: pathlib.Path):
             f"    def __init__(self, name: str):",
             f"        self.name = name",
             f"        self.value = {get_constant_initializer(theory)}",
+            "",
+            f"    def __eq__(self, other: '{get_constant(theory)}'):",
+            f"        return self.name == other.name",
+            "",
+            "    def __hash__(self):",
+            "       return hash(self.name)",
             "",
             *accept_fun(get_constant(theory)),
             "",
@@ -143,6 +171,7 @@ def define_ast(base_name: pathlib.Path):
         ])
         content.extend([
             "",
+            *eq(get_root(theory), 2),
             *accept_fun(get_root(theory)),
             "",
         ])
