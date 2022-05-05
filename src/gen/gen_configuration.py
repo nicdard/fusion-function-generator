@@ -34,7 +34,7 @@ fringe_operators: Dict[str, Dict[str, List[str]]] = {
     "RealOperator": {}
 }
 
-theory_declarations = {k: main_operators[k] | fringe_operators[k] for k in main_operators}
+theory_declarations = {k: { **main_operators[k], **fringe_operators[k] } for k in main_operators}
 
 leaf_operators = {
     "BooleanOperator": {

@@ -38,7 +38,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = BooleanXor(operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
-        return inverse_1 | inverse_2
+        return {**inverse_1, **inverse_2}
 
     def visit_boolean_not(self, operator: BooleanNot):
         output = self.output[operator]
@@ -62,7 +62,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = IntegerSubtraction(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
-        return inverse_1 | inverse_2
+        return {**inverse_1, **inverse_2}
 
     def visit_integer_subtraction(self, operator: IntegerSubtraction):
         output = self.output[operator]
@@ -70,7 +70,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = IntegerSubtraction(operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
-        return inverse_1 | inverse_2
+        return {**inverse_1, **inverse_2}
 
     def visit_integer_multiplication(self, operator: IntegerMultiplication):
         output = self.output[operator]
@@ -78,7 +78,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = IntegerDivision(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
-        return inverse_1 | inverse_2
+        return {**inverse_1, **inverse_2}
 
     def visit_integer_division(self, operator: IntegerDivision):
         return {}
@@ -102,7 +102,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = RealSubtraction(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
-        return inverse_1 | inverse_2
+        return {**inverse_1, **inverse_2}
 
     def visit_real_subtraction(self, operator: RealSubtraction):
         output = self.output[operator]
@@ -110,7 +110,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = RealSubtraction(operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
-        return inverse_1 | inverse_2
+        return {**inverse_1, **inverse_2}
 
     def visit_real_multiplication(self, operator: RealMultiplication):
         output = self.output[operator]
@@ -118,7 +118,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = RealDivision(output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
-        return inverse_1 | inverse_2
+        return {**inverse_1, **inverse_2}
 
     def visit_real_division(self, operator: RealDivision):
         output = self.output[operator]
@@ -126,7 +126,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         self.output[operator.operator_2] = RealDivision(operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
-        return inverse_1 | inverse_2
+        return {**inverse_1, **inverse_2}
 
     def visit_real_constant(self, operator: RealConstant):
         return {}

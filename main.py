@@ -21,7 +21,9 @@ def parse_args():
 def main(args):
     output_dir = os.path.join(os.path.dirname(__file__), 'out')
     os.makedirs(output_dir, exist_ok=True)
-    file_name = args.target.removesuffix('.txt') + '.txt'
+    file_name = args.target
+    if not args.target.endswith('.txt'):
+        file_name += '.txt'
 
     operator_types = gen_configuration.get_theories()
 

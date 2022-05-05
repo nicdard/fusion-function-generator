@@ -96,8 +96,8 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         id = self.generate_node_name()
         (op_1, children_1, edges_1) = operator.operator_1.accept(self)
         (op_2, children_2, edges_2) = operator.operator_2.accept(self)
-        nodes = {id: label} | children_1 | children_2
-        edges = { id: [op_1, op_2] } | edges_1 | edges_2
+        nodes = { id: label, **children_1, **children_2 }
+        edges = { id: [op_1, op_2], **edges_1, **edges_2 }
         nodes = [ f"    {child} [label={nodes[child]}]" for child in nodes.keys() ]
         edges = [ (f"    {key} -> {'{' + ' '.join(edges[key]) + '}'}" ) for key in edges.keys() ]
         content = heading + "\n".join(nodes) + "\n" + "\n".join(edges) + ending
@@ -109,8 +109,8 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         id = self.generate_node_name()
         return (
             id,
-            { id: label } | op_1 | op_2,
-            { id: [op_id_1, op_id_2] } | edges_1 | edges_2,
+            { id: label, **op_1, **op_2},
+            { id: [op_id_1, op_id_2] , **edges_1, **edges_2},
         )
 
     def visit_unary_operator(self, label: str, operator: Operator):
@@ -118,8 +118,8 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         id = self.generate_node_name()
         return (
             id, 
-            { id: label } | op_1,
-            { id: [op_id_1] } | edges_1
+            { id: label , **op_1 },
+            { id: [op_id_1], **edges_1 }
         )
     
     def visit_constant(self, operator: Operator):
