@@ -1,5 +1,7 @@
 # fusion-function-generator
 
+![CI](https://github.com/nicdard/fusion-function-generator/actions/workflows/ci.yml/badge.svg)
+
 Automatic generation of [Fusion Functions](https://yinyang.readthedocs.io/en/latest/fusion.html#fusion-functions) 
 used by 
 [yinyang](https://yinyang.readthedocs.io/en/latest/index.html) fuzzer for [Semantic Fusion](https://yinyang.readthedocs.io/en/latest/fusion.html).
