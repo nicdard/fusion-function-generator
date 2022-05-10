@@ -1,4 +1,3 @@
-; config-1
 ; not triggered with (set-logic NRA)
 (declare-fun a () Real)
 (declare-fun b () Real)
