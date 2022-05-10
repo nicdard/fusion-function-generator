@@ -1,3 +1,26 @@
+# MIT License
+# 
+# Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
 import os
 import pathlib
 import sys
@@ -28,13 +51,28 @@ def camel_to_snake_case(s: str) -> str:
     return camel_case_pattern.sub('_', s).lower()
 
 
-def define_generic(output_dir: pathlib.Path):
+def read_license():
+    """
+    Returns the content of the LICENSE file as python comments.
+    """
+    path = pathlib.Path(__file__).parent.resolve()
+    license_path = path.parent.parent.joinpath("LICENSE")
+    comments = []
+    with open(license_path, "r") as license:
+        for line in license.readlines():
+            comments.append(f"# {line}")
+    comments.append("\n")
+    return comments
+
+
+def define_generic(output_dir: pathlib.Path, license: str):
     """
     Generates abstract classes. 
     """
     path = output_dir.joinpath("generic.py")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w+', encoding='utf-8') as f:
+        f.write(license + "\n")
         f.write("\n".join([
             WARNING_MESSAGE,
             "from abc import ABC, abstractmethod",
@@ -76,13 +114,14 @@ def define_visitor_interface(theory: str) -> List[str]:
     return content
 
 
-def define_ast(base_name: pathlib.Path):
+def define_ast(base_name: pathlib.Path, license: str):
     """
     Generates class hierarchy for a given operator.  
     """
     for theory in get_theories():
         path = base_name.joinpath(get_module_name(theory) + ".py")
         content = [
+            license,
             WARNING_MESSAGE,
             "import random",
             "from abc import ABC, abstractmethod",
@@ -151,7 +190,7 @@ def define_ast(base_name: pathlib.Path):
             f.write("\n".join(content))
 
 
-def define_visitor(output_dir: pathlib.Path, name: str):
+def define_visitor(output_dir: pathlib.Path, name: str, license: str):
     """
     Generates a stub implementation of all visitors of all theories.
     The visitor implementation is generated in the folder specified by output_dir.
@@ -163,7 +202,7 @@ def define_visitor(output_dir: pathlib.Path, name: str):
     class_name = f"{name.capitalize()}Visitor"
     path = output_dir.joinpath(file_name)
 
-    content = []
+    content = [license]
     extends = []
 
     for theory in get_theories():
@@ -197,6 +236,7 @@ def main():
     """
     script_path = pathlib.Path(__file__).parent.resolve()
     output_dir = script_path.parent.joinpath("operators")
+    license = "".join(read_license())
 
     if len(sys.argv) < 2:
         print("Usage: \
@@ -212,12 +252,12 @@ def main():
     # Ensure that the 'operators' folder exists.
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
 
-    define_generic(output_dir)
-    define_ast(output_dir)
+    define_generic(output_dir, license)
+    define_ast(output_dir, license)
 
     print(sys.argv[1])
     if sys.argv[1] == "stub":
-        define_visitor(script_path.parent.joinpath("visitors"), sys.argv[2])
+        define_visitor(script_path.parent.joinpath("visitors"), sys.argv[2], license)
 
 
 if __name__ == '__main__':
