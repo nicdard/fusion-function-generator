@@ -1,4 +1,5 @@
-.idea
-__pycache__
+.idea/
+.vscode/
+__pycache__/
 *.dot
-out
+out/
