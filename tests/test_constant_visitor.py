@@ -68,6 +68,21 @@ class TestConstantVisitor(unittest.TestCase):
         constants = tree.accept(ConstantVisitor())
         self.assertEqual(constants, {'c0': 'Real', 'c1': 'Real'})
 
+    def test_boolean_visitor_inequality(self):
+        tree = BooleanEquality(BooleanConstant('c0'), BooleanConstant('c1'))
+        constants = tree.accept(ConstantVisitor())
+        self.assertNotEqual(constants, {'c0': 'Boolean', 'c1': 'Bool', 'c2': 'Bool'})
+
+    def test_integer_visitor_inequality(self):
+        tree = IntegerEquality(IntegerConstant('c0'), IntegerConstant('c1'))
+        constants = tree.accept(ConstantVisitor())
+        self.assertNotEqual(constants, {'c0': 'Integer', 'c1': 'Int', 'c2': 'Int'})
+
+    def test_real_visitor_inequaility(self):
+        tree = RealEquality(RealConstant('c0'), RealConstant('c1'))
+        constants = tree.accept(ConstantVisitor())
+        self.assertNotEqual(constants, {'c0': 'Rational', 'c1': 'Real', 'c2': 'Real'})
+    
     def test_boolean_visitor_hard(self):
         tree = BooleanEquality(
             BooleanVariable('z'),

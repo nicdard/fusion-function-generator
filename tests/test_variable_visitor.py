@@ -68,6 +68,21 @@ class TestVariableVisitor(unittest.TestCase):
         variables = tree.accept(VariableVisitor())
         self.assertEqual(variables, {'x': 'Real', 'y': 'Real'})
 
+    def test_boolean_visitor_inequality(self):
+        tree = BooleanEquality(BooleanVariable('x'), BooleanVariable('y'))
+        variables = tree.accept(VariableVisitor())
+        self.assertNotEqual(variables, {'x': 'Boolean', 'y': 'Bool', 'z': 'Bool'})
+
+    def test_integer_visitor_inequality(self):
+        tree = IntegerEquality(IntegerVariable('x'), IntegerVariable('y'))
+        variables = tree.accept(VariableVisitor())
+        self.assertNotEqual(variables, {'x': 'Integer', 'y': 'Int', 'z': 'Int'})
+
+    def test_real_visitor_inequality(self):
+        tree = RealEquality(RealVariable('x'), RealVariable('y'))
+        variables = tree.accept(VariableVisitor())
+        self.assertNotEqual(variables, {'x': 'Rational', 'y': 'Real', 'z': 'Real'})
+
     def test_boolean_visitor_hard(self):
         tree = BooleanEquality(
             BooleanVariable('z'),

@@ -37,9 +37,15 @@ from src.visitors.rewrite_visitor import RewriteVisitor
 
 
 class TestRewriteVisitor(unittest.TestCase):
-    def assert_equal_trees(self, tree: Operator, expected: Operator):
+    def serialize(self, tree: Operator):
         printer = SymbolicPrinterVisitor()
-        self.assertEqual(tree.accept(printer), expected.accept(printer))
+        return tree.accept(printer)
+
+    def assert_equal_trees(self, tree: Operator, expected: Operator):
+        self.assertEqual(self.serialize(tree), self.serialize(expected))
+
+    def assert_not_equal_trees(self, tree: Operator, not_expected: Operator):
+        self.assertNotEqual(self.serialize(tree), self.serialize(not_expected))
 
     def test_boolean_visitor_easy(self):
         tree = BooleanEquality(BooleanVariable('x'), BooleanVariable('y'))
@@ -61,6 +67,27 @@ class TestRewriteVisitor(unittest.TestCase):
         self.assertEqual(len(inverses), 1)
         expected = RealEquality(RealVariable('y'), RealVariable('x'))
         self.assert_equal_trees(inverses[0], expected)
+
+    def test_boolean_visitor_inequality(self):
+        tree = BooleanEquality(BooleanVariable('x'), BooleanVariable('y'))
+        inverses = tree.accept(RewriteVisitor())
+        self.assertEqual(len(inverses), 1)
+        not_expected = BooleanEquality(BooleanNot(BooleanVariable('y')), BooleanVariable('x'))
+        self.assert_not_equal_trees(inverses[0], not_expected)
+
+    def test_integer_visitor_inequality(self):
+        tree = IntegerEquality(IntegerVariable('x'), IntegerVariable('y'))
+        inverses = tree.accept(RewriteVisitor())
+        self.assertEqual(len(inverses), 1)
+        not_expected = IntegerEquality(IntegerAddition(IntegerVariable('y'), IntegerConstant('c0')), IntegerVariable('x'))
+        self.assert_not_equal_trees(inverses[0], not_expected)
+
+    def test_real_visitor_inequality(self):
+        tree = RealEquality(RealVariable('x'), RealVariable('y'))
+        inverses = tree.accept(RewriteVisitor())
+        self.assertEqual(len(inverses), 1)
+        not_expected = RealEquality(RealDivision(RealVariable('y'), RealConstant('c0')), RealVariable('x'))
+        self.assert_not_equal_trees(inverses[0], not_expected)
 
     def test_boolean_visitor_hard(self):
         tree = BooleanEquality(
