@@ -28,32 +28,10 @@ import sys
 sys.path.append("../../")
 
 
-from src.operators.boolean_theory import (
-    BooleanConstant,
-    BooleanEquality,
-    BooleanNot,
-    BooleanVariable,
-    BooleanXor,
-)
+from src.operators.boolean_theory import *
 from src.operators.generic import Operator
-from src.operators.integer_theory import ( 
-    IntegerAddition,
-    IntegerConstant,
-    IntegerDivision,
-    IntegerEquality,
-    IntegerMultiplication,
-    IntegerSubtraction,
-    IntegerVariable,
-)
-from src.operators.real_theory import (
-    RealAddition,
-    RealConstant,
-    RealDivision,
-    RealEquality,
-    RealMultiplication,
-    RealSubtraction, 
-    RealVariable,
-)
+from src.operators.integer_theory import *
+from src.operators.real_theory import *
 from src.visitors.symbolic_printer_visitor import SymbolicPrinterVisitor
 from src.visitors.rewrite_visitor import RewriteVisitor
 
