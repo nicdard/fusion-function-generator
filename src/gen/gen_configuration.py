@@ -42,8 +42,7 @@ main_operators: Dict[str, Dict[str, List[str]]] = {
     "RealOperator": {
         "RealAddition": ["RealOperator", "RealOperator"],
         "RealSubtraction": ["RealOperator", "RealOperator"],
-        "RealMultiplication": ["RealOperator", "RealOperator"],
-        "RealDivision": ["RealOperator", "RealOperator"],
+        "RealMultiplication": ["RealOperator", "RealOperator"],  
     }
 }
 
@@ -54,7 +53,9 @@ fringe_operators: Dict[str, Dict[str, List[str]]] = {
     "IntegerOperator": {
         "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
     },
-    "RealOperator": {}
+    "RealOperator": {
+        "RealDivision": ["RealOperator", "RealOperator"],
+    },
 }
 
 theory_declarations = {k: main_operators[k] | fringe_operators[k] for k in main_operators}
