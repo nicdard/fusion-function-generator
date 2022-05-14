@@ -1,5 +1,7 @@
 # fusion-function-generator
 
+![CI](https://github.com/nicdard/fusion-function-generator/actions/workflows/ci.yml/badge.svg)
+
 Automatic generation of [Fusion Functions](https://yinyang.readthedocs.io/en/latest/fusion.html#fusion-functions) 
 used by 
 [yinyang](https://yinyang.readthedocs.io/en/latest/index.html) fuzzer for [Semantic Fusion](https://yinyang.readthedocs.io/en/latest/fusion.html).
@@ -59,6 +61,14 @@ Add the new theory description by following the guideline and examples already t
 Afterwards, you will need to re-generate the gen folder and (if needed) update the visitors.
 To update a visitor, make the visitor inherit from the new visitor class associated with the theory you created,
 and implement all of its methods.
+
+
+## Testing
+
+The repository provides unit tests using [unittest](https://docs.python.org/3/library/unittest.html) testing framework.
+To run them, simply type:
+
+> python3 -m unittest discover -v
 
 ## References
 

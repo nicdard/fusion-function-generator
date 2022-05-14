@@ -116,7 +116,7 @@ def define_visitor_interface(theory: str) -> List[str]:
 
 def define_ast(base_name: pathlib.Path, license: str):
     """
-    Generates class hierarchy for a given operator.  
+    Generates class hierarchy of operators for all theories.  
     """
     for theory in get_theories():
         path = base_name.joinpath(get_module_name(theory) + ".py")
