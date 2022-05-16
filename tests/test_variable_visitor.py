@@ -143,11 +143,15 @@ class TestVariableVisitor(unittest.TestCase):
                     StringLiteral('c1')),
                 Substring(
                     StringVariable('y'),
-                    StringLength(StringLiteral('c2')),
-                    IntegerConstant('c3'))))
+                    StringLength(StringVariable('v')),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringVariable('w'),
+                        IntegerConstant('c3'),
+                    ))))
         variables = tree.accept(VariableVisitor())
         self.assertEqual(
-            {'x': 'String', 'y': 'String', 'z': 'String'}, variables)
+            {'v': 'String', 'w': 'String', 'x': 'String', 'y': 'String', 'z': 'String'}, variables)
 
 
 if __name__ == '__main__':

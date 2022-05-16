@@ -101,10 +101,14 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
                 Substring(
                     StringVariable('y'),
                     StringLength(StringLiteral('c2')),
-                    IntegerConstant('c3'))))
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringVariable('y'),
+                        IntegerConstant('c3'),
+                    ))))
         symbolic_repr = tree.accept(SymbolicPrinterVisitor())
         self.assertEqual(
-            "(= z (str.++ (str.replace x c0 c1) (str.substr y (str.len c2) c3)))", symbolic_repr)
+            "(= z (str.++ (str.replace x c0 c1) (str.substr y (str.len c2) (str.indexof z y c3))))", symbolic_repr)
 
     def test_boolean_visitor_inequality(self):
         tree_1 = BooleanEquality(BooleanConstant('c0'), BooleanConstant('c1'))

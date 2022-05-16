@@ -149,7 +149,11 @@ class TestConstantVisitor(unittest.TestCase):
                 Substring(
                     StringVariable('y'),
                     StringLength(StringLiteral('c2')),
-                    IntegerConstant('c3'))))
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringVariable('y'),
+                        IntegerConstant('c3'),
+                    ))))
         constants = tree.accept(ConstantVisitor())
         self.assertEqual({'c0': 'String', 'c1': 'String',
                          'c2': 'String', 'c3': 'Int'}, constants)

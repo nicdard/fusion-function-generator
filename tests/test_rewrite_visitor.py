@@ -274,14 +274,30 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(2, len(inverses))
 
-        expected_x = StringEquality(
+        expected_x_1 = StringEquality(
             StringVariable('x'),
             Substring(
                 StringVariable('z'),
                 IntegerConstant('0'),
                 StringLength(
                     StringVariable('x'))))
-        self.assert_equal_trees(expected_x, inverses[0])
+
+        expected_x_2 = StringEquality(
+            StringVariable('x'),
+            Substring(
+                StringVariable('z'),
+                IntegerConstant('0'),
+                StringIndexof(
+                    StringVariable('z'),
+                    StringConcatenation(
+                        StringReplacement(
+                            StringLiteral('c0'),
+                            StringLiteral('c1'),
+                            StringLiteral('c2')),
+                        StringVariable('y')),
+                    StringLength(StringVariable('x')))))
+
+        self.assert_any_of_trees([expected_x_1, expected_x_2], inverses[0])
 
         expected_y_1 = StringEquality(
             StringVariable('y'),
@@ -349,8 +365,205 @@ class TestRewriteVisitor(unittest.TestCase):
                         StringLiteral('c2'))),
                 StringLength(
                     StringVariable('y'))))
-        self.assert_any_of_trees(
-            [expected_y_1, expected_y_2, expected_y_3, expected_y_4], inverses[1])
+        expected_y_5 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                Substring(
+                    StringVariable('z'),
+                    StringLength(StringVariable('x')),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringIndexof(
+                    Substring(
+                        StringVariable('z'),
+                        StringLength(StringVariable('x')),
+                        StringLength(
+                            StringConcatenation(
+                                StringReplacement(
+                                    StringLiteral('c0'),
+                                    StringLiteral('c1'),
+                                    StringLiteral('c2')),
+                                StringVariable('y')))),
+                    StringVariable('y'),
+                    StringLength(
+                        StringReplacement(
+                            StringLiteral('c0'),
+                            StringLiteral('c1'),
+                            StringLiteral('c2')))),
+                StringLength(StringVariable('y'))))
+        expected_y_6 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                Substring(
+                    StringVariable('z'),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')),
+                        StringLength(StringVariable('x'))),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringLength(
+                    StringReplacement(
+                        StringLiteral('c0'),
+                        StringLiteral('c1'),
+                        StringLiteral('c2'))),
+                StringLength(StringVariable('y'))))
+        expected_y_7 = StringEquality(
+            StringVariable('y'),
+            StringReplacement(
+                Substring(
+                    StringVariable('z'),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')),
+                        StringLength(StringVariable('x'))),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringReplacement(
+                    StringLiteral('c0'),
+                    StringLiteral('c1'),
+                    StringLiteral('c2')),
+                StringLiteral('""')))
+        expected_y_8 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                Substring(
+                    StringVariable('z'),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')),
+                        StringLength(StringVariable('x'))),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringIndexof(
+                    Substring(
+                        StringVariable('z'),
+                        StringLength(StringVariable('x')),
+                        StringLength(
+                            StringConcatenation(
+                                StringReplacement(
+                                    StringLiteral('c0'),
+                                    StringLiteral('c1'),
+                                    StringLiteral('c2')),
+                                StringVariable('y')))),
+                    StringVariable('y'),
+                    StringLength(
+                        StringReplacement(
+                            StringLiteral('c0'),
+                            StringLiteral('c1'),
+                            StringLiteral('c2')))),
+                StringLength(StringVariable('y'))))
+        expected_y_9 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                StringReplacement(
+                    StringVariable('z'),
+                    StringVariable('x'),
+                    StringLiteral('""')),
+                StringIndexof(
+                    StringReplacement(
+                        StringVariable('z'),
+                        StringVariable('x'),
+                        StringLiteral('""')),
+                    StringVariable('y'),
+                    StringLength(
+                        StringReplacement(
+                            StringLiteral('c0'),
+                            StringLiteral('c1'),
+                            StringLiteral('c2')))),
+                StringLength(StringVariable('y'))))
+
+        expected_y_8 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                Substring(
+                    StringVariable('z'),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')),
+                        StringLength(StringVariable('x'))),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringIndexof(
+                    Substring(
+                        StringVariable('z'),
+                        StringIndexof(
+                            StringVariable('z'),
+                            StringConcatenation(
+                                StringReplacement(
+                                    StringLiteral('c0'),
+                                    StringLiteral('c1'),
+                                    StringLiteral('c2')),
+                                StringVariable('y')),
+                            StringLength(StringVariable('x'))),
+                        StringLength(
+                            StringConcatenation(
+                                StringReplacement(
+                                    StringLiteral('c0'),
+                                    StringLiteral('c1'),
+                                    StringLiteral('c2')),
+                                StringVariable('y')))),
+                    StringVariable('y'),
+                    StringLength(StringReplacement(
+                        StringLiteral('c0'),
+                        StringLiteral('c1'),
+                        StringLiteral('c2')))),
+                StringLength(StringVariable('y'))))
+        self.assert_any_of_trees([expected_y_1,
+                                  expected_y_2,
+                                  expected_y_3,
+                                  expected_y_4,
+                                  expected_y_5,
+                                  expected_y_6,
+                                  expected_y_7,
+                                  expected_y_8,
+                                  expected_y_9,
+                                  ], inverses[1])
 
 
 if __name__ == '__main__':
