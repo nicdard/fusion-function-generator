@@ -82,7 +82,7 @@ leaf_operators = {
         "RealVariable": str,
     },
     "StringOperator": {
-        "StringLiteral": "''.join([chr(random.randint(97, 122)) for _ in range(random.randint(0, 50))])",
+        "StringLiteral": "''.join(random.sample(string.ascii_letters + string.digits, random.randint(0, 50)))",
         "StringVariable": str,
     },
 }
@@ -166,6 +166,13 @@ def get_theory_name(operator_type: str) -> str:
 
 def get_module_name(operator_type: str) -> str:
     return get_theory_name(operator_type).lower() + "_theory"
+
+
+def get_required_modules(operator_type: str) -> List[str]:
+    modules = ["random"]
+    if operator_type == "StringOperator":
+        modules.append("string")
+    return modules
 
 
 def get_operator_class(operator_type, name):
