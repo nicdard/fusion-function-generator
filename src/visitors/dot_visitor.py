@@ -132,7 +132,7 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
             edges = {**edges, **sub_edges}
 
         name = self.generate_node_name()
-        return name, {name: label} | ops, {name: op_ids} | edges,
+        return name, {name: label, **ops}, {name: op_ids, **edges}
 
     def visit_constant(self, operator: Operator):
         name = self.generate_node_name()

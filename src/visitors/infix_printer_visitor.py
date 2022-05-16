@@ -77,7 +77,7 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
         return f"({operator.operator_1.accept(self)} / {operator.operator_2.accept(self)})"
 
     def visit_real_constant(self, operator: RealConstant):
-        return str(operator.name)
+        return operator.name
 
     def visit_real_variable(self, operator: RealVariable):
         return operator.name

@@ -135,11 +135,7 @@ class TestRewriteVisitor(unittest.TestCase):
                 BooleanXor(
                     BooleanVariable('y'), 
                     BooleanNot(
-                        BooleanConstant('c0')
-                    )
-                )
-            )
-        )
+                        BooleanConstant('c0')))))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(2, len(inverses))
 
@@ -150,13 +146,8 @@ class TestRewriteVisitor(unittest.TestCase):
                     BooleanXor(
                         BooleanVariable('y'),
                         BooleanNot(
-                            BooleanConstant('c0')
-                        )
-                    ),
-                    BooleanVariable('z')
-                )
-            )
-        )
+                            BooleanConstant('c0'))),
+                    BooleanVariable('z'))))
         self.assert_equal_trees(expected_x, inverses[0])
 
         expected_y = BooleanEquality(
@@ -165,12 +156,8 @@ class TestRewriteVisitor(unittest.TestCase):
                 BooleanNot(BooleanConstant('c0')),
                 BooleanXor(
                     BooleanNot(
-                        BooleanVariable('x')
-                    ),
-                    BooleanVariable('z')
-                )
-            )
-        )
+                        BooleanVariable('x')),
+                    BooleanVariable('z'))))
         self.assert_equal_trees(expected_y, inverses[1])
 
     def test_integer_visitor_hard(self):
@@ -181,15 +168,10 @@ class TestRewriteVisitor(unittest.TestCase):
                     IntegerConstant('c0'),
                     IntegerSubtraction(
                         IntegerVariable('x'),
-                        IntegerConstant('c1')
-                    )
-                ),
+                        IntegerConstant('c1'))),
                 IntegerMultiplication(
                     IntegerVariable('y'),
-                    IntegerVariable('v')
-                )
-            )
-        )
+                    IntegerVariable('v'))))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(3, len(inverses))
 
@@ -201,14 +183,9 @@ class TestRewriteVisitor(unittest.TestCase):
                         IntegerVariable('z'),
                         IntegerMultiplication(
                             IntegerVariable('y'),
-                            IntegerVariable('v')
-                        )
-                    ),
-                    IntegerConstant('c0')
-                ),
-                IntegerConstant('c1')
-            )
-        )
+                            IntegerVariable('v'))),
+                    IntegerConstant('c0')),
+                IntegerConstant('c1')))
         self.assert_equal_trees(expected_x, inverses[0])
 
         expected_y = IntegerEquality(
@@ -220,13 +197,8 @@ class TestRewriteVisitor(unittest.TestCase):
                         IntegerConstant('c0'),
                         IntegerSubtraction(
                             IntegerVariable('x'),
-                            IntegerConstant('c1')
-                        )
-                    )
-                ),
-                IntegerVariable('v')
-            )
-        )
+                            IntegerConstant('c1')))),
+                IntegerVariable('v')))
         self.assert_equal_trees(expected_y, inverses[1])
 
         expected_v = IntegerEquality(
@@ -238,13 +210,8 @@ class TestRewriteVisitor(unittest.TestCase):
                         IntegerConstant('c0'),
                         IntegerSubtraction(
                             IntegerVariable('x'),
-                            IntegerConstant('c1')
-                        )
-                    )
-                ),
-                IntegerVariable('y')
-            )
-        )
+                            IntegerConstant('c1')))),
+                IntegerVariable('y')))
         self.assert_equal_trees(expected_v, inverses[2])
 
     def test_real_visitor_hard(self):
@@ -255,15 +222,10 @@ class TestRewriteVisitor(unittest.TestCase):
                     RealAddition(
                         RealMultiplication(
                             RealVariable('x'),
-                            RealConstant('c0')
-                        ),
-                        RealConstant('c1')
-                    ),
-                    RealVariable('y')
-                ),
-                RealConstant('c2')
-            )
-        )
+                            RealConstant('c0')),
+                        RealConstant('c1')),
+                    RealVariable('y')),
+                RealConstant('c2')))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(2, len(inverses))
 
@@ -274,15 +236,10 @@ class TestRewriteVisitor(unittest.TestCase):
                     RealAddition(
                         RealDivision(
                             RealVariable('z'),
-                            RealConstant('c2')
-                        ),
-                        RealVariable('y')
-                    ),
-                    RealConstant('c1')
-                ),
-                RealConstant('c0')
-            )
-        )
+                            RealConstant('c2')),
+                        RealVariable('y')),
+                    RealConstant('c1')),
+                RealConstant('c0')))
         self.assert_equal_trees(expected_x, inverses[0])
 
         expected_y = RealEquality(
@@ -291,16 +248,11 @@ class TestRewriteVisitor(unittest.TestCase):
                 RealAddition(
                     RealMultiplication(
                         RealVariable('x'),
-                        RealConstant('c0')
-                    ),
-                    RealConstant('c1')
-                ),
+                        RealConstant('c0')),
+                    RealConstant('c1')),
                 RealDivision(
                     RealVariable('z'),
-                    RealConstant('c2')
-                )
-            )
-        )
+                    RealConstant('c2'))))
         self.assert_equal_trees(expected_y, inverses[1])
 
     def test_string_visitor_hard(self):
@@ -312,12 +264,8 @@ class TestRewriteVisitor(unittest.TestCase):
                     StringReplacement(
                         StringLiteral('c0'),
                         StringLiteral('c1'),
-                        StringLiteral('c2')
-                    ),
-                    StringVariable('y')
-                )
-            )
-        )
+                        StringLiteral('c2')),
+                    StringVariable('y'))))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(2, len(inverses))
 
@@ -327,10 +275,7 @@ class TestRewriteVisitor(unittest.TestCase):
                 StringVariable('z'),
                 IntegerConstant('0'),
                 StringLength(
-                    StringVariable('x')
-                )
-            )
-        )
+                    StringVariable('x'))))
         self.assert_equal_trees(expected_x, inverses[0])
 
         expected_y_1 = StringEquality(
@@ -339,94 +284,66 @@ class TestRewriteVisitor(unittest.TestCase):
                 StringReplacement(
                     StringVariable('z'),
                     StringVariable('x'),
-                    StringLiteral('""')
-                ),
+                    StringLiteral('""')),
                 StringReplacement(
                     StringLiteral('c0'),
                     StringLiteral('c1'),
-                    StringLiteral('c2')
-                ),
-                StringLiteral('""')
-            )
-        )
+                    StringLiteral('c2')),
+                StringLiteral('""')))
         expected_y_2 = StringEquality(
             StringVariable('y'),
             Substring(
                 StringReplacement(
                     StringVariable('z'),
                     StringVariable('x'),
-                    StringLiteral('""')
-                ),
+                    StringLiteral('""')),
                 StringLength(
                     StringReplacement(
                         StringLiteral('c0'),
                         StringLiteral('c1'),
-                        StringLiteral('c2')
-                    )
-                ),
+                        StringLiteral('c2'))),
                 StringLength(
-                    StringVariable('y')
-                )
-            )
-        )
+                    StringVariable('y'))))
         expected_y_3 = StringEquality(
             StringVariable('y'),
             StringReplacement(
                 Substring(
                     StringVariable('z'),
                     StringLength(
-                        StringVariable('x')
-                    ),
+                        StringVariable('x')),
                     StringLength(
                         StringConcatenation(
                             StringReplacement(
                                 StringLiteral('c0'),
                                 StringLiteral('c1'),
-                                StringLiteral('c2')
-                            ),
-                            StringVariable('y')
-                        ),
-                    )
-                ),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
                 StringReplacement(
                     StringLiteral('c0'),
                     StringLiteral('c1'),
-                    StringLiteral('c2')
-                ),
-                StringLiteral('""')
-            )
-        )
+                    StringLiteral('c2')),
+                StringLiteral('""')))
         expected_y_4 = StringEquality(
             StringVariable('y'),
             Substring(
                 Substring(
                     StringVariable('z'),
                     StringLength(
-                        StringVariable('x')
-                    ),
+                        StringVariable('x')),
                     StringLength(
                         StringConcatenation(
                             StringReplacement(
                                 StringLiteral('c0'),
                                 StringLiteral('c1'),
-                                StringLiteral('c2')
-                            ),
-                            StringVariable('y')
-                        )
-                    )
-                ),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
                 StringLength(
                     StringReplacement(
                         StringLiteral('c0'),
                         StringLiteral('c1'),
-                        StringLiteral('c2')
-                    ),
-                ),
+                        StringLiteral('c2'))),
                 StringLength(
-                    StringVariable('y')
-                )
-            )
-        )
+                    StringVariable('y'))))
         self.assert_any_of_trees([expected_y_1, expected_y_2, expected_y_3, expected_y_4], inverses[1])
 
 

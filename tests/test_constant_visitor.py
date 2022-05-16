@@ -33,7 +33,7 @@ from src.visitors.constant_visitor import ConstantVisitor
 class TestConstantVisitor(unittest.TestCase):
     def test_boolean_visitor_easy(self):
         visitor = ConstantVisitor()
-        tree = BooleanVariable('x')
+        tree = BooleanVariable('c0')
         self.assertEqual({}, tree.accept(visitor))
         tree = BooleanConstant('c0')
         self.assertEqual({'c0': 'Bool'}, tree.accept(visitor))
@@ -42,7 +42,7 @@ class TestConstantVisitor(unittest.TestCase):
 
     def test_integer_visitor_easy(self):
         visitor = ConstantVisitor()
-        tree = IntegerVariable('x')
+        tree = IntegerVariable('c0')
         self.assertEqual({}, tree.accept(visitor))
         tree = IntegerConstant('c0')
         self.assertEqual({'c0': 'Int'}, tree.accept(visitor))
@@ -51,7 +51,7 @@ class TestConstantVisitor(unittest.TestCase):
 
     def test_real_visitor_easy(self):
         visitor = ConstantVisitor()
-        tree = RealVariable('x')
+        tree = RealVariable('c0')
         self.assertEqual({}, tree.accept(visitor))
         tree = RealConstant('c0')
         self.assertEqual({'c0': 'Real'}, tree.accept(visitor))

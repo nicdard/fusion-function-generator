@@ -110,9 +110,7 @@ class TestVariableVisitor(unittest.TestCase):
                     IntegerConstant('c0'),
                     IntegerSubtraction(
                         IntegerVariable('x'),
-                        IntegerConstant('c1')
-                    )
-                ),
+                        IntegerConstant('c1'))),
                 IntegerDivision(
                     IntegerVariable('y'),
                     IntegerVariable('v')))) 
@@ -127,12 +125,9 @@ class TestVariableVisitor(unittest.TestCase):
                     RealAddition(
                         RealDivision(
                             RealVariable('x'),
-                            RealConstant('c0')
-                        ),
-                        RealConstant('c1'),
-                    ),
-                    RealVariable('y')
-                ),
+                            RealConstant('c0')),
+                        RealConstant('c1')),
+                    RealVariable('y')),
                 RealConstant('c2'))) 
         variables = tree.accept(VariableVisitor())
         self.assertEqual({'x': 'Real', 'y': 'Real', 'z': 'Real'}, variables)
