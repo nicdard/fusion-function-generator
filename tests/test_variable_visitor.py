@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -95,9 +95,9 @@ class TestVariableVisitor(unittest.TestCase):
         tree = BooleanEquality(
             BooleanVariable('z'),
             BooleanXor(
-                BooleanNot(BooleanVariable('x')), 
+                BooleanNot(BooleanVariable('x')),
                 BooleanXor(
-                    BooleanVariable('y'), 
+                    BooleanVariable('y'),
                     BooleanNot(BooleanConstant('c0')))))
         variables = tree.accept(VariableVisitor())
         self.assertEqual({'x': 'Bool', 'y': 'Bool', 'z': 'Bool'}, variables)
@@ -113,9 +113,10 @@ class TestVariableVisitor(unittest.TestCase):
                         IntegerConstant('c1'))),
                 IntegerDivision(
                     IntegerVariable('y'),
-                    IntegerVariable('v')))) 
+                    IntegerVariable('v'))))
         variables = tree.accept(VariableVisitor())
-        self.assertEqual({'v': 'Int', 'x': 'Int', 'y': 'Int', 'z': 'Int'}, variables)
+        self.assertEqual(
+            {'v': 'Int', 'x': 'Int', 'y': 'Int', 'z': 'Int'}, variables)
 
     def test_real_visitor_hard(self):
         tree = RealEquality(
@@ -128,7 +129,7 @@ class TestVariableVisitor(unittest.TestCase):
                             RealConstant('c0')),
                         RealConstant('c1')),
                     RealVariable('y')),
-                RealConstant('c2'))) 
+                RealConstant('c2')))
         variables = tree.accept(VariableVisitor())
         self.assertEqual({'x': 'Real', 'y': 'Real', 'z': 'Real'}, variables)
 
@@ -145,7 +146,8 @@ class TestVariableVisitor(unittest.TestCase):
                     StringLength(StringLiteral('c2')),
                     IntegerConstant('c3'))))
         variables = tree.accept(VariableVisitor())
-        self.assertEqual({'x': 'String', 'y': 'String', 'z': 'String'}, variables)
+        self.assertEqual(
+            {'x': 'String', 'y': 'String', 'z': 'String'}, variables)
 
 
 if __name__ == '__main__':

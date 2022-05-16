@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -65,7 +65,8 @@ class TestConstantVisitor(unittest.TestCase):
         tree = StringLiteral('c0')
         self.assertEqual({'c0': 'String'}, tree.accept(visitor))
         tree = StringEquality(StringLiteral('c0'), StringLiteral('c1'))
-        self.assertEqual({'c0': 'String', 'c1': 'String'}, tree.accept(visitor))
+        self.assertEqual({'c0': 'String', 'c1': 'String'},
+                         tree.accept(visitor))
 
     def test_boolean_visitor_inequality(self):
         visitor = ConstantVisitor()
@@ -90,14 +91,14 @@ class TestConstantVisitor(unittest.TestCase):
         tree_1 = StringEquality(StringLiteral('c0'), StringLiteral('c1'))
         tree_2 = StringEquality(StringLiteral('c1'), StringLiteral('c2'))
         self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
-    
+
     def test_boolean_visitor_hard(self):
         tree = BooleanEquality(
             BooleanVariable('z'),
             BooleanXor(
-                BooleanNot(BooleanVariable('x')), 
+                BooleanNot(BooleanVariable('x')),
                 BooleanXor(
-                    BooleanVariable('y'), 
+                    BooleanVariable('y'),
                     BooleanNot(BooleanConstant('c0')))))
         constants = tree.accept(ConstantVisitor())
         self.assertEqual({'c0': 'Bool'}, constants)
@@ -115,7 +116,7 @@ class TestConstantVisitor(unittest.TestCase):
                 ),
                 IntegerDivision(
                     IntegerVariable('y'),
-                    IntegerVariable('v')))) 
+                    IntegerVariable('v'))))
         constants = tree.accept(ConstantVisitor())
         self.assertEqual({'c0': 'Int', 'c1': 'Int'}, constants)
 
@@ -133,7 +134,7 @@ class TestConstantVisitor(unittest.TestCase):
                     ),
                     RealVariable('y')
                 ),
-                RealConstant('c2'))) 
+                RealConstant('c2')))
         constants = tree.accept(ConstantVisitor())
         self.assertEqual({'c0': 'Real', 'c1': 'Real', 'c2': 'Real'}, constants)
 
@@ -150,7 +151,8 @@ class TestConstantVisitor(unittest.TestCase):
                     StringLength(StringLiteral('c2')),
                     IntegerConstant('c3'))))
         constants = tree.accept(ConstantVisitor())
-        self.assertEqual({'c0': 'String', 'c1': 'String', 'c2': 'String', 'c3': 'Int'}, constants)
+        self.assertEqual({'c0': 'String', 'c1': 'String',
+                         'c2': 'String', 'c3': 'Int'}, constants)
 
 
 if __name__ == '__main__':

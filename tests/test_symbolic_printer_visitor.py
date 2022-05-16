@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -51,9 +51,9 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
         tree = BooleanEquality(
             BooleanVariable('z'),
             BooleanXor(
-                BooleanNot(BooleanVariable('x')), 
+                BooleanNot(BooleanVariable('x')),
                 BooleanXor(
-                    BooleanVariable('y'), 
+                    BooleanVariable('y'),
                     BooleanNot(BooleanConstant('c0')))))
         symbolic_repr = tree.accept(SymbolicPrinterVisitor())
         self.assertEqual("(= z (xor (not x) (xor y (not c0))))", symbolic_repr)
@@ -103,7 +103,8 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
                     StringLength(StringLiteral('c2')),
                     IntegerConstant('c3'))))
         symbolic_repr = tree.accept(SymbolicPrinterVisitor())
-        self.assertEqual("(= z (str.++ (str.replace x c0 c1) (str.substr y (str.len c2) c3)))", symbolic_repr)
+        self.assertEqual(
+            "(= z (str.++ (str.replace x c0 c1) (str.substr y (str.len c2) c3)))", symbolic_repr)
 
     def test_boolean_visitor_inequality(self):
         tree_1 = BooleanEquality(BooleanConstant('c0'), BooleanConstant('c1'))

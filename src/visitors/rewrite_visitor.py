@@ -33,8 +33,10 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
 
     def visit_boolean_xor(self, operator: BooleanXor):
         output = self.output[operator]
-        self.output[operator.operator_1] = BooleanXor(operator.operator_2, output)
-        self.output[operator.operator_2] = BooleanXor(operator.operator_1, output)
+        self.output[operator.operator_1] = BooleanXor(
+            operator.operator_2, output)
+        self.output[operator.operator_2] = BooleanXor(
+            operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
@@ -57,24 +59,30 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
 
     def visit_integer_addition(self, operator: IntegerAddition):
         output = self.output[operator]
-        self.output[operator.operator_1] = IntegerSubtraction(output, operator.operator_2)
-        self.output[operator.operator_2] = IntegerSubtraction(output, operator.operator_1)
+        self.output[operator.operator_1] = IntegerSubtraction(
+            output, operator.operator_2)
+        self.output[operator.operator_2] = IntegerSubtraction(
+            output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
 
     def visit_integer_subtraction(self, operator: IntegerSubtraction):
         output = self.output[operator]
-        self.output[operator.operator_1] = IntegerAddition(output, operator.operator_2)
-        self.output[operator.operator_2] = IntegerSubtraction(operator.operator_1, output)
+        self.output[operator.operator_1] = IntegerAddition(
+            output, operator.operator_2)
+        self.output[operator.operator_2] = IntegerSubtraction(
+            operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
 
     def visit_integer_multiplication(self, operator: IntegerMultiplication):
         output = self.output[operator]
-        self.output[operator.operator_1] = IntegerDivision(output, operator.operator_2)
-        self.output[operator.operator_2] = IntegerDivision(output, operator.operator_1)
+        self.output[operator.operator_1] = IntegerDivision(
+            output, operator.operator_2)
+        self.output[operator.operator_2] = IntegerDivision(
+            output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
@@ -97,32 +105,40 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
 
     def visit_real_addition(self, operator: RealAddition):
         output = self.output[operator]
-        self.output[operator.operator_1] = RealSubtraction(output, operator.operator_2)
-        self.output[operator.operator_2] = RealSubtraction(output, operator.operator_1)
+        self.output[operator.operator_1] = RealSubtraction(
+            output, operator.operator_2)
+        self.output[operator.operator_2] = RealSubtraction(
+            output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
 
     def visit_real_subtraction(self, operator: RealSubtraction):
         output = self.output[operator]
-        self.output[operator.operator_1] = RealAddition(output, operator.operator_2)
-        self.output[operator.operator_2] = RealSubtraction(operator.operator_1, output)
+        self.output[operator.operator_1] = RealAddition(
+            output, operator.operator_2)
+        self.output[operator.operator_2] = RealSubtraction(
+            operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
 
     def visit_real_multiplication(self, operator: RealMultiplication):
         output = self.output[operator]
-        self.output[operator.operator_1] = RealDivision(output, operator.operator_2)
-        self.output[operator.operator_2] = RealDivision(output, operator.operator_1)
+        self.output[operator.operator_1] = RealDivision(
+            output, operator.operator_2)
+        self.output[operator.operator_2] = RealDivision(
+            output, operator.operator_1)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
 
     def visit_real_division(self, operator: RealDivision):
         output = self.output[operator]
-        self.output[operator.operator_1] = RealMultiplication(output, operator.operator_2)
-        self.output[operator.operator_2] = RealDivision(operator.operator_1, output)
+        self.output[operator.operator_1] = RealMultiplication(
+            output, operator.operator_2)
+        self.output[operator.operator_2] = RealDivision(
+            operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
@@ -149,11 +165,12 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
 
         def rule_1():
             return Substring(output, zero, StringLength(operator.operator_1)), \
-                   Substring(output, StringLength(operator.operator_1), StringLength(operator.operator_2))
+                Substring(output, StringLength(operator.operator_1),
+                          StringLength(operator.operator_2))
 
         def rule_2():
             return Substring(output, zero, StringLength(operator.operator_1)), \
-                   StringReplacement(output, operator.operator_1, empty_string)
+                StringReplacement(output, operator.operator_1, empty_string)
 
         rule = random.choice([rule_1, rule_2])
         output_1, output_2 = rule()

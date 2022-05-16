@@ -63,7 +63,7 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
 
     def visit_integer_equality(self, operator: IntegerEquality):
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
-    
+
     def visit_real_addition(self, operator: RealAddition):
         return f"({operator.operator_1.accept(self)} + {operator.operator_2.accept(self)})"
 

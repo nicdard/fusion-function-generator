@@ -39,7 +39,7 @@ class ConstantVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
 
     def visit_boolean_constant(self, operator: BooleanConstant):
         return {operator.name: "Bool"}
-    
+
     def visit_boolean_equality(self, operator: BooleanEquality):
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
 

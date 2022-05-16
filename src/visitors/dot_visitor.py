@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -117,8 +117,10 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         op_2, children_2, edges_2 = operator.operator_2.accept(self)
         nodes = {name: label, **children_1, **children_2}
         edges = {name: [op_1, op_2], **edges_1, **edges_2}
-        nodes = [f"    {child} [label=\"{nodes[child]}\"]" for child in nodes.keys()]
-        edges = [f"    {key} -> {'{' + ' '.join(edges[key]) + '}'}" for key in edges.keys()]
+        nodes = [
+            f"    {child} [label=\"{nodes[child]}\"]" for child in nodes.keys()]
+        edges = [
+            f"    {key} -> {'{' + ' '.join(edges[key]) + '}'}" for key in edges.keys()]
         content = heading + "\n".join(nodes) + "\n" + "\n".join(edges) + ending
         return content
 
@@ -126,7 +128,8 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         op_ids, ops, edges = [], dict(), dict()
 
         for i in range(arity):
-            op_id, op, sub_edges = getattr(operator, f'operator_{i+1}').accept(self)
+            op_id, op, sub_edges = getattr(
+                operator, f'operator_{i+1}').accept(self)
             op_ids.append(op_id)
             ops = {**ops, **op}
             edges = {**edges, **sub_edges}
