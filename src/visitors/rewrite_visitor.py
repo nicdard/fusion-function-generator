@@ -163,17 +163,26 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
         empty_string = StringLiteral("\"\"")
         empty_string.value = ""
 
-        def rule_1():
-            return Substring(output, zero, StringLength(operator.operator_1)), \
-                Substring(output, StringLength(operator.operator_1),
-                          StringLength(operator.operator_2))
+        def inv_1_rule_1():
+            return Substring(output, zero, StringLength(operator.operator_1))
 
-        def rule_2():
-            return Substring(output, zero, StringLength(operator.operator_1)), \
-                StringReplacement(output, operator.operator_1, empty_string)
+        def inv_1_rule_2():
+            return Substring(output, zero, StringIndexof(output, operator.operator_2, StringLength(operator.operator_1)))
 
-        rule = random.choice([rule_1, rule_2])
-        output_1, output_2 = rule()
+        def inv_2_rule_1():
+            return Substring(output, StringLength(operator.operator_1), StringLength(operator.operator_2))
+
+        def inv_2_rule_2():
+            return Substring(output,
+                             StringIndexof(output, operator.operator_2, StringLength(
+                                 operator.operator_1)),
+                             StringLength(operator.operator_2))
+
+        def inv_2_rule_3():
+            return StringReplacement(output, operator.operator_1, empty_string)
+
+        output_1 = random.choice([inv_1_rule_1, inv_1_rule_2])()
+        output_2 = random.choice([inv_2_rule_1, inv_2_rule_2, inv_2_rule_3])()
 
         self.output[operator.operator_1] = output_1
         self.output[operator.operator_2] = output_2
@@ -184,6 +193,9 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
         return {**inverse_1, **inverse_2}
 
     def visit_string_length(self, operator: StringLength):
+        return {}
+
+    def visit_string_indexof(self, operator: StringIndexof):
         return {}
 
     def visit_substring(self, operator: Substring):

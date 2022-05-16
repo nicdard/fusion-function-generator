@@ -91,6 +91,10 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_string_length(self, operator: StringLength):
         return f"len({operator.operator_1.accept(self)})"
 
+    def visit_string_indexof(self, operator: StringIndexof):
+        return f"{operator.operator_1.accept(self)}.indexof" \
+               f"({operator.operator_2.accept(self)}, {operator.operator_3.accept(self)})"
+
     def visit_substring(self, operator: Substring):
         return f"{operator.operator_1.accept(self)}" \
                f"[{operator.operator_2.accept(self)}, {operator.operator_3.accept(self)}]"

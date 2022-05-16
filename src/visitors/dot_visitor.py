@@ -94,6 +94,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
     def visit_string_length(self, operator: StringLength):
         return self.visit_operator("STR_LEN", operator, 1)
 
+    def visit_string_indexof(self, operator: StringIndexof):
+        return self.visit_operator("STR_INDEX", operator, 3)
+
     def visit_substring(self, operator: Substring):
         return self.visit_operator("SUBSTR", operator, 3)
 

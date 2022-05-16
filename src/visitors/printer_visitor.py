@@ -91,6 +91,10 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
     def visit_string_length(self, operator: StringLength):
         return f"(str.len {operator.operator_1.accept(self)})"
 
+    def visit_string_indexof(self, operator: StringIndexof):
+        return f"(str.indexof {operator.operator_1.accept(self)} " \
+               f"{operator.operator_2.accept(self)} {operator.operator_3.accept(self)})"
+
     def visit_substring(self, operator: Substring):
         return f"(str.substr {operator.operator_1.accept(self)} " \
                f"{operator.operator_2.accept(self)} {operator.operator_3.accept(self)})"
