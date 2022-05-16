@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,7 +26,7 @@
 
 import random
 from abc import ABC, abstractmethod
-from src.operators.generic import IntegerOperator, StringOperator
+from src.operators.generic import StringOperator, IntegerOperator
 
 
 class IntegerAddition(IntegerOperator):
@@ -71,6 +71,16 @@ class StringLength(IntegerOperator):
 
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visit_string_length(self)
+
+
+class StringIndexof(IntegerOperator):
+    def __init__(self, input_1: StringOperator, input_2: StringOperator, input_3: IntegerOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+        self.operator_3 = input_3
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_string_indexof(self)
 
 
 class IntegerVariable(IntegerOperator):
@@ -118,6 +128,10 @@ class IntegerVisitor(ABC):
 
     @abstractmethod
     def visit_string_length(self, operator: StringLength):
+        pass
+
+    @abstractmethod
+    def visit_string_indexof(self, operator: StringIndexof):
         pass
 
     @abstractmethod
