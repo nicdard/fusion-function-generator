@@ -25,6 +25,7 @@
 # Look at the README to learn more.
 
 import random
+import string
 from abc import ABC, abstractmethod
 from src.operators.generic import IntegerOperator, StringOperator
 
@@ -69,7 +70,7 @@ class StringVariable(StringOperator):
 class StringLiteral(StringOperator):
     def __init__(self, name: str):
         self.name = name
-        self.value = ''.join([chr(random.randint(97, 122)) for _ in range(random.randint(0, 50))])
+        self.value = ''.join(random.sample(string.ascii_letters + string.digits, random.randint(0, 50)))
 
     def accept(self, visitor: 'StringVisitor'):
         return visitor.visit_string_literal(self)
