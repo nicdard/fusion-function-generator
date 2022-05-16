@@ -13,6 +13,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Generate operators
+        run:
+          python src/gen/generator.py operators
       - name: Run unittest
         run:
           python -m unittest discover -v
