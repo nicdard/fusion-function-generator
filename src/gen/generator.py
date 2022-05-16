@@ -61,7 +61,10 @@ def read_license():
     comments = []
     with open(license_path, "r") as license:
         for line in license.readlines():
-            comments.append(f"# {line}")
+            if line != "\n":
+                comments.append(f"# {line}")
+            else:
+                comments.append("#\n")
     comments.append("\n")
     return comments
 
