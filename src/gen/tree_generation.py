@@ -32,7 +32,8 @@ from src.gen.gen_configuration import (
     get_eligible_operator,
     get_root,
     get_operator_class,
-    get_arities
+    get_arities,
+    get_operator_parameters
 )
 
 constant_name_pattern = re.compile(r"^c\d+$")
@@ -122,11 +123,11 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable) -> O
         else:
             op_name = get_eligible_operator(operator_type, n)
 
-            for _ in range(n):
-                param, idx = recursive_generation(idx, operator_type)
+            for input_type in get_operator_parameters(operator_type, op_name):
+                param, idx = recursive_generation(idx, input_type)
                 params.append(param)
 
-        return get_operator_class(theory, op_name)(*params), idx
+        return get_operator_class(operator_type, op_name)(*params), idx
 
     operator_tree, _ = recursive_generation(0, theory)
     root_name = get_root(theory)

@@ -24,6 +24,7 @@
 from src.operators.boolean_theory import BooleanConstant
 from src.operators.integer_theory import IntegerConstant
 from src.operators.real_theory import RealConstant
+from src.operators.string_theory import StringLiteral
 from src.visitors.printer_visitor import PrinterVisitor
 
 
@@ -35,4 +36,7 @@ class SymbolicPrinterVisitor(PrinterVisitor):
         return operator.name
 
     def visit_real_constant(self, operator: RealConstant):
+        return operator.name
+
+    def visit_string_literal(self, operator: StringLiteral):
         return operator.name

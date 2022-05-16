@@ -61,3 +61,13 @@ class RealOperator(Operator):
     @abstractmethod
     def accept(self, visitor):
         pass
+
+
+class StringOperator(Operator):
+    @abstractmethod
+    def __init__(self, *inputs):
+        pass
+
+    @abstractmethod
+    def accept(self, visitor):
+        pass

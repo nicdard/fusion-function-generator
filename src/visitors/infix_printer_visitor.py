@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,37 +21,13 @@
 # SOFTWARE.
 
 
-from src.operators.boolean_theory import (
-    BooleanXor,
-    BooleanNot,
-    BooleanVariable,
-    BooleanConstant,
-    BooleanEquality,
-    BooleanVisitor
-)
-from src.operators.integer_theory import (
-    IntegerAddition,
-    IntegerSubtraction,
-    IntegerMultiplication,
-    IntegerDivision,
-    IntegerVariable,
-    IntegerConstant,
-    IntegerEquality,
-    IntegerVisitor
-)
-from src.operators.real_theory import (
-    RealAddition,
-    RealSubtraction,
-    RealMultiplication,
-    RealDivision,
-    RealVariable,
-    RealConstant,
-    RealEquality,
-    RealVisitor
-)
+from src.operators.boolean_theory import *
+from src.operators.integer_theory import *
+from src.operators.real_theory import *
+from src.operators.string_theory import *
 
 
-class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
+class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
     def visit_boolean_xor(self, operator: BooleanXor):
         return f"({operator.operator_1.accept(self)} xor {operator.operator_2.accept(self)})"
 
@@ -59,7 +35,7 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         return f"(not {operator.operator_1.accept(self)})"
 
     def visit_boolean_constant(self, operator: BooleanConstant):
-        return str(operator.name)
+        return operator.name
 
     def visit_boolean_variable(self, operator: BooleanVariable):
         return operator.name
@@ -80,7 +56,7 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         return f"({operator.operator_1.accept(self)} div {operator.operator_2.accept(self)})"
 
     def visit_integer_constant(self, operator: IntegerConstant):
-        return str(operator.name)
+        return operator.name
 
     def visit_integer_variable(self, operator: IntegerVariable):
         return operator.name
@@ -101,10 +77,33 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor):
         return f"({operator.operator_1.accept(self)} / {operator.operator_2.accept(self)})"
 
     def visit_real_constant(self, operator: RealConstant):
-        return str(operator.name)
+        return operator.name
 
     def visit_real_variable(self, operator: RealVariable):
         return operator.name
 
     def visit_real_equality(self, operator: RealEquality):
+        return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
+
+    def visit_string_concatenation(self, operator: StringConcatenation):
+        return f"({operator.operator_1.accept(self)} || {operator.operator_2.accept(self)})"
+
+    def visit_string_length(self, operator: StringLength):
+        return f"len({operator.operator_1.accept(self)})"
+
+    def visit_substring(self, operator: Substring):
+        return f"{operator.operator_1.accept(self)}" \
+               f"[{operator.operator_2.accept(self)}, {operator.operator_3.accept(self)}]"
+
+    def visit_string_replacement(self, operator: StringReplacement):
+        return f"{operator.operator_1.accept(self)}.replace" \
+               f"({operator.operator_2.accept(self)}, {operator.operator_3.accept(self)})"
+
+    def visit_string_variable(self, operator: StringVariable):
+        return operator.name
+
+    def visit_string_literal(self, operator: StringLiteral):
+        return operator.name
+
+    def visit_string_equality(self, operator: StringEquality):
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"

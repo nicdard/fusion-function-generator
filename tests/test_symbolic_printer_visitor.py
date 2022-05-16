@@ -22,30 +22,30 @@
 
 
 import unittest
-import sys
-
-
-sys.path.append("../../")
-
 
 from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
 from src.operators.real_theory import *
+from src.operators.string_theory import *
 from src.visitors.symbolic_printer_visitor import SymbolicPrinterVisitor
 
 
 class TestSymbolicPrinterVisitor(unittest.TestCase):
     def test_boolean_visitor_easy(self):
         tree = BooleanEquality(BooleanConstant('c0'), BooleanConstant('c1'))
-        self.assertEqual(tree.accept(SymbolicPrinterVisitor()), "(= c0 c1)")
+        self.assertEqual("(= c0 c1)", tree.accept(SymbolicPrinterVisitor()))
 
     def test_integer_visitor_easy(self):
         tree = IntegerEquality(IntegerConstant('c0'), IntegerConstant('c1'))
-        self.assertEqual(tree.accept(SymbolicPrinterVisitor()), "(= c0 c1)")
+        self.assertEqual("(= c0 c1)", tree.accept(SymbolicPrinterVisitor()))
 
     def test_real_visitor_easy(self):
         tree = RealEquality(RealConstant('c0'), RealConstant('c1'))
-        self.assertEqual(tree.accept(SymbolicPrinterVisitor()), "(= c0 c1)")
+        self.assertEqual("(= c0 c1)", tree.accept(SymbolicPrinterVisitor()))
+
+    def test_string_visitor_easy(self):
+        tree = StringEquality(StringLiteral('c0'), StringLiteral('c1'))
+        self.assertEqual("(= c0 c1)", tree.accept(SymbolicPrinterVisitor()))
 
     def test_boolean_visitor_hard(self):
         tree = BooleanEquality(
@@ -55,7 +55,8 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
                 BooleanXor(
                     BooleanVariable('y'), 
                     BooleanNot(BooleanConstant('c0')))))
-        self.assertEqual(tree.accept(SymbolicPrinterVisitor()), "(= z (xor (not x) (xor y (not c0))))")
+        symbolic_repr = tree.accept(SymbolicPrinterVisitor())
+        self.assertEqual("(= z (xor (not x) (xor y (not c0))))", symbolic_repr)
 
     def test_integer_visitor_hard(self):
         tree = IntegerEquality(
@@ -71,7 +72,8 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
                 IntegerDivision(
                     IntegerVariable('y'),
                     IntegerVariable('v'))))
-        self.assertEqual(tree.accept(SymbolicPrinterVisitor()), "(= z (+ (* c0 (- x c1)) (div y v)))")
+        symbolic_repr = tree.accept(SymbolicPrinterVisitor())
+        self.assertEqual("(= z (+ (* c0 (- x c1)) (div y v)))", symbolic_repr)
 
     def test_real_visitor_hard(self):
         tree = RealEquality(
@@ -85,47 +87,47 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
                         RealConstant('c1')),
                     RealVariable('y')),
                 RealConstant('c2')))
-        self.assertEqual(tree.accept(SymbolicPrinterVisitor()), "(= z (* (- (+ (/ x c0) c1) y) c2))")
+        symbolic_repr = tree.accept(SymbolicPrinterVisitor())
+        self.assertEqual("(= z (* (- (+ (/ x c0) c1) y) c2))", symbolic_repr)
+
+    def test_string_visitor_hard(self):
+        tree = StringEquality(
+            StringVariable('z'),
+            StringConcatenation(
+                StringReplacement(
+                    StringVariable('x'),
+                    StringLiteral('c0'),
+                    StringLiteral('c1')),
+                Substring(
+                    StringVariable('y'),
+                    StringLength(StringLiteral('c2')),
+                    IntegerConstant('c3'))))
+        symbolic_repr = tree.accept(SymbolicPrinterVisitor())
+        self.assertEqual("(= z (str.++ (str.replace x c0 c1) (str.substr y (str.len c2) c3)))", symbolic_repr)
 
     def test_boolean_visitor_inequality(self):
-        tree = BooleanEquality(
-            BooleanVariable('z'),
-            BooleanXor(
-                BooleanXor(
-                    BooleanVariable('y'), 
-                    BooleanNot(BooleanConstant('c0'))),
-                BooleanNot(BooleanVariable('x'))))
-        self.assertNotEqual(tree.accept(SymbolicPrinterVisitor()), "(= z (xor (not x) (xor y (not c0))))")
+        tree_1 = BooleanEquality(BooleanConstant('c0'), BooleanConstant('c1'))
+        tree_2 = BooleanEquality(BooleanVariable('x'), BooleanVariable('y'))
+        visitor = SymbolicPrinterVisitor()
+        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 
     def test_integer_visitor_inequality(self):
-        tree = IntegerEquality(
-            IntegerVariable('z'),
-            IntegerAddition(
-                IntegerMultiplication(
-                    IntegerSubtraction(
-                        IntegerVariable('x'),
-                        IntegerConstant('c1')
-                    ),
-                    IntegerConstant('c0')
-                ),
-                IntegerDivision(
-                    IntegerVariable('y'),
-                    IntegerVariable('v'))))
-        self.assertNotEqual(tree.accept(SymbolicPrinterVisitor()), "(= z (+ (* c0 (- x c1)) (div y v)))")
+        tree_1 = IntegerEquality(IntegerConstant('c0'), IntegerConstant('c1'))
+        tree_2 = IntegerEquality(IntegerVariable('x'), IntegerVariable('y'))
+        visitor = SymbolicPrinterVisitor()
+        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 
     def test_real_visitor_inequality(self):
-        tree = RealEquality(
-            RealVariable('z'),
-            RealMultiplication(
-                RealSubtraction(
-                    RealAddition(
-                        RealConstant('c1'),
-                        RealDivision(
-                            RealVariable('x'),
-                            RealConstant('c0'))),
-                    RealVariable('y')),
-                RealConstant('c2')))
-        self.assertNotEqual(tree.accept(SymbolicPrinterVisitor()), "(= z (* (- (+ (/ x c0) c1) y) c2))")
+        tree_1 = RealEquality(RealConstant('c0'), RealConstant('c1'))
+        tree_2 = RealEquality(RealVariable('x'), RealVariable('y'))
+        visitor = SymbolicPrinterVisitor()
+        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
+
+    def test_string_visitor_inequality(self):
+        tree_1 = StringEquality(StringLiteral('c0'), StringLiteral('c1'))
+        tree_2 = StringEquality(StringVariable('x'), StringVariable('y'))
+        visitor = SymbolicPrinterVisitor()
+        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 
 
 if __name__ == '__main__':
