@@ -72,6 +72,7 @@ def define_generic(output_dir: pathlib.Path, license: str):
     path = output_dir.joinpath("generic.py")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w+', encoding='utf-8') as f:
+        print(f"...emitting base classes to {path.as_uri()}")
         f.write(license + "\n")
         f.write("\n".join([
             WARNING_MESSAGE,
@@ -187,6 +188,7 @@ def define_ast(base_name: pathlib.Path, license: str):
         ])
         content.extend(define_visitor_interface(theory))
         with open(path, 'w+', encoding='utf-8') as f:
+            print(f"...emitting operators and visitor interface for {theory} to {path.as_uri()}")
             f.write("\n".join(content))
 
 
@@ -252,6 +254,7 @@ def main():
     # Ensure that the 'operators' folder exists.
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
 
+    print("Generate src/operators directory:")
     define_generic(output_dir, license)
     define_ast(output_dir, license)
 
