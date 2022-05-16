@@ -56,6 +56,7 @@ fringe_operators: Dict[str, Dict[str, List[str]]] = {
     "IntegerOperator": {
         "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
         "StringLength": ["StringOperator"],
+        "StringIndexof": ["StringOperator", "StringOperator", "IntegerOperator"],
     },
     "RealOperator": {
         "RealDivision": ["RealOperator", "RealOperator"],
