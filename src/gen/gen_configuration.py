@@ -123,7 +123,7 @@ def get_arities(theory: str) -> List[int]:
 
 
 def get_operator_parameters(theory: str, operator: str):
-    params = main_operators[theory][operator]
+    params = theory_declarations[theory][operator]
     for p in params:
         assert isinstance(p, str)
     return params

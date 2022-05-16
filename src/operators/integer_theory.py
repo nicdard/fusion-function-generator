@@ -26,7 +26,7 @@
 
 import random
 from abc import ABC, abstractmethod
-from src.operators.generic import IntegerOperator
+from src.operators.generic import IntegerOperator, StringOperator
 
 
 class IntegerAddition(IntegerOperator):
@@ -63,6 +63,14 @@ class IntegerDivision(IntegerOperator):
 
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visit_integer_division(self)
+
+
+class StringLength(IntegerOperator):
+    def __init__(self, input_1: StringOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_string_length(self)
 
 
 class IntegerVariable(IntegerOperator):
@@ -106,6 +114,10 @@ class IntegerVisitor(ABC):
 
     @abstractmethod
     def visit_integer_division(self, operator: IntegerDivision):
+        pass
+
+    @abstractmethod
+    def visit_string_length(self, operator: StringLength):
         pass
 
     @abstractmethod
