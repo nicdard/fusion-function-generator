@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -73,6 +73,7 @@ def define_generic(output_dir: pathlib.Path, license: str):
     path = output_dir.joinpath("generic.py")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w+', encoding='utf-8') as f:
+        print(f"...emitting base classes to {path.as_uri()}")
         f.write(license + "\n")
         f.write("\n".join([
             WARNING_MESSAGE,
@@ -109,7 +110,8 @@ def define_visitor_interface(theory: str) -> List[str]:
     ])
     for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
         content.append(f"    @abstractmethod")
-        content.append(f"    def visit_{camel_to_snake_case(operator)}(self, operator: {operator}):")
+        content.append(
+            f"    def visit_{camel_to_snake_case(operator)}(self, operator: {operator}):")
         content.append(f"        pass")
         content.append(f"")
     return content
@@ -189,6 +191,8 @@ def define_ast(base_name: pathlib.Path, license: str):
         ])
         content.extend(define_visitor_interface(theory))
         with open(path, 'w+', encoding='utf-8') as f:
+            print(
+                f"...emitting operators and visitor interface for {theory} to {path.as_uri()}")
             f.write("\n".join(content))
 
 
@@ -211,7 +215,8 @@ def define_visitor(output_dir: pathlib.Path, name: str, license: str):
         visitor_name = f"{get_theory_name(theory)}Visitor"
         extends.append(f"{visitor_name}")
 
-        content.append(f"from src.operators.{get_module_name(theory)} import (")
+        content.append(
+            f"from src.operators.{get_module_name(theory)} import (")
         for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
             content.append(f"    {operator},")
         content.append(f"    {visitor_name}")
@@ -225,7 +230,8 @@ def define_visitor(output_dir: pathlib.Path, name: str, license: str):
     ])
     for theory in get_theories():
         for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
-            content.append(f"    def visit_{camel_to_snake_case(operator)}(self, operator: {operator}):")
+            content.append(
+                f"    def visit_{camel_to_snake_case(operator)}(self, operator: {operator}):")
             content.append(f"        pass")
             content.append(f"")
     with open(path, 'w+', encoding='utf-8') as f:
@@ -254,12 +260,14 @@ def main():
     # Ensure that the 'operators' folder exists.
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
 
+    print("Generate src/operators directory:")
     define_generic(output_dir, license)
     define_ast(output_dir, license)
 
     print(sys.argv[1])
     if sys.argv[1] == "stub":
-        define_visitor(script_path.parent.joinpath("visitors"), sys.argv[2], license)
+        define_visitor(script_path.parent.joinpath(
+            "visitors"), sys.argv[2], license)
 
 
 if __name__ == '__main__':
