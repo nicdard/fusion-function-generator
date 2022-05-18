@@ -60,14 +60,17 @@ def read_license():
     path = pathlib.Path(__file__).parent.resolve()
     license_path = path.parent.parent.joinpath("LICENSE")
     comments = []
-    with open(license_path, "r") as license:
-        for line in license.readlines():
-            comments.append(f"# {line}")
+    with open(license_path, "r") as license_file:
+        for line in license_file.readlines():
+            if line != "\n":
+                comments.append(f"# {line}")
+            else:
+                comments.append("#\n")
     comments.append("\n")
     return comments
 
 
-def define_generic(output_dir: pathlib.Path, license: str):
+def define_generic(output_dir: pathlib.Path, license_text: str):
     """
     Generates abstract classes. 
     """
@@ -75,7 +78,7 @@ def define_generic(output_dir: pathlib.Path, license: str):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w+', encoding='utf-8') as f:
         print(f"...emitting base classes to {path.as_uri()}")
-        f.write(license + "\n")
+        f.write(license_text + "\n")
         f.write("\n".join([
             WARNING_MESSAGE,
             "from abc import ABC, abstractmethod",
@@ -118,7 +121,7 @@ def define_visitor_interface(theory: str) -> List[str]:
     return content
 
 
-def define_ast(base_name: pathlib.Path, license: str):
+def define_ast(base_name: pathlib.Path, license_text: str):
     """
     Generates class hierarchy of operators for all theories.  
     """
@@ -127,7 +130,7 @@ def define_ast(base_name: pathlib.Path, license: str):
         operator_types = get_operator_types(theory)
         operator_types.sort()
         content = [
-            license,
+            license_text,
             WARNING_MESSAGE,
             *[f"import {module}" for module in get_required_modules(theory)],
             "from abc import ABC, abstractmethod",
@@ -198,7 +201,7 @@ def define_ast(base_name: pathlib.Path, license: str):
             f.write("\n".join(content))
 
 
-def define_visitor(output_dir: pathlib.Path, name: str, license: str):
+def define_visitor(output_dir: pathlib.Path, name: str, license_text: str):
     """
     Generates a stub implementation of all visitors of all theories.
     The visitor implementation is generated in the folder specified by output_dir.
@@ -210,7 +213,7 @@ def define_visitor(output_dir: pathlib.Path, name: str, license: str):
     class_name = f"{name.capitalize()}Visitor"
     path = output_dir.joinpath(file_name)
 
-    content = [license]
+    content = [license_text]
     extends = []
 
     for theory in get_theories():
@@ -246,7 +249,7 @@ def main():
     """
     script_path = pathlib.Path(__file__).parent.resolve()
     output_dir = script_path.parent.joinpath("operators")
-    license = "".join(read_license())
+    license_text = "".join(read_license())
 
     if len(sys.argv) < 2:
         print("Usage: \
@@ -263,13 +266,13 @@ def main():
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
 
     print("Generate src/operators directory:")
-    define_generic(output_dir, license)
-    define_ast(output_dir, license)
+    define_generic(output_dir, license_text)
+    define_ast(output_dir, license_text)
 
     print(sys.argv[1])
     if sys.argv[1] == "stub":
         define_visitor(script_path.parent.joinpath(
-            "visitors"), sys.argv[2], license)
+            "visitors"), sys.argv[2], license_text)
 
 
 if __name__ == '__main__':

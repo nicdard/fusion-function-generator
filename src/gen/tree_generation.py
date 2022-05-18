@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -63,13 +63,14 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
 
     def missing_nodes():
         return expected_nodes() - len(tree)
-    
+
     while len(tree) < size:
         remaining = size - expected_nodes()
 
         if remaining in range(1, min_op_arity):
             discrepancy = min_op_arity - remaining
-            print(f"Cannot match tree size {size} exactly, increasing to {size + discrepancy}...")
+            print(
+                f"Cannot match tree size {size} exactly, increasing to {size + discrepancy}...")
             size += discrepancy
             remaining += discrepancy
 
@@ -77,8 +78,9 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
         max_sub_leaves = (rem_operators - 1) * (max_op_arity - 1) + 1
         min_arity = max(1, rem_leaves - missing_nodes() - max_sub_leaves + 2)
 
-        branching_choices = [n for n in arities if n in range(min_arity, remaining+1)]
-        
+        branching_choices = [
+            n for n in arities if n in range(min_arity, remaining+1)]
+
         if not (missing_nodes() == 1 and remaining > 0):
             branching_choices.extend([0, 0])  # two different leaf operators
 
@@ -97,7 +99,8 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable) -> O
     num_constants = num_leaves - num_variables
 
     if num_leaves < num_variables:
-        raise ValueError("Not enough leaves to accommodate requested number of variables.")
+        raise ValueError(
+            "Not enough leaves to accommodate requested number of variables.")
 
     leaves = [False] * num_constants + [True] * num_variables
     random.shuffle(leaves)
@@ -145,7 +148,8 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
         # Check that names do not clash with constant generated names.
         for v in in_variables:
             if constant_name_pattern.match(v) is not None:
-                ValueError("The list of variables should not contain a name matching the constant name pattern: c[0-9]")
+                ValueError(
+                    "The list of variables should not contain a name matching the constant name pattern: c[0-9]")
 
     num_variables = len(in_variables)
     arities = get_arities(theory)

@@ -39,7 +39,7 @@ class ConstantVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
 
     def visit_boolean_constant(self, operator: BooleanConstant):
         return {operator.name: "Bool"}
-    
+
     def visit_boolean_equality(self, operator: BooleanEquality):
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
 
@@ -90,6 +90,10 @@ class ConstantVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
 
     def visit_string_length(self, operator: StringLength):
         return operator.operator_1.accept(self)
+
+    def visit_string_indexof(self, operator: StringIndexof):
+        return {**operator.operator_1.accept(self), **operator.operator_2.accept(self),
+                **operator.operator_3.accept(self)}
 
     def visit_substring(self, operator: Substring):
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self),

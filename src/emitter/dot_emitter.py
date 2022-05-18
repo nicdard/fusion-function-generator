@@ -21,22 +21,30 @@
 # SOFTWARE.
 
 
-from src.operators.boolean_theory import BooleanConstant
-from src.operators.integer_theory import IntegerConstant
-from src.operators.real_theory import RealConstant
-from src.operators.string_theory import StringLiteral
-from src.visitors.printer_visitor import PrinterVisitor
+import os
+from typing import List
+
+from src.operators.generic import Operator
+from src.visitors.dot_visitor import DotVisitor
+from src.visitors.rewrite_visitor import RewriteVisitor
 
 
-class SymbolicPrinterVisitor(PrinterVisitor):
-    def visit_boolean_constant(self, operator: BooleanConstant):
-        return operator.name
+def emit(trees: List[Operator], output_dir):
+    """
+    Emits multiple fusion functions and its inverses to the dot format.
+    Each function is placed in a separe subfolder inside ./out.
+    """
+    dot_printer = DotVisitor()
+    rewriter = RewriteVisitor()
+    for i, tree in enumerate(trees):
 
-    def visit_integer_constant(self, operator: IntegerConstant):
-        return operator.name
+        directory = os.path.join(output_dir, f"dot_{i}")
+        os.makedirs(directory, exist_ok=True)
+        with open(os.path.join(directory, "z.dot"), 'w', encoding='utf-8') as file:
+            digraph = tree.accept(dot_printer)
+            print(digraph, file=file)
 
-    def visit_real_constant(self, operator: RealConstant):
-        return operator.name
-
-    def visit_string_literal(self, operator: StringLiteral):
-        return operator.name
+        for inv_i, inverse in enumerate(tree.accept(rewriter)):
+            with open(os.path.join(directory, f"inv_{inv_i}.dot"), 'w', encoding='utf-8') as file:
+                digraph = inverse.accept(dot_printer)
+                print(digraph, file=file)

@@ -1,17 +1,17 @@
 # MIT License
-# 
+#
 # Copyright (c) 2022 Nicola Dardanis, Lucas Weitzendorf
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -45,7 +45,8 @@ class TestRewriteVisitor(unittest.TestCase):
 
     def assert_any_of_trees(self, expected_list: List[Operator], tree: Operator):
         visitor = SymbolicPrinterVisitor()
-        self.assertIn(tree.accept(visitor), [expected.accept(visitor) for expected in expected_list])
+        self.assertIn(tree.accept(visitor), [expected.accept(
+            visitor) for expected in expected_list])
 
     def test_boolean_visitor_easy(self):
         tree = BooleanEquality(BooleanVariable('x'), BooleanVariable('y'))
@@ -82,7 +83,8 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
-        tree_2 = BooleanEquality(BooleanVariable('x'), BooleanNot(BooleanVariable('y')))
+        tree_2 = BooleanEquality(BooleanVariable(
+            'x'), BooleanNot(BooleanVariable('y')))
         inverses_2 = tree_2.accept(visitor)
         self.assertEqual(1, len(inverses_2))
 
@@ -95,7 +97,8 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
-        tree_2 = IntegerEquality(IntegerVariable('x'), IntegerAddition(IntegerVariable('y'), IntegerConstant('c')))
+        tree_2 = IntegerEquality(IntegerVariable('x'), IntegerAddition(
+            IntegerVariable('y'), IntegerConstant('c')))
         inverses_2 = tree_2.accept(visitor)
         self.assertEqual(1, len(inverses_2))
 
@@ -108,7 +111,8 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
-        tree_2 = RealEquality(RealVariable('x'), RealAddition(RealVariable('y'), RealConstant('c')))
+        tree_2 = RealEquality(RealVariable('x'), RealAddition(
+            RealVariable('y'), RealConstant('c')))
         inverses_2 = tree_2.accept(visitor)
         self.assertEqual(1, len(inverses_2))
 
@@ -121,7 +125,8 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
-        tree_2 = StringEquality(StringVariable('x'), StringConcatenation(StringVariable('y'), StringLiteral('c')))
+        tree_2 = StringEquality(StringVariable('x'), StringConcatenation(
+            StringVariable('y'), StringLiteral('c')))
         inverses_2 = tree_2.accept(visitor)
         self.assertEqual(1, len(inverses_2))
 
@@ -131,9 +136,9 @@ class TestRewriteVisitor(unittest.TestCase):
         tree = BooleanEquality(
             BooleanVariable('z'),
             BooleanXor(
-                BooleanNot(BooleanVariable('x')), 
+                BooleanNot(BooleanVariable('x')),
                 BooleanXor(
-                    BooleanVariable('y'), 
+                    BooleanVariable('y'),
                     BooleanNot(
                         BooleanConstant('c0')))))
         inverses = tree.accept(RewriteVisitor())
@@ -269,14 +274,30 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(2, len(inverses))
 
-        expected_x = StringEquality(
+        expected_x_1 = StringEquality(
             StringVariable('x'),
             Substring(
                 StringVariable('z'),
                 IntegerConstant('0'),
                 StringLength(
                     StringVariable('x'))))
-        self.assert_equal_trees(expected_x, inverses[0])
+
+        expected_x_2 = StringEquality(
+            StringVariable('x'),
+            Substring(
+                StringVariable('z'),
+                IntegerConstant('0'),
+                StringIndexof(
+                    StringVariable('z'),
+                    StringConcatenation(
+                        StringReplacement(
+                            StringLiteral('c0'),
+                            StringLiteral('c1'),
+                            StringLiteral('c2')),
+                        StringVariable('y')),
+                    StringLength(StringVariable('x')))))
+
+        self.assert_any_of_trees([expected_x_1, expected_x_2], inverses[0])
 
         expected_y_1 = StringEquality(
             StringVariable('y'),
@@ -344,7 +365,205 @@ class TestRewriteVisitor(unittest.TestCase):
                         StringLiteral('c2'))),
                 StringLength(
                     StringVariable('y'))))
-        self.assert_any_of_trees([expected_y_1, expected_y_2, expected_y_3, expected_y_4], inverses[1])
+        expected_y_5 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                Substring(
+                    StringVariable('z'),
+                    StringLength(StringVariable('x')),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringIndexof(
+                    Substring(
+                        StringVariable('z'),
+                        StringLength(StringVariable('x')),
+                        StringLength(
+                            StringConcatenation(
+                                StringReplacement(
+                                    StringLiteral('c0'),
+                                    StringLiteral('c1'),
+                                    StringLiteral('c2')),
+                                StringVariable('y')))),
+                    StringVariable('y'),
+                    StringLength(
+                        StringReplacement(
+                            StringLiteral('c0'),
+                            StringLiteral('c1'),
+                            StringLiteral('c2')))),
+                StringLength(StringVariable('y'))))
+        expected_y_6 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                Substring(
+                    StringVariable('z'),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')),
+                        StringLength(StringVariable('x'))),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringLength(
+                    StringReplacement(
+                        StringLiteral('c0'),
+                        StringLiteral('c1'),
+                        StringLiteral('c2'))),
+                StringLength(StringVariable('y'))))
+        expected_y_7 = StringEquality(
+            StringVariable('y'),
+            StringReplacement(
+                Substring(
+                    StringVariable('z'),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')),
+                        StringLength(StringVariable('x'))),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringReplacement(
+                    StringLiteral('c0'),
+                    StringLiteral('c1'),
+                    StringLiteral('c2')),
+                StringLiteral('""')))
+        expected_y_8 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                Substring(
+                    StringVariable('z'),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')),
+                        StringLength(StringVariable('x'))),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringIndexof(
+                    Substring(
+                        StringVariable('z'),
+                        StringLength(StringVariable('x')),
+                        StringLength(
+                            StringConcatenation(
+                                StringReplacement(
+                                    StringLiteral('c0'),
+                                    StringLiteral('c1'),
+                                    StringLiteral('c2')),
+                                StringVariable('y')))),
+                    StringVariable('y'),
+                    StringLength(
+                        StringReplacement(
+                            StringLiteral('c0'),
+                            StringLiteral('c1'),
+                            StringLiteral('c2')))),
+                StringLength(StringVariable('y'))))
+        expected_y_9 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                StringReplacement(
+                    StringVariable('z'),
+                    StringVariable('x'),
+                    StringLiteral('""')),
+                StringIndexof(
+                    StringReplacement(
+                        StringVariable('z'),
+                        StringVariable('x'),
+                        StringLiteral('""')),
+                    StringVariable('y'),
+                    StringLength(
+                        StringReplacement(
+                            StringLiteral('c0'),
+                            StringLiteral('c1'),
+                            StringLiteral('c2')))),
+                StringLength(StringVariable('y'))))
+
+        expected_y_8 = StringEquality(
+            StringVariable('y'),
+            Substring(
+                Substring(
+                    StringVariable('z'),
+                    StringIndexof(
+                        StringVariable('z'),
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')),
+                        StringLength(StringVariable('x'))),
+                    StringLength(
+                        StringConcatenation(
+                            StringReplacement(
+                                StringLiteral('c0'),
+                                StringLiteral('c1'),
+                                StringLiteral('c2')),
+                            StringVariable('y')))),
+                StringIndexof(
+                    Substring(
+                        StringVariable('z'),
+                        StringIndexof(
+                            StringVariable('z'),
+                            StringConcatenation(
+                                StringReplacement(
+                                    StringLiteral('c0'),
+                                    StringLiteral('c1'),
+                                    StringLiteral('c2')),
+                                StringVariable('y')),
+                            StringLength(StringVariable('x'))),
+                        StringLength(
+                            StringConcatenation(
+                                StringReplacement(
+                                    StringLiteral('c0'),
+                                    StringLiteral('c1'),
+                                    StringLiteral('c2')),
+                                StringVariable('y')))),
+                    StringVariable('y'),
+                    StringLength(StringReplacement(
+                        StringLiteral('c0'),
+                        StringLiteral('c1'),
+                        StringLiteral('c2')))),
+                StringLength(StringVariable('y'))))
+        self.assert_any_of_trees([expected_y_1,
+                                  expected_y_2,
+                                  expected_y_3,
+                                  expected_y_4,
+                                  expected_y_5,
+                                  expected_y_6,
+                                  expected_y_7,
+                                  expected_y_8,
+                                  expected_y_9,
+                                  ], inverses[1])
 
 
 if __name__ == '__main__':
