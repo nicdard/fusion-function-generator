@@ -96,6 +96,14 @@ root_operators: Dict[str, str] = {
     "StringOperator": "StringEquality",
 }
 
+# A map from command line options to the internal representation.
+option_to_operator_type: Dict[str, str] = {
+    "bool": "BooleanOperator",
+    "int": "IntegerOperator",
+    "real": "RealOperator",
+    "string": "StringOperator",
+}
+
 
 def get_theories():
     return list(theory_declarations.keys())
