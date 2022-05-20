@@ -61,6 +61,9 @@ def main(args):
                           for option in args.theories]
     if args.verbose:
         print(f"Using theories: {operator_types}")
+        print(f"Output to: {os.path.join(output_dir, file_name)}")
+        print(f"Number of functions: {args.num_functions}")
+        print(f"Size of a function: {args.size}\n")
 
     infix_printer = InfixPrinterVisitor()
     trees = []
@@ -69,7 +72,7 @@ def main(args):
         tree = generate_tree(root_type, args.size, ['y', 'x'], 'z')
         trees.append(tree)
         if args.verbose:
-            print(f"{tree.accept(infix_printer)}\n")
+            print(f"{i}. {tree.accept(infix_printer)}")
     yinyang_emitter.emit(trees, os.path.join(
         output_dir, file_name), args, is_symbolic=True)
     if args.dot:
