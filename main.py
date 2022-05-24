@@ -43,6 +43,8 @@ def parse_args():
                         default='fusion_functions', help='name of the output file')
     parser.add_argument('--dot', '-d', action='store_true',
                         help='emit formulas and inverses also to dot files')
+    parser.add_argument('--theories', choices=['bool', 'int', 'real', 'string'], nargs='+',
+                        default=[], help='specify the theories to be used during generation')
     return parser.parse_args()
 
 
@@ -54,6 +56,15 @@ def main(args):
         file_name += '.txt'
 
     operator_types = gen_configuration.get_theories()
+    if args.theories:
+        operator_types = [gen_configuration.option_to_operator_type[option]
+                          for option in args.theories]
+    if args.verbose:
+        print(f"Using theories: {operator_types}")
+        print(f"Output to: {os.path.join(output_dir, file_name)}")
+        print(f"Number of functions: {args.num_functions}")
+        print(f"Function size: {args.size}\n")
+
     infix_printer = InfixPrinterVisitor()
     trees = []
     for i in range(args.num_functions):
@@ -61,7 +72,7 @@ def main(args):
         tree = generate_tree(root_type, args.size, ['y', 'x'], 'z')
         trees.append(tree)
         if args.verbose:
-            print(f"{tree.accept(infix_printer)}\n")
+            print(f"{i + 1}. {tree.accept(infix_printer)}")
     yinyang_emitter.emit(trees, os.path.join(
         output_dir, file_name), args, is_symbolic=True)
     if args.dot:
