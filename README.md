@@ -70,6 +70,29 @@ To run them, simply type:
 
 > python3 -m unittest discover -v
 
+## Benchmarking
+
+A Docker image `ffg` with the latest version of cvc5 and z3 instrumented with gcov is available by building the provided Dockerfile:
+
+> docker build ./benchmarking -t ffg
+
+To run it, simply type:
+
+> docker run -it --name ffg ffg
+
+This will create a container named `ffg` in interactive mode. Note that the shell is `bash`.
+
+To keep data between multiple runs of the container type:
+
+> docker run -it --mount source=ffg-vol,destination=/app/ --name ffg ffg
+
+Note that this will also persist changes in the gcov files used to count the coverage information.
+Just mount the volume in a different directory if you want to have fresh build of z3 and cvc5.
+
+To open a new bash shell on a container (named `ffg`) running a benchmark:
+
+> docker exec -it ffg /bin/bash
+
 ## References
 
 See [docs](docs).
