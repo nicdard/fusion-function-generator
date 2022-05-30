@@ -24,9 +24,13 @@ RUN apt-get update && \
     python-is-python3 \
     sudo
 
-RUN pip3 install toml ddsmt
+RUN pip3 install toml ddsmt antlr4-python3-runtime==4.9.2
 
 WORKDIR /app/
+
+RUN git clone https://github.com/testsmt/yinyang.git
+
+RUN git clone https://github.com/testsmt/semantic-fusion-seeds.git
 
 # Clone z3 on changes to the master branch
 ADD https://api.github.com/repos/Z3Prover/z3/compare/master...HEAD /dev/null
@@ -45,5 +49,10 @@ RUN cd cvc5 && \
     cd build && \
     make && \
     make install
+
+# Get modified version of yinyang.
+RUN cd yinyang && \
+    git fetch origin pull/49/head:allow-multiple-constants && \
+    git checkout allow-multiple-constants
 
 COPY . .
