@@ -1,0 +1,743 @@
+; Generated with: https://github.com/nicdard/fusion-function-generator
+; 60 functions (number of #begin ... #end blocks)
+; 10 operators per function
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(assert (= z (not (xor (not (not (not c1))) (xor x (not y))))))
+(assert (= x (xor (not y) (xor (not (not (not c1))) (not z)))))
+(assert (= y (not (xor x (xor (not (not (not c1))) (not z))))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(assert (= z (not (xor x (not (not (not (not (not (not y))))))))))
+(assert (= x (xor (not (not (not (not (not (not y)))))) (not z))))
+(assert (= y (not (not (not (not (not (not (xor x (not z))))))))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (- (+ x c4) (* (* (* c3 y) c2) c1))))
+(assert (= x (- (+ z (* (* (* c3 y) c2) c1)) c4)))
+(assert (= y (div (div (div (- (+ x c4) z) c1) c2) c3)))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ c4 (str.++ c3 (str.++ x (str.++ y (str.++ c2 c1)))))))
+(assert (= x (str.substr (str.substr (str.replace z c4 "") (str.indexof (str.replace z c4 "") (str.++ x (str.++ y (str.++ c2 c1))) (str.len c3)) (str.len (str.++ x (str.++ y (str.++ c2 c1))))) 0 (str.indexof (str.substr (str.replace z c4 "") (str.indexof (str.replace z c4 "") (str.++ x (str.++ y (str.++ c2 c1))) (str.len c3)) (str.len (str.++ x (str.++ y (str.++ c2 c1))))) (str.++ y (str.++ c2 c1)) (str.len x)))))
+(assert (= y (str.substr (str.substr (str.substr (str.replace z c4 "") (str.indexof (str.replace z c4 "") (str.++ x (str.++ y (str.++ c2 c1))) (str.len c3)) (str.len (str.++ x (str.++ y (str.++ c2 c1))))) (str.indexof (str.substr (str.replace z c4 "") (str.indexof (str.replace z c4 "") (str.++ x (str.++ y (str.++ c2 c1))) (str.len c3)) (str.len (str.++ x (str.++ y (str.++ c2 c1))))) (str.++ y (str.++ c2 c1)) (str.len x)) (str.len (str.++ y (str.++ c2 c1)))) 0 (str.len y))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (- (* x (+ c4 c3)) (* c2 (- y c1)))))
+(assert (= x (/ (+ z (* c2 (- y c1))) (+ c4 c3))))
+(assert (= y (+ (/ (- (* x (+ c4 c3)) z) c2) c1)))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(assert (= z (xor c2 (xor (not c1) (not (xor x (not y)))))))
+(assert (= x (xor (not y) (not (xor (not c1) (xor c2 z))))))
+(assert (= y (not (xor x (not (xor (not c1) (xor c2 z)))))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (* (+ (+ c4 (* x (- c3 c2))) c1) y)))
+(assert (= x (/ (- (- (/ z y) c1) c4) (- c3 c2))))
+(assert (= y (/ z (+ (+ c4 (* x (- c3 c2))) c1))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ c4 (+ (* (- (* x c3) c2) y) c1))))
+(assert (= x (/ (+ (/ (- (- z c4) c1) y) c2) c3)))
+(assert (= y (/ (- (- z c4) c1) (- (* x c3) c2))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ (+ (- (+ (- c4 c3) x) c2) c1) y)))
+(assert (= x (- (+ (- (- z y) c1) c2) (- c4 c3))))
+(assert (= y (- z (+ (- (+ (- c4 c3) x) c2) c1))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(assert (= z (xor (not x) (not (not (not (not (not (not y)))))))))
+(assert (= x (not (xor (not (not (not (not (not (not y)))))) z))))
+(assert (= y (not (not (not (not (not (not (xor (not x) z)))))))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (+ (- (* c4 (* (- x c3) c2)) c1) y)))
+(assert (= x (+ (div (div (+ (- z y) c1) c4) c2) c3)))
+(assert (= y (- z (- (* c4 (* (- x c3) c2)) c1))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(assert (= z (not (xor (not (not c1)) (not (xor (not x) y))))))
+(assert (= x (not (xor y (not (xor (not (not c1)) (not z)))))))
+(assert (= y (xor (not x) (not (xor (not (not c1)) (not z))))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(assert (= z (xor c1 (xor x (not (not (not (not (not y)))))))))
+(assert (= x (xor (not (not (not (not (not y))))) (xor c1 z))))
+(assert (= y (not (not (not (not (not (xor x (xor c1 z)))))))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (- (* c4 x) (- c3 (+ (* c2 c1) y)))))
+(assert (= x (div (+ z (- c3 (+ (* c2 c1) y))) c4)))
+(assert (= y (- (- c3 (- (* c4 x) z)) (* c2 c1))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (+ c4 (- (* x c3) (- c2 (- y c1))))))
+(assert (= x (div (+ (- z c4) (- c2 (- y c1))) c3)))
+(assert (= y (+ (- c2 (- (* x c3) (- z c4))) c1)))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (- (+ c4 c3) (* (- (* c2 x) y) c1))))
+(assert (= x (div (+ (div (- (+ c4 c3) z) c1) y) c2)))
+(assert (= y (- (* c2 x) (div (- (+ c4 c3) z) c1))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (- (- (* (- c4 (* c3 x)) c2) y) c1)))
+(assert (= x (/ (- c4 (/ (+ (+ z c1) y) c2)) c3)))
+(assert (= y (- (* (- c4 (* c3 x)) c2) (+ z c1))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (+ (- (+ c4 (- (- c3 x) c2)) c1) y)))
+(assert (= x (- c3 (+ (- (+ (- z y) c1) c4) c2))))
+(assert (= y (- z (- (+ c4 (- (- c3 x) c2)) c1))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ (- c4 x) (- c3 (+ c2 (+ c1 y))))))
+(assert (= x (- c4 (- z (- c3 (+ c2 (+ c1 y)))))))
+(assert (= y (- (- (- c3 (- z (- c4 x))) c2) c1)))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (- x (+ c4 (* (+ (- y c3) c2) c1)))))
+(assert (= x (+ z (+ c4 (* (+ (- y c3) c2) c1)))))
+(assert (= y (+ (- (/ (- (- x z) c4) c1) c2) c3)))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ (- c4 x) (- (* (- c3 c2) c1) y))))
+(assert (= x (- c4 (- z (- (* (- c3 c2) c1) y)))))
+(assert (= y (- (* (- c3 c2) c1) (- z (- c4 x)))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(declare-const c3 Bool)
+(assert (= z (xor x (xor c3 (xor y (xor (not c2) c1))))))
+(assert (= x (xor (xor c3 (xor y (xor (not c2) c1))) z)))
+(assert (= y (xor (xor (not c2) c1) (xor c3 (xor x z)))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(assert (= z (xor c2 (xor (not x) (xor y (not (not c1)))))))
+(assert (= x (not (xor (xor y (not (not c1))) (xor c2 z)))))
+(assert (= y (xor (not (not c1)) (xor (not x) (xor c2 z)))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ (+ c4 (- (+ (* x c3) c2) c1)) y)))
+(assert (= x (/ (- (+ (- (- z y) c4) c1) c2) c3)))
+(assert (= y (- z (+ c4 (- (+ (* x c3) c2) c1)))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(declare-const c3 Bool)
+(assert (= z (xor (xor c3 (xor x c2)) (not (xor y c1)))))
+(assert (= x (xor c2 (xor c3 (xor (not (xor y c1)) z)))))
+(assert (= y (xor c1 (not (xor (xor c3 (xor x c2)) z)))))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ x (str.++ c4 (str.++ c3 (str.++ (str.++ c2 c1) y))))))
+(assert (= x (str.substr z 0 (str.indexof z (str.++ c4 (str.++ c3 (str.++ (str.++ c2 c1) y))) (str.len x)))))
+(assert (= y (str.substr (str.replace (str.substr (str.substr z (str.len x) (str.len (str.++ c4 (str.++ c3 (str.++ (str.++ c2 c1) y))))) (str.len c4) (str.len (str.++ c3 (str.++ (str.++ c2 c1) y)))) c3 "") (str.indexof (str.replace (str.substr (str.substr z (str.len x) (str.len (str.++ c4 (str.++ c3 (str.++ (str.++ c2 c1) y))))) (str.len c4) (str.len (str.++ c3 (str.++ (str.++ c2 c1) y)))) c3 "") y (str.len (str.++ c2 c1))) (str.len y))))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ (str.++ (str.++ (str.++ c4 (str.++ x c3)) y) c2) c1)))
+(assert (= x (str.substr (str.substr (str.substr (str.substr (str.substr z 0 (str.len (str.++ (str.++ (str.++ c4 (str.++ x c3)) y) c2))) 0 (str.len (str.++ (str.++ c4 (str.++ x c3)) y))) 0 (str.indexof (str.substr (str.substr z 0 (str.len (str.++ (str.++ (str.++ c4 (str.++ x c3)) y) c2))) 0 (str.len (str.++ (str.++ c4 (str.++ x c3)) y))) y (str.len (str.++ c4 (str.++ x c3))))) (str.len c4) (str.len (str.++ x c3))) 0 (str.indexof (str.substr (str.substr (str.substr (str.substr z 0 (str.len (str.++ (str.++ (str.++ c4 (str.++ x c3)) y) c2))) 0 (str.len (str.++ (str.++ c4 (str.++ x c3)) y))) 0 (str.indexof (str.substr (str.substr z 0 (str.len (str.++ (str.++ (str.++ c4 (str.++ x c3)) y) c2))) 0 (str.len (str.++ (str.++ c4 (str.++ x c3)) y))) y (str.len (str.++ c4 (str.++ x c3))))) (str.len c4) (str.len (str.++ x c3))) c3 (str.len x)))))
+(assert (= y (str.substr (str.substr (str.substr z 0 (str.len (str.++ (str.++ (str.++ c4 (str.++ x c3)) y) c2))) 0 (str.len (str.++ (str.++ c4 (str.++ x c3)) y))) (str.indexof (str.substr (str.substr z 0 (str.len (str.++ (str.++ (str.++ c4 (str.++ x c3)) y) c2))) 0 (str.len (str.++ (str.++ c4 (str.++ x c3)) y))) y (str.len (str.++ c4 (str.++ x c3)))) (str.len y))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(assert (= z (xor (xor (not (not x)) c2) (not (xor c1 y)))))
+(assert (= x (not (not (xor c2 (xor (not (xor c1 y)) z))))))
+(assert (= y (xor c1 (not (xor (xor (not (not x)) c2) z)))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (* x (+ (* (+ (+ c4 c3) c2) c1) y))))
+(assert (= x (div z (+ (* (+ (+ c4 c3) c2) c1) y))))
+(assert (= y (- (div z x) (* (+ (+ c4 c3) c2) c1))))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ c4 (str.++ (str.++ x (str.++ c3 c2)) (str.++ y c1)))))
+(assert (= x (str.substr (str.substr (str.substr z (str.len c4) (str.len (str.++ (str.++ x (str.++ c3 c2)) (str.++ y c1)))) 0 (str.len (str.++ x (str.++ c3 c2)))) 0 (str.indexof (str.substr (str.substr z (str.len c4) (str.len (str.++ (str.++ x (str.++ c3 c2)) (str.++ y c1)))) 0 (str.len (str.++ x (str.++ c3 c2)))) (str.++ c3 c2) (str.len x)))))
+(assert (= y (str.substr (str.replace (str.substr z (str.len c4) (str.len (str.++ (str.++ x (str.++ c3 c2)) (str.++ y c1)))) (str.++ x (str.++ c3 c2)) "") 0 (str.len y))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ c4 (+ c3 (- x (* (* y c2) c1))))))
+(assert (= x (+ (- (- z c4) c3) (* (* y c2) c1))))
+(assert (= y (/ (/ (- x (- (- z c4) c3)) c1) c2)))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ x (str.++ (str.++ c4 (str.++ c3 c2)) (str.++ y c1)))))
+(assert (= x (str.substr z 0 (str.indexof z (str.++ (str.++ c4 (str.++ c3 c2)) (str.++ y c1)) (str.len x)))))
+(assert (= y (str.substr (str.substr (str.replace z x "") (str.indexof (str.replace z x "") (str.++ y c1) (str.len (str.++ c4 (str.++ c3 c2)))) (str.len (str.++ y c1))) 0 (str.len y))))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2)) c1)))
+(assert (= x (str.substr (str.substr (str.substr z 0 (str.indexof z c1 (str.len (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2))))) 0 (str.indexof (str.substr z 0 (str.indexof z c1 (str.len (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2))))) (str.++ c3 c2) (str.len (str.++ x (str.++ y c4))))) 0 (str.indexof (str.substr (str.substr z 0 (str.indexof z c1 (str.len (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2))))) 0 (str.indexof (str.substr z 0 (str.indexof z c1 (str.len (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2))))) (str.++ c3 c2) (str.len (str.++ x (str.++ y c4))))) (str.++ y c4) (str.len x)))))
+(assert (= y (str.substr (str.substr (str.substr (str.substr z 0 (str.indexof z c1 (str.len (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2))))) 0 (str.indexof (str.substr z 0 (str.indexof z c1 (str.len (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2))))) (str.++ c3 c2) (str.len (str.++ x (str.++ y c4))))) (str.indexof (str.substr (str.substr z 0 (str.indexof z c1 (str.len (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2))))) 0 (str.indexof (str.substr z 0 (str.indexof z c1 (str.len (str.++ (str.++ x (str.++ y c4)) (str.++ c3 c2))))) (str.++ c3 c2) (str.len (str.++ x (str.++ y c4))))) (str.++ y c4) (str.len x)) (str.len (str.++ y c4))) 0 (str.len y))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (+ (+ (- c4 (+ c3 x)) c2) (- y c1))))
+(assert (= x (- (- c4 (- (- z (- y c1)) c2)) c3)))
+(assert (= y (+ (- z (+ (- c4 (+ c3 x)) c2)) c1)))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(declare-const c3 Bool)
+(assert (= z (not (xor (xor (xor (xor x c3) c2) y) c1))))
+(assert (= x (xor c3 (xor c2 (xor y (xor c1 (not z)))))))
+(assert (= y (xor (xor (xor x c3) c2) (xor c1 (not z)))))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ x (str.++ c4 (str.++ c3 (str.++ y (str.++ c2 c1)))))))
+(assert (= x (str.substr z 0 (str.len x))))
+(assert (= y (str.substr (str.substr (str.replace (str.substr z (str.len x) (str.len (str.++ c4 (str.++ c3 (str.++ y (str.++ c2 c1)))))) c4 "") (str.len c3) (str.len (str.++ y (str.++ c2 c1)))) 0 (str.indexof (str.substr (str.replace (str.substr z (str.len x) (str.len (str.++ c4 (str.++ c3 (str.++ y (str.++ c2 c1)))))) c4 "") (str.len c3) (str.len (str.++ y (str.++ c2 c1)))) (str.++ c2 c1) (str.len y)))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(assert (= z (xor (not c2) (xor x (xor (not (not y)) c1)))))
+(assert (= x (xor (xor (not (not y)) c1) (xor (not c2) z))))
+(assert (= y (not (not (xor c1 (xor x (xor (not c2) z)))))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(assert (= z (not (xor (xor x c2) (xor y (not (not c1)))))))
+(assert (= x (xor c2 (xor (xor y (not (not c1))) (not z)))))
+(assert (= y (xor (not (not c1)) (xor (xor x c2) (not z)))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(assert (= z (xor (not c2) (not (xor c1 (xor x (not y)))))))
+(assert (= x (xor (not y) (xor c1 (not (xor (not c2) z))))))
+(assert (= y (not (xor x (xor c1 (not (xor (not c2) z)))))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ (- x c4) (* c3 (+ (* y c2) c1)))))
+(assert (= x (+ (- z (* c3 (+ (* y c2) c1))) c4)))
+(assert (= y (/ (- (/ (- z (- x c4)) c3) c1) c2)))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (- c4 (+ c3 (* (- (* x c2) c1) y)))))
+(assert (= x (div (+ (div (- (- c4 z) c3) y) c1) c2)))
+(assert (= y (div (- (- c4 z) c3) (- (* x c2) c1))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(assert (= z (not (not (xor (xor (xor c2 (not c1)) x) y)))))
+(assert (= x (xor (xor c2 (not c1)) (xor y (not (not z))))))
+(assert (= y (xor (xor (xor c2 (not c1)) x) (not (not z)))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(assert (= z (not (not (xor (not c1) (not (xor x (not y))))))))
+(assert (= x (xor (not y) (not (xor (not c1) (not (not z)))))))
+(assert (= y (not (xor x (not (xor (not c1) (not (not z))))))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(declare-const c3 Bool)
+(assert (= z (xor x (xor (xor c3 (xor c2 y)) (not c1)))))
+(assert (= x (xor (xor (xor c3 (xor c2 y)) (not c1)) z)))
+(assert (= y (xor c2 (xor c3 (xor (not c1) (xor x z))))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (- (* c4 c3) (+ (* (- c2 c1) x) y))))
+(assert (= x (/ (- (- (* c4 c3) z) y) (- c2 c1))))
+(assert (= y (- (- (* c4 c3) z) (* (- c2 c1) x))))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ c4 (str.++ c3 (str.++ (str.++ (str.++ c2 x) c1) y)))))
+(assert (= x (str.substr (str.substr (str.substr (str.substr (str.substr z (str.len c4) (str.len (str.++ c3 (str.++ (str.++ (str.++ c2 x) c1) y)))) (str.len c3) (str.len (str.++ (str.++ (str.++ c2 x) c1) y))) 0 (str.indexof (str.substr (str.substr z (str.len c4) (str.len (str.++ c3 (str.++ (str.++ (str.++ c2 x) c1) y)))) (str.len c3) (str.len (str.++ (str.++ (str.++ c2 x) c1) y))) y (str.len (str.++ (str.++ c2 x) c1)))) 0 (str.len (str.++ c2 x))) (str.indexof (str.substr (str.substr (str.substr (str.substr z (str.len c4) (str.len (str.++ c3 (str.++ (str.++ (str.++ c2 x) c1) y)))) (str.len c3) (str.len (str.++ (str.++ (str.++ c2 x) c1) y))) 0 (str.indexof (str.substr (str.substr z (str.len c4) (str.len (str.++ c3 (str.++ (str.++ (str.++ c2 x) c1) y)))) (str.len c3) (str.len (str.++ (str.++ (str.++ c2 x) c1) y))) y (str.len (str.++ (str.++ c2 x) c1)))) 0 (str.len (str.++ c2 x))) x (str.len c2)) (str.len x))))
+(assert (= y (str.substr (str.substr (str.substr z (str.len c4) (str.len (str.++ c3 (str.++ (str.++ (str.++ c2 x) c1) y)))) (str.len c3) (str.len (str.++ (str.++ (str.++ c2 x) c1) y))) (str.len (str.++ (str.++ c2 x) c1)) (str.len y))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (- (* x y) (* (- (- c4 c3) c2) c1))))
+(assert (= x (/ (+ z (* (- (- c4 c3) c2) c1)) y)))
+(assert (= y (/ (+ z (* (- (- c4 c3) c2) c1)) x)))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ (str.++ x c4) (str.++ c3 (str.++ y (str.++ c2 c1))))))
+(assert (= x (str.substr (str.substr z 0 (str.indexof z (str.++ c3 (str.++ y (str.++ c2 c1))) (str.len (str.++ x c4)))) 0 (str.indexof (str.substr z 0 (str.indexof z (str.++ c3 (str.++ y (str.++ c2 c1))) (str.len (str.++ x c4)))) c4 (str.len x)))))
+(assert (= y (str.substr (str.replace (str.substr z (str.indexof z (str.++ c3 (str.++ y (str.++ c2 c1))) (str.len (str.++ x c4))) (str.len (str.++ c3 (str.++ y (str.++ c2 c1))))) c3 "") 0 (str.indexof (str.replace (str.substr z (str.indexof z (str.++ c3 (str.++ y (str.++ c2 c1))) (str.len (str.++ x c4))) (str.len (str.++ c3 (str.++ y (str.++ c2 c1))))) c3 "") (str.++ c2 c1) (str.len y)))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (- x (- (+ y c4) (- (+ c3 c2) c1)))))
+(assert (= x (+ z (- (+ y c4) (- (+ c3 c2) c1)))))
+(assert (= y (- (+ (- x z) (- (+ c3 c2) c1)) c4)))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (- (+ c4 (- (+ (+ c3 x) y) c2)) c1)))
+(assert (= x (- (- (+ (- (+ z c1) c4) c2) y) c3)))
+(assert (= y (- (+ (- (+ z c1) c4) c2) (+ c3 x))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(declare-const c3 Bool)
+(assert (= z (xor (xor (xor x (xor c3 c2)) c1) (not y))))
+(assert (= x (xor (xor c3 c2) (xor c1 (xor (not y) z)))))
+(assert (= y (not (xor (xor (xor x (xor c3 c2)) c1) z))))
+#end
+
+#begin
+(declare-const x Int)
+(declare-const y Int)
+(declare-const z Int)
+(declare-const c1 Int)
+(declare-const c2 Int)
+(declare-const c3 Int)
+(declare-const c4 Int)
+(assert (= z (- (- c4 (* x (+ (* c3 c2) c1))) y)))
+(assert (= x (div (- c4 (+ z y)) (+ (* c3 c2) c1))))
+(assert (= y (- (- c4 (* x (+ (* c3 c2) c1))) z)))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ (str.++ (str.++ c4 x) c3) (str.++ (str.++ c2 c1) y))))
+(assert (= x (str.substr (str.substr (str.substr z 0 (str.indexof z (str.++ (str.++ c2 c1) y) (str.len (str.++ (str.++ c4 x) c3)))) 0 (str.len (str.++ c4 x))) (str.indexof (str.substr (str.substr z 0 (str.indexof z (str.++ (str.++ c2 c1) y) (str.len (str.++ (str.++ c4 x) c3)))) 0 (str.len (str.++ c4 x))) x (str.len c4)) (str.len x))))
+(assert (= y (str.substr (str.substr z (str.indexof z (str.++ (str.++ c2 c1) y) (str.len (str.++ (str.++ c4 x) c3))) (str.len (str.++ (str.++ c2 c1) y))) (str.indexof (str.substr z (str.indexof z (str.++ (str.++ c2 c1) y) (str.len (str.++ (str.++ c4 x) c3))) (str.len (str.++ (str.++ c2 c1) y))) y (str.len (str.++ c2 c1))) (str.len y))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ (+ (+ c4 (- (* c3 x) y)) c2) c1)))
+(assert (= x (/ (+ (- (- (- z c1) c2) c4) y) c3)))
+(assert (= y (- (* c3 x) (- (- (- z c1) c2) c4))))
+#end
+
+#begin
+(declare-const x Bool)
+(declare-const y Bool)
+(declare-const z Bool)
+(declare-const c1 Bool)
+(declare-const c2 Bool)
+(assert (= z (xor x (not (xor (not (not c2)) (xor y c1))))))
+(assert (= x (xor (not (xor (not (not c2)) (xor y c1))) z)))
+(assert (= y (xor c1 (xor (not (not c2)) (not (xor x z))))))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (- (* (* (* x y) c4) c3) (+ c2 c1))))
+(assert (= x (/ (/ (/ (+ z (+ c2 c1)) c3) c4) y)))
+(assert (= y (/ (/ (/ (+ z (+ c2 c1)) c3) c4) x)))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ c4 (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))))))
+(assert (= x (str.substr (str.substr z (str.indexof z (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))) (str.len c4)) (str.len (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))))) 0 (str.len x))))
+(assert (= y (str.replace (str.substr (str.substr (str.substr (str.substr z (str.indexof z (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))) (str.len c4)) (str.len (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))))) (str.len x) (str.len (str.++ c3 (str.++ (str.++ c2 y) c1)))) (str.indexof (str.substr (str.substr z (str.indexof z (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))) (str.len c4)) (str.len (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))))) (str.len x) (str.len (str.++ c3 (str.++ (str.++ c2 y) c1)))) (str.++ (str.++ c2 y) c1) (str.len c3)) (str.len (str.++ (str.++ c2 y) c1))) 0 (str.indexof (str.substr (str.substr (str.substr z (str.indexof z (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))) (str.len c4)) (str.len (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))))) (str.len x) (str.len (str.++ c3 (str.++ (str.++ c2 y) c1)))) (str.indexof (str.substr (str.substr z (str.indexof z (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))) (str.len c4)) (str.len (str.++ x (str.++ c3 (str.++ (str.++ c2 y) c1))))) (str.len x) (str.len (str.++ c3 (str.++ (str.++ c2 y) c1)))) (str.++ (str.++ c2 y) c1) (str.len c3)) (str.len (str.++ (str.++ c2 y) c1))) c1 (str.len (str.++ c2 y)))) c2 "")))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (- (- (- (- c4 (+ c3 x)) c2) c1) y)))
+(assert (= x (- (- c4 (+ (+ (+ z y) c1) c2)) c3)))
+(assert (= y (- (- (- (- c4 (+ c3 x)) c2) c1) z)))
+#end
+
+#begin
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(declare-const c1 Real)
+(declare-const c2 Real)
+(declare-const c3 Real)
+(declare-const c4 Real)
+(assert (= z (+ c4 (- (+ c3 x) (* c2 (* c1 y))))))
+(assert (= x (- (+ (- z c4) (* c2 (* c1 y))) c3)))
+(assert (= y (/ (/ (- (+ c3 x) (- z c4)) c2) c1)))
+#end
+
+#begin
+(declare-const x String)
+(declare-const y String)
+(declare-const z String)
+(declare-const c1 String)
+(declare-const c2 String)
+(declare-const c3 String)
+(declare-const c4 String)
+(assert (= z (str.++ c4 (str.++ c3 (str.++ c2 (str.++ x (str.++ y c1)))))))
+(assert (= x (str.substr (str.substr (str.substr (str.replace z c4 "") (str.indexof (str.replace z c4 "") (str.++ c2 (str.++ x (str.++ y c1))) (str.len c3)) (str.len (str.++ c2 (str.++ x (str.++ y c1))))) (str.len c2) (str.len (str.++ x (str.++ y c1)))) 0 (str.indexof (str.substr (str.substr (str.replace z c4 "") (str.indexof (str.replace z c4 "") (str.++ c2 (str.++ x (str.++ y c1))) (str.len c3)) (str.len (str.++ c2 (str.++ x (str.++ y c1))))) (str.len c2) (str.len (str.++ x (str.++ y c1)))) (str.++ y c1) (str.len x)))))
+(assert (= y (str.substr (str.replace (str.substr (str.substr (str.replace z c4 "") (str.indexof (str.replace z c4 "") (str.++ c2 (str.++ x (str.++ y c1))) (str.len c3)) (str.len (str.++ c2 (str.++ x (str.++ y c1))))) (str.len c2) (str.len (str.++ x (str.++ y c1)))) x "") 0 (str.indexof (str.replace (str.substr (str.substr (str.replace z c4 "") (str.indexof (str.replace z c4 "") (str.++ c2 (str.++ x (str.++ y c1))) (str.len c3)) (str.len (str.++ c2 (str.++ x (str.++ y c1))))) (str.len c2) (str.len (str.++ x (str.++ y c1)))) x "") c1 (str.len y)))))
+#end
+
