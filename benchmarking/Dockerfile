@@ -11,7 +11,6 @@ RUN apt-get update && \
     doxygen \
     default-jdk \
     g++ \
-    gcovr \
     git \
     graphviz \
     libgmp-dev \
@@ -24,7 +23,7 @@ RUN apt-get update && \
     python-is-python3 \
     sudo
 
-RUN pip3 install toml ddsmt antlr4-python3-runtime==4.9.2
+RUN pip3 install toml ddsmt antlr4-python3-runtime==4.9.2 gcovr
 
 WORKDIR /app/
 
@@ -54,5 +53,9 @@ RUN cd cvc5 && \
 RUN cd yinyang && \
     git fetch origin pull/49/head:allow-multiple-constants && \
     git checkout allow-multiple-constants
+
+# Fix missclassification bug.
+RUN mv semantic-fusion-seeds/LIA/unsat/NUM899-1.smt2 semantic-fusion-seeds/LIA/sat/NUM899-1.smt2 && \ 
+    mv semantic-fusion-seeds/LIA/sat/NUM889-1.smt2  semantic-fusion-seeds/LIA/unsat/NUM889-1.smt2
 
 COPY . .
