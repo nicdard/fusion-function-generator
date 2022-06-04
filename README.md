@@ -93,6 +93,10 @@ To open a new bash shell on a container (named `ffg`) running a benchmark:
 
 > docker exec -it ffg /bin/bash
 
+To get a list of mounted volumes to a running container, type:
+
+> docker inspect -f '{{ .Mounts }}' \<container-id\>
+
 ## References
 
 See [docs](docs).
