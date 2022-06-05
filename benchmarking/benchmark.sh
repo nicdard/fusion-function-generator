@@ -12,14 +12,14 @@ do
   do
     # Run cvc5 for sat and unsat seeds.
     id=$(($id + 1))
-    docker run --mount source=ffg-$TIMESTAMP,destination=/app/vol --name ffg-$theory-sat-cvc5-$size ffg:$TIMESTAMP bash ./measure.sh $id cvc5 $theory sat /app/fusion_functions/$size.txt &
+    docker run --mount source=ffg-$TIMESTAMP,destination=/app/vol --name ffg2-$theory-sat-cvc5-$size ffg:$TIMESTAMP bash ./measure.sh $id cvc5 $theory sat /app/fusion_functions/$size.txt &
     id=$(($id + 1))
-    docker run --mount source=ffg-$TIMESTAMP,destination=/app/vol --name ffg-$theory-unsat-cvc5-$size ffg:$TIMESTAMP bash ./measure.sh $id cvc5 $theory unsat /app/fusion_functions/$size.txt &
+    docker run --mount source=ffg-$TIMESTAMP,destination=/app/vol --name ffg2-$theory-unsat-cvc5-$size ffg:$TIMESTAMP bash ./measure.sh $id cvc5 $theory unsat /app/fusion_functions/$size.txt &
     # Run z3 for sat and unsat seeds..
     id=$(($id + 1))
-    docker run --mount source=ffg-$TIMESTAMP,destination=/app/vol --name ffg-$theory-sat-z3-$size ffg:$TIMESTAMP bash ./measure.sh $id z3 $theory sat /app/fusion_functions/$size.txt &
+    docker run --mount source=ffg-$TIMESTAMP,destination=/app/vol --name ffg2-$theory-sat-z3-$size ffg:$TIMESTAMP bash ./measure.sh $id z3 $theory sat /app/fusion_functions/$size.txt &
     id=$(($id + 1))
-    docker run --mount source=ffg-$TIMESTAMP,destination=/app/vol --name ffg-$theory-unsat-z3-$size ffg:$TIMESTAMP bash ./measure.sh $id z3 $theory unsat /app/fusion_functions/$size.txt &
+    docker run --mount source=ffg-$TIMESTAMP,destination=/app/vol --name ffg2-$theory-unsat-z3-$size ffg:$TIMESTAMP bash ./measure.sh $id z3 $theory unsat /app/fusion_functions/$size.txt &
   done
 done
 

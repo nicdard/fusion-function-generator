@@ -32,9 +32,20 @@ echo "==============="
 cat $WORKDIR/options-$LOGIC-$ORACLE.txt
 echo "==============="
 
-cp $FUSION_FUNCTONS $WORKDIR
+# Dump to json file.
+echo "{" > $WORKDIR/options.json
+echo "  \"id\":\"$ID\"," >> $WORKDIR/options.json
+echo "  \"logic\":\"$LOGIC\"," >> $WORKDIR/options.json
+echo "  \"oracle\":\"$ORACLE\"," >> $WORKDIR/options.json
+echo "  \"fusion_functions\":\"vanilla-yinyang\"," >> $WORKDIR/options.json
+echo "  \"solver_cli\":\"$COMMAND\"," >> $WORKDIR/options.json
+echo "  \"solver_timeout\":\"$SMT_TIMEOUT\"" >> $WORKDIR/options.json
+echo "}" >> $WORKDIR/options.json
 
-#timeout 1h python3 yinyang/bin/yinyang -t $SMT_TIMEOUT -b $WORKDIR/bugs/$ORACLE -s $WORKDIR/scratch/$ORACLE -l $WORKDIR/logs/$ORACLE -c $WORKDIR/$FUSION_FUNCTONS -o $ORACLE "$COMMAND" /app/semantic-fusion-seeds/$LOGIC/$ORACLE
+
+cp $FUSION_FUNCTIONS $WORKDIR
+
+#timeout 1h python3 yinyang/bin/yinyang -t $SMT_TIMEOUT -b $WORKDIR/bugs/$ORACLE -s $WORKDIR/scratch/$ORACLE -l $WORKDIR/logs/$ORACLE -c $WORKDIR/$FUSION_FUNCTIONS -o $ORACLE "$COMMAND" /app/semantic-fusion-seeds/$LOGIC/$ORACLE
 timeout 1h python3 yinyang/bin/yinyang -t $SMT_TIMEOUT -b $WORKDIR/bugs/$ORACLE -s $WORKDIR/scratch/$ORACLE -l $WORKDIR/logs/$ORACLE -o $ORACLE "$COMMAND" /app/semantic-fusion-seeds/$LOGIC/$ORACLE
 
 /app/coverage.sh $2 $WORKDIR
