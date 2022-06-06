@@ -8,7 +8,7 @@ docker build . -t ffg:$TIMESTAMP
 BENCHMARKS="LIA LRA NRA QF_LIA QF_LRA QF_NRA QF_SLIA QF_S"
 for theory in $BENCHMARKS;
 do
-  for size in 10 20 50;
+  for size in 5 10 20 25 30 50;
   do
     # Run cvc5 for sat and unsat seeds.
     id=$(($id + 1))

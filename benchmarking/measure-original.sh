@@ -45,7 +45,6 @@ echo "}" >> $WORKDIR/options.json
 
 cp $FUSION_FUNCTIONS $WORKDIR
 
-#timeout 1h python3 yinyang/bin/yinyang -t $SMT_TIMEOUT -b $WORKDIR/bugs/$ORACLE -s $WORKDIR/scratch/$ORACLE -l $WORKDIR/logs/$ORACLE -c $WORKDIR/$FUSION_FUNCTIONS -o $ORACLE "$COMMAND" /app/semantic-fusion-seeds/$LOGIC/$ORACLE
 timeout 1h python3 yinyang/bin/yinyang -t $SMT_TIMEOUT -b $WORKDIR/bugs/$ORACLE -s $WORKDIR/scratch/$ORACLE -l $WORKDIR/logs/$ORACLE -o $ORACLE "$COMMAND" /app/semantic-fusion-seeds/$LOGIC/$ORACLE
 
 /app/coverage.sh $2 $WORKDIR
