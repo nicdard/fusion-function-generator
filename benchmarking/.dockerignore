@@ -1,0 +1,4 @@
+*.json
+coverage-to-latex.py
+latex.output.txt
+coverage-to-latex.py
