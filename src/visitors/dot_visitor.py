@@ -32,10 +32,10 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         self.id = 0
 
     def visit_boolean_xor(self, operator: BooleanXor):
-        return self.visit_operator("XOR", operator, 2)
+        return self.visit_operator("xor", operator, 2)
 
     def visit_boolean_not(self, operator: BooleanNot):
-        return self.visit_operator("NOT", operator, 1)
+        return self.visit_operator("not", operator, 1)
 
     def visit_boolean_constant(self, operator: BooleanConstant):
         return self.visit_constant(operator)
@@ -44,19 +44,19 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         return self.visit_variable(operator)
 
     def visit_boolean_equality(self, operator: BooleanEquality):
-        return self.visit_root("BOOL_EQ", operator)
+        return self.visit_root("=", operator)
 
     def visit_integer_addition(self, operator: IntegerAddition):
-        return self.visit_operator("INT_ADD", operator, 2)
+        return self.visit_operator("+", operator, 2)
 
     def visit_integer_subtraction(self, operator: IntegerSubtraction):
-        return self.visit_operator("INT_SUB", operator, 2)
+        return self.visit_operator("-", operator, 2)
 
     def visit_integer_multiplication(self, operator: IntegerMultiplication):
-        return self.visit_operator("INT_MUL", operator, 2)
+        return self.visit_operator("*", operator, 2)
 
     def visit_integer_division(self, operator: IntegerDivision):
-        return self.visit_operator("INT_DIV", operator, 2)
+        return self.visit_operator("div", operator, 2)
 
     def visit_integer_constant(self, operator: IntegerConstant):
         return self.visit_constant(operator)
@@ -65,19 +65,19 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         return self.visit_variable(operator)
 
     def visit_integer_equality(self, operator: IntegerEquality):
-        return self.visit_root("INT_EQ", operator)
+        return self.visit_root("=", operator)
 
     def visit_real_addition(self, operator: RealAddition):
-        return self.visit_operator("REAL_ADD", operator, 2)
+        return self.visit_operator("+", operator, 2)
 
     def visit_real_subtraction(self, operator: RealSubtraction):
-        return self.visit_operator("REAL_SUB", operator, 2)
+        return self.visit_operator("-", operator, 2)
 
     def visit_real_multiplication(self, operator: RealMultiplication):
-        return self.visit_operator("REAL_MUL", operator, 2)
+        return self.visit_operator("*", operator, 2)
 
     def visit_real_division(self, operator: RealDivision):
-        return self.visit_operator("REAL_DIV", operator, 2)
+        return self.visit_operator("/", operator, 2)
 
     def visit_real_constant(self, operator: RealConstant):
         return self.visit_constant(operator)
@@ -86,22 +86,22 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         return self.visit_variable(operator)
 
     def visit_real_equality(self, operator: RealEquality):
-        return self.visit_root("REAL_EQ", operator)
+        return self.visit_root("=", operator)
 
     def visit_string_concatenation(self, operator: StringConcatenation):
-        return self.visit_operator("STR_CONCAT", operator, 2)
+        return self.visit_operator("str.++", operator, 2)
 
     def visit_string_length(self, operator: StringLength):
-        return self.visit_operator("STR_LEN", operator, 1)
+        return self.visit_operator("str.len", operator, 1)
 
     def visit_string_indexof(self, operator: StringIndexof):
-        return self.visit_operator("STR_INDEX", operator, 3)
+        return self.visit_operator("str.indexof", operator, 3)
 
     def visit_substring(self, operator: Substring):
-        return self.visit_operator("SUBSTR", operator, 3)
+        return self.visit_operator("str.substr", operator, 3)
 
     def visit_string_replacement(self, operator: StringReplacement):
-        return self.visit_operator("STR_RPL", operator, 3)
+        return self.visit_operator("str.replace", operator, 3)
 
     def visit_string_variable(self, operator: StringVariable):
         return self.visit_variable(operator)
@@ -110,7 +110,7 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         return self.visit_constant(operator)
 
     def visit_string_equality(self, operator: StringEquality):
-        return self.visit_root("STR_EQ", operator)
+        return self.visit_root("=", operator)
 
     def visit_root(self, label: str, operator: Operator):
         heading = "digraph {\n"
