@@ -32,14 +32,14 @@ from src.visitors.rewrite_visitor import RewriteVisitor
 def emit(trees: List[Operator], output_dir):
     """
     Emits multiple fusion functions and its inverses to the dot format.
-    Each function is placed in a separe subfolder inside ./out.
+    Each function is placed in a separate subdirectory inside ./out.
     """
     dot_printer = DotVisitor()
     rewriter = RewriteVisitor()
     for i, tree in enumerate(trees):
-
         directory = os.path.join(output_dir, f"dot_{i}")
         os.makedirs(directory, exist_ok=True)
+
         with open(os.path.join(directory, "z.dot"), 'w', encoding='utf-8') as file:
             digraph = tree.accept(dot_printer)
             print(digraph, file=file)
