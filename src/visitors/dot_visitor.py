@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from src.operators.generic import Operator
 from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
 from src.operators.real_theory import *
@@ -32,90 +31,106 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         self.id = 0
 
     def visit_boolean_xor(self, operator: BooleanXor):
-        return self.visit_operator("xor", operator, 2)
+        return self._visit_operator("xor", operator, 2)
 
     def visit_boolean_not(self, operator: BooleanNot):
-        return self.visit_operator("not", operator, 1)
+        return self._visit_operator("not", operator, 1)
 
     def visit_boolean_constant(self, operator: BooleanConstant):
-        return self.visit_constant(operator)
+        return self._visit_constant(operator)
 
     def visit_boolean_variable(self, operator: BooleanVariable):
-        return self.visit_variable(operator)
+        return self._visit_variable(operator)
 
     def visit_boolean_equality(self, operator: BooleanEquality):
-        return self.visit_root("=", operator)
+        return self._visit_root("=", operator)
 
     def visit_integer_addition(self, operator: IntegerAddition):
-        return self.visit_operator("+", operator, 2)
+        return self._visit_operator("+", operator, 2)
 
     def visit_integer_subtraction(self, operator: IntegerSubtraction):
-        return self.visit_operator("-", operator, 2)
+        return self._visit_operator("-", operator, 2)
 
     def visit_integer_multiplication(self, operator: IntegerMultiplication):
-        return self.visit_operator("*", operator, 2)
+        return self._visit_operator("*", operator, 2)
 
     def visit_integer_division(self, operator: IntegerDivision):
-        return self.visit_operator("div", operator, 2)
+        return self._visit_operator("div", operator, 2)
 
     def visit_integer_constant(self, operator: IntegerConstant):
-        return self.visit_constant(operator)
+        return self._visit_constant(operator)
 
     def visit_integer_variable(self, operator: IntegerVariable):
-        return self.visit_variable(operator)
+        return self._visit_variable(operator)
 
     def visit_integer_equality(self, operator: IntegerEquality):
-        return self.visit_root("=", operator)
+        return self._visit_root("=", operator)
 
     def visit_real_addition(self, operator: RealAddition):
-        return self.visit_operator("+", operator, 2)
+        return self._visit_operator("+", operator, 2)
 
     def visit_real_subtraction(self, operator: RealSubtraction):
-        return self.visit_operator("-", operator, 2)
+        return self._visit_operator("-", operator, 2)
 
     def visit_real_multiplication(self, operator: RealMultiplication):
-        return self.visit_operator("*", operator, 2)
+        return self._visit_operator("*", operator, 2)
 
     def visit_real_division(self, operator: RealDivision):
-        return self.visit_operator("/", operator, 2)
+        return self._visit_operator("/", operator, 2)
 
     def visit_real_constant(self, operator: RealConstant):
-        return self.visit_constant(operator)
+        return self._visit_constant(operator)
 
     def visit_real_variable(self, operator: RealVariable):
-        return self.visit_variable(operator)
+        return self._visit_variable(operator)
 
     def visit_real_equality(self, operator: RealEquality):
-        return self.visit_root("=", operator)
+        return self._visit_root("=", operator)
 
     def visit_string_concatenation(self, operator: StringConcatenation):
-        return self.visit_operator("str.++", operator, 2)
+        return self._visit_operator("str.++", operator, 2)
 
     def visit_string_length(self, operator: StringLength):
-        return self.visit_operator("str.len", operator, 1)
+        return self._visit_operator("str.len", operator, 1)
 
     def visit_string_indexof(self, operator: StringIndexof):
-        return self.visit_operator("str.indexof", operator, 3)
+        return self._visit_operator("str.indexof", operator, 3)
 
     def visit_substring(self, operator: Substring):
-        return self.visit_operator("str.substr", operator, 3)
+        return self._visit_operator("str.substr", operator, 3)
 
     def visit_string_replacement(self, operator: StringReplacement):
-        return self.visit_operator("str.replace", operator, 3)
+        return self._visit_operator("str.replace", operator, 3)
 
     def visit_string_variable(self, operator: StringVariable):
-        return self.visit_variable(operator)
+        return self._visit_variable(operator)
 
-    def visit_string_literal(self, operator: StringLiteral):
-        return self.visit_constant(operator)
+    def visit_string_constant(self, operator: StringLiteral):
+        return self._visit_constant(operator)
 
     def visit_string_equality(self, operator: StringEquality):
-        return self.visit_root("=", operator)
+        return self._visit_root("=", operator)
 
-    def visit_root(self, label: str, operator: Operator):
+    def visit_boolean_literal(self, operator: BooleanLiteral):
+        name = self._generate_node_name()
+        return name, {name: str(operator.value).lower()}, {}
+
+    def visit_integer_literal(self, operator: IntegerLiteral):
+        name = self._generate_node_name()
+        return name, {name: str(operator.value)}, {}
+
+    def visit_real_literal(self, operator: RealLiteral):
+        name = self._generate_node_name()
+        return name, {name: str(operator.value)}, {}
+
+    def visit_string_literal(self, operator: StringLiteral):
+        name = self._generate_node_name()
+        return name, {name: f"\"{operator.value}\""}, {}
+
+    def _visit_root(self, label, operator):
         heading = "digraph {\n"
         ending = "\n}"
-        name = self.generate_node_name()
+        name = self._generate_node_name()
         op_1, children_1, edges_1 = operator.operator_1.accept(self)
         op_2, children_2, edges_2 = operator.operator_2.accept(self)
         nodes = {name: label, **children_1, **children_2}
@@ -127,7 +142,7 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         content = heading + "\n".join(nodes) + "\n" + "\n".join(edges) + ending
         return content
 
-    def visit_operator(self, label: str, operator: Operator, arity: int):
+    def _visit_operator(self, label, operator, arity):
         op_ids, ops, edges = [], dict(), dict()
 
         for i in range(arity):
@@ -137,17 +152,17 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
             ops = {**ops, **op}
             edges = {**edges, **sub_edges}
 
-        name = self.generate_node_name()
+        name = self._generate_node_name()
         return name, {name: label, **ops}, {name: op_ids, **edges}
 
-    def visit_constant(self, operator: Operator):
-        name = self.generate_node_name()
-        return name, {name: operator.value}, {}
-
-    def visit_variable(self, operator: Operator):
-        name = self.generate_node_name()
+    def _visit_constant(self, operator):
+        name = self._generate_node_name()
         return name, {name: operator.name}, {}
 
-    def generate_node_name(self):
+    def _visit_variable(self, operator):
+        name = self._generate_node_name()
+        return name, {name: operator.name}, {}
+
+    def _generate_node_name(self):
         self.id += 1
         return f"n{self.id}"

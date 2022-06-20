@@ -74,8 +74,7 @@ def main(args):
         trees.append(tree)
         if args.verbose:
             print(f"{i + 1}. {tree.accept(infix_printer)}")
-    yinyang_emitter.emit(trees, os.path.join(
-        output_dir, file_name), args, is_symbolic=True)
+    yinyang_emitter.emit(trees, os.path.join(output_dir, file_name), args)
     if args.dot:
         dot_emitter.emit(trees, output_dir)
 

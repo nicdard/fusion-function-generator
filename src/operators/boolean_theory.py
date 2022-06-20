@@ -24,9 +24,16 @@
 # WARNING: This file has been generated and shouldn't be edited manually!
 # Look at the README to learn more.
 
-import random
 from abc import ABC, abstractmethod
 from src.operators.generic import BooleanOperator
+
+
+class BooleanNot(BooleanOperator):
+    def __init__(self, input_1: BooleanOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'BooleanVisitor'):
+        return visitor.visit_boolean_not(self)
 
 
 class BooleanXor(BooleanOperator):
@@ -38,29 +45,28 @@ class BooleanXor(BooleanOperator):
         return visitor.visit_boolean_xor(self)
 
 
-class BooleanNot(BooleanOperator):
-    def __init__(self, input_1: BooleanOperator):
-        self.operator_1 = input_1
-
-    def accept(self, visitor: 'BooleanVisitor'):
-        return visitor.visit_boolean_not(self)
-
-
 class BooleanVariable(BooleanOperator):
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self):
+        pass
 
     def accept(self, visitor: 'BooleanVisitor'):
         return visitor.visit_boolean_variable(self)
 
 
 class BooleanConstant(BooleanOperator):
-    def __init__(self, name: str):
-        self.name = name
-        self.value = random.random() > 0.5
+    def __init__(self):
+        pass
 
     def accept(self, visitor: 'BooleanVisitor'):
         return visitor.visit_boolean_constant(self)
+
+
+class BooleanLiteral(BooleanOperator):
+    def __init__(self, value):
+        self.value = value
+
+    def accept(self, visitor: 'BooleanVisitor'):
+        return visitor.visit_boolean_literal(self)
 
 
 class BooleanEquality(BooleanOperator):
@@ -74,11 +80,11 @@ class BooleanEquality(BooleanOperator):
 
 class BooleanVisitor(ABC):
     @abstractmethod
-    def visit_boolean_xor(self, operator: BooleanXor):
+    def visit_boolean_not(self, operator: BooleanNot):
         pass
 
     @abstractmethod
-    def visit_boolean_not(self, operator: BooleanNot):
+    def visit_boolean_xor(self, operator: BooleanXor):
         pass
 
     @abstractmethod
@@ -87,6 +93,10 @@ class BooleanVisitor(ABC):
 
     @abstractmethod
     def visit_boolean_constant(self, operator: BooleanConstant):
+        pass
+
+    @abstractmethod
+    def visit_boolean_literal(self, operator: BooleanLiteral):
         pass
 
     @abstractmethod

@@ -27,131 +27,137 @@ from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
 from src.operators.real_theory import *
 from src.operators.string_theory import *
+
+from src.visitors.initialization_visitor import InitializationVisitor
 from src.visitors.variable_visitor import VariableVisitor
 
 
 class TestVariableVisitor(unittest.TestCase):
+    def assert_equal_value(self, value, tree):
+        init_visitor = InitializationVisitor(['a', 'b', 'c', 'd', 'e'], 'z')
+        tree.accept(init_visitor)
+        const_visitor = VariableVisitor()
+        self.assertEqual(value, tree.accept(const_visitor))
+
+    def assert_not_equal_tree(self, tree_1, tree_2):
+        init_visitor = InitializationVisitor(['a', 'b', 'c', 'd', 'e'], 'z')
+        tree_1.accept(init_visitor)
+        tree_2.accept(init_visitor)
+        const_visitor = VariableVisitor()
+        self.assertNotEqual(tree_1.accept(const_visitor), tree_2.accept(const_visitor))
+    
     def test_boolean_visitor_easy(self):
-        visitor = VariableVisitor()
-        tree = BooleanConstant('c0')
-        self.assertEqual({}, tree.accept(visitor))
-        tree = BooleanVariable('x')
-        self.assertEqual({'x': 'Bool'}, tree.accept(visitor))
-        tree = BooleanEquality(BooleanVariable('x'), BooleanVariable('y'))
-        self.assertEqual({'x': 'Bool', 'y': 'Bool'}, tree.accept(visitor))
+        tree = BooleanConstant()
+        self.assert_equal_value({}, tree)
+        tree = BooleanVariable()
+        self.assert_equal_value({'a': 'Bool'}, tree)
+        tree = BooleanEquality(BooleanVariable(), BooleanVariable())
+        self.assert_equal_value({'a': 'Bool', 'z': 'Bool'}, tree)
 
     def test_integer_visitor_easy(self):
-        visitor = VariableVisitor()
-        tree = IntegerConstant('c0')
-        self.assertEqual({}, tree.accept(visitor))
-        tree = IntegerVariable('x')
-        self.assertEqual({'x': 'Int'}, tree.accept(visitor))
-        tree = IntegerEquality(IntegerVariable('x'), IntegerVariable('y'))
-        self.assertEqual({'x': 'Int', 'y': 'Int'}, tree.accept(visitor))
+        tree = IntegerConstant()
+        self.assert_equal_value({}, tree)
+        tree = IntegerVariable()
+        self.assert_equal_value({'a': 'Int'}, tree)
+        tree = IntegerEquality(IntegerVariable(), IntegerVariable())
+        self.assert_equal_value({'a': 'Int', 'z': 'Int'}, tree)
 
     def test_real_visitor_easy(self):
-        visitor = VariableVisitor()
-        tree = RealConstant('c0')
-        self.assertEqual({}, tree.accept(visitor))
-        tree = RealVariable('x')
-        self.assertEqual({'x': 'Real'}, tree.accept(visitor))
-        tree = RealEquality(RealVariable('x'), RealVariable('y'))
-        self.assertEqual({'x': 'Real', 'y': 'Real'}, tree.accept(visitor))
+        tree = RealConstant()
+        self.assert_equal_value({}, tree)
+        tree = RealVariable()
+        self.assert_equal_value({'a': 'Real'}, tree)
+        tree = RealEquality(RealVariable(), RealVariable())
+        self.assert_equal_value({'a': 'Real', 'z': 'Real'}, tree)
 
     def test_string_visitor_easy(self):
-        visitor = VariableVisitor()
-        tree = StringLiteral('c0')
-        self.assertEqual({}, tree.accept(visitor))
-        tree = StringVariable('x')
-        self.assertEqual({'x': 'String'}, tree.accept(visitor))
-        tree = StringEquality(StringVariable('x'), StringVariable('y'))
-        self.assertEqual({'x': 'String', 'y': 'String'}, tree.accept(visitor))
+        tree = StringConstant()
+        self.assert_equal_value({}, tree)
+        tree = StringVariable()
+        self.assert_equal_value({'a': 'String'}, tree)
+        tree = StringEquality(StringVariable(), StringVariable())
+        self.assert_equal_value({'a': 'String', 'z': 'String'}, tree)
 
     def test_boolean_visitor_inequality(self):
-        visitor = VariableVisitor()
-        tree_1 = BooleanEquality(BooleanVariable('x'), BooleanVariable('y'))
-        tree_2 = BooleanEquality(BooleanVariable('y'), BooleanVariable('z'))
-        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
+        tree_1 = BooleanVariable()
+        tree_2 = BooleanEquality(BooleanVariable(), BooleanVariable())
+        self.assert_not_equal_tree(tree_1, tree_2)
 
     def test_integer_visitor_inequality(self):
-        visitor = VariableVisitor()
-        tree_1 = IntegerEquality(IntegerVariable('x'), IntegerVariable('y'))
-        tree_2 = IntegerEquality(IntegerVariable('y'), IntegerVariable('z'))
-        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
+        tree_1 = IntegerVariable()
+        tree_2 = IntegerEquality(IntegerVariable(), IntegerVariable())
+        self.assert_not_equal_tree(tree_1, tree_2)
 
     def test_real_visitor_inequality(self):
-        visitor = VariableVisitor()
-        tree_1 = RealEquality(RealVariable('x'), RealVariable('y'))
-        tree_2 = RealEquality(RealVariable('y'), RealVariable('z'))
-        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
+        tree_1 = RealVariable()
+        tree_2 = RealEquality(RealVariable(), RealVariable())
+        self.assert_not_equal_tree(tree_1, tree_2)
 
     def test_string_visitor_inequality(self):
-        visitor = VariableVisitor()
-        tree_1 = StringEquality(StringVariable('x'), StringVariable('y'))
-        tree_2 = StringEquality(StringVariable('y'), StringVariable('z'))
-        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
+        tree_1 = StringVariable()
+        tree_2 = StringEquality(StringVariable(), StringVariable())
+        self.assert_not_equal_tree(tree_1, tree_2)
 
     def test_boolean_visitor_hard(self):
         tree = BooleanEquality(
-            BooleanVariable('z'),
+            BooleanVariable(),
             BooleanXor(
-                BooleanNot(BooleanVariable('x')),
+                BooleanNot(BooleanVariable()),
                 BooleanXor(
-                    BooleanVariable('y'),
-                    BooleanNot(BooleanConstant('c0')))))
-        variables = tree.accept(VariableVisitor())
-        self.assertEqual({'x': 'Bool', 'y': 'Bool', 'z': 'Bool'}, variables)
+                    BooleanVariable(),
+                    BooleanNot(BooleanConstant()))))
+        expected = {'a': 'Bool', 'b': 'Bool', 'z': 'Bool'}
+        self.assert_equal_value(expected, tree)
 
     def test_integer_visitor_hard(self):
         tree = IntegerEquality(
-            IntegerVariable('z'),
+            IntegerVariable(),
             IntegerAddition(
                 IntegerMultiplication(
-                    IntegerConstant('c0'),
+                    IntegerConstant(),
                     IntegerSubtraction(
-                        IntegerVariable('x'),
-                        IntegerConstant('c1'))),
+                        IntegerVariable(),
+                        IntegerConstant())),
                 IntegerDivision(
-                    IntegerVariable('y'),
-                    IntegerVariable('v'))))
-        variables = tree.accept(VariableVisitor())
-        self.assertEqual(
-            {'v': 'Int', 'x': 'Int', 'y': 'Int', 'z': 'Int'}, variables)
+                    IntegerVariable(),
+                    IntegerVariable())))
+        expected = {'a': 'Int', 'b': 'Int', 'c': 'Int', 'z': 'Int'}
+        self.assert_equal_value(expected, tree)
 
     def test_real_visitor_hard(self):
         tree = RealEquality(
-            RealVariable('z'),
+            RealVariable(),
             RealMultiplication(
                 RealSubtraction(
                     RealAddition(
                         RealDivision(
-                            RealVariable('x'),
-                            RealConstant('c0')),
-                        RealConstant('c1')),
-                    RealVariable('y')),
-                RealConstant('c2')))
-        variables = tree.accept(VariableVisitor())
-        self.assertEqual({'x': 'Real', 'y': 'Real', 'z': 'Real'}, variables)
+                            RealVariable(),
+                            RealConstant()),
+                        RealConstant()),
+                    RealVariable()),
+                RealConstant()))
+        expected = {'a': 'Real', 'b': 'Real', 'z': 'Real'}
+        self.assert_equal_value(expected, tree)
 
     def test_string_visitor_hard(self):
         tree = StringEquality(
-            StringVariable('z'),
+            StringVariable(),
             StringConcatenation(
                 StringReplacement(
-                    StringVariable('x'),
-                    StringLiteral('c0'),
-                    StringLiteral('c1')),
+                    StringVariable(),
+                    StringConstant(),
+                    StringConstant()),
                 Substring(
-                    StringVariable('y'),
-                    StringLength(StringVariable('v')),
+                    StringVariable(),
+                    StringLength(StringVariable()),
                     StringIndexof(
-                        StringVariable('z'),
-                        StringVariable('w'),
-                        IntegerConstant('c3'),
+                        StringVariable(),
+                        StringVariable(),
+                        IntegerConstant(),
                     ))))
-        variables = tree.accept(VariableVisitor())
-        self.assertEqual(
-            {'v': 'String', 'w': 'String', 'x': 'String', 'y': 'String', 'z': 'String'}, variables)
+        expected = {'a': 'String', 'b': 'String', 'c': 'String',
+                    'd': 'String', 'e': 'String', 'z': 'String'}
+        self.assert_equal_value(expected, tree)
 
 
 if __name__ == '__main__':

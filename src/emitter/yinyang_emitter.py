@@ -26,11 +26,10 @@ from src.operators.generic import Operator
 from src.visitors.constant_visitor import ConstantVisitor
 from src.visitors.printer_visitor import PrinterVisitor
 from src.visitors.rewrite_visitor import RewriteVisitor
-from src.visitors.symbolic_printer_visitor import SymbolicPrinterVisitor
 from src.visitors.variable_visitor import VariableVisitor
 
 
-def emit(trees: List[Operator], file, args, is_symbolic: bool = True):
+def emit(trees: List[Operator], file, args):
     """
     Emits multiple fusion functions and its inverses to yinyan's configuration file.
 
@@ -39,7 +38,7 @@ def emit(trees: List[Operator], file, args, is_symbolic: bool = True):
     with open(file, 'w', encoding='utf-8') as file:
         emit_options(file, args)
         for tree in trees:
-            emit_function(tree, file, is_symbolic=True)
+            emit_function(tree, file)
 
 
 def emit_options(file, args):
@@ -53,7 +52,7 @@ def emit_options(file, args):
     print("", file=file)
 
 
-def emit_function(tree: Operator, file, is_symbolic: bool = True):
+def emit_function(tree: Operator, file):
     """
     Emits a fusion function and its inverses to yinyang's configuration file:
         #begin
@@ -72,9 +71,9 @@ def emit_function(tree: Operator, file, is_symbolic: bool = True):
     """
 
     rewriter = RewriteVisitor()
-    printer = SymbolicPrinterVisitor() if is_symbolic else PrinterVisitor()
+    printer = PrinterVisitor()
     variables = tree.accept(VariableVisitor())
-    constants = tree.accept(ConstantVisitor()) if is_symbolic else {}
+    constants = tree.accept(ConstantVisitor())
 
     # Block begin
     print("#begin", file=file)
@@ -84,7 +83,7 @@ def emit_function(tree: Operator, file, is_symbolic: bool = True):
         print(f"(declare-const {variable} {type})", file=file)
 
     # Constant declarations
-    for constant, type in reversed(constants.items()):
+    for constant, type in constants.items():
         print(f"(declare-const {constant} {type})", file=file)
 
     # Fusion function

@@ -24,9 +24,8 @@
 # WARNING: This file has been generated and shouldn't be edited manually!
 # Look at the README to learn more.
 
-import random
 from abc import ABC, abstractmethod
-from src.operators.generic import StringOperator, IntegerOperator
+from src.operators.generic import IntegerOperator, StringOperator
 
 
 class IntegerAddition(IntegerOperator):
@@ -84,20 +83,27 @@ class StringIndexof(IntegerOperator):
 
 
 class IntegerVariable(IntegerOperator):
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self):
+        pass
 
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visit_integer_variable(self)
 
 
 class IntegerConstant(IntegerOperator):
-    def __init__(self, name: str):
-        self.name = name
-        self.value = random.randint(0, 1000)
+    def __init__(self):
+        pass
 
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visit_integer_constant(self)
+
+
+class IntegerLiteral(IntegerOperator):
+    def __init__(self, value):
+        self.value = value
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_integer_literal(self)
 
 
 class IntegerEquality(IntegerOperator):
@@ -140,6 +146,10 @@ class IntegerVisitor(ABC):
 
     @abstractmethod
     def visit_integer_constant(self, operator: IntegerConstant):
+        pass
+
+    @abstractmethod
+    def visit_integer_literal(self, operator: IntegerLiteral):
         pass
 
     @abstractmethod

@@ -106,8 +106,20 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_string_variable(self, operator: StringVariable):
         return operator.name
 
-    def visit_string_literal(self, operator: StringLiteral):
+    def visit_string_constant(self, operator: StringLiteral):
         return operator.name
 
     def visit_string_equality(self, operator: StringEquality):
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
+
+    def visit_boolean_literal(self, operator: BooleanLiteral):
+        return str(operator.value).lower()
+
+    def visit_integer_literal(self, operator: IntegerLiteral):
+        return str(operator.value)
+
+    def visit_real_literal(self, operator: RealLiteral):
+        return str(operator.value)
+
+    def visit_string_literal(self, operator: StringLiteral):
+        return f"\"{operator.value}\""
