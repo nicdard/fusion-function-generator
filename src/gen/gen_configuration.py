@@ -47,6 +47,12 @@ main_operators: Dict[str, Dict[str, List[str]]] = {
     "StringOperator": {
         "StringConcatenation": ["StringOperator", "StringOperator"],
     },
+    "BitVectorOperator": {
+        "BitVectorNot": ["BitVectorOperator"],
+        "BitVectorNegation": ["BitVectorOperator"],
+        "BitVectorXor": ["BitVectorOperator", "BitVectorOperator"],
+        "BitVectorConcatenation": ["BitVectorOperator", "BitVectorOperator"],
+    },
 }
 
 # These operators are not invertible and thus not used in generation, but necessary
@@ -65,10 +71,14 @@ fringe_operators: Dict[str, Dict[str, List[str]]] = {
         "StringReplacement": ["StringOperator", "StringOperator", "StringOperator"],
         "Substring": ["StringOperator", "IntegerOperator", "IntegerOperator"],
     },
+    "BitVectorOperator": {
+        "BitVectorExtraction": ["BitVectorOperator", "IntegerOperator", "IntegerOperator"],
+    },
 }
 
 theory_declarations: Dict[str, Dict[str, List[str]]] = {
-    k: {**main_operators[k], **fringe_operators[k]} for k in main_operators}
+    k: {**main_operators[k], **fringe_operators[k]} for k in main_operators
+}
 
 leaf_operators: Dict[str, Dict[str, str]] = {
     "BooleanOperator": {
@@ -91,6 +101,11 @@ leaf_operators: Dict[str, Dict[str, str]] = {
         "var": "StringVariable",
         "lit": "StringLiteral"
     },
+    "BitVectorOperator": {
+        "const": "BitVectorConstant",
+        "var": "BitVectorVariable",
+        "lit": "BitVectorLiteral"
+    },
 }
 
 root_operators: Dict[str, str] = {
@@ -98,6 +113,7 @@ root_operators: Dict[str, str] = {
     "IntegerOperator": "IntegerEquality",
     "RealOperator": "RealEquality",
     "StringOperator": "StringEquality",
+    "BitVectorOperator": "BitVectorEquality",
 }
 
 # A map from command line options to the internal representation.
@@ -106,6 +122,7 @@ option_to_operator_type: Dict[str, str] = {
     "int": "IntegerOperator",
     "real": "RealOperator",
     "string": "StringOperator",
+    "bitvector": "BitVectorOperator",
 }
 
 
@@ -124,27 +141,21 @@ def get_all_nodes(theory: str) -> List[str]:
 
 def get_operator_types(theory: str) -> List[str]:
     type_set = {theory}
-
     for op in theory_declarations[theory]:
         for in_type in theory_declarations[theory][op]:
             type_set.add(in_type)
-
     return list(type_set)
 
 
 def get_arities(theory: str) -> List[int]:
     arities = []
-
     for op in main_operators[theory].keys():
         arities.append(len(get_operator_parameters(theory, op)))
-
     return arities
 
 
 def get_operator_parameters(theory: str, operator: str) -> List[str]:
     params = theory_declarations[theory][operator]
-    for p in params:
-        assert isinstance(p, str)
     return params
 
 
@@ -164,7 +175,10 @@ def get_root(theory: str) -> str:
     return root_operators[theory]
 
 
-def get_eligible_operator(theory: str, arity):
+def get_eligible_operator(theory: str, arity: int) -> str:
+    if theory is None:
+        theory = random.choice(get_theories())
+
     theory = main_operators[theory]
     operator_choices = []
 
@@ -184,7 +198,7 @@ def get_module_name(theory: str) -> str:
     return get_theory_name(theory).lower() + "_theory"
 
 
-def get_operator_class(theory: str, name):
+def get_operator_class(theory: str, name: str) -> 'Operator.__class__':
     module_name = get_module_name(theory)
     module = importlib.import_module('src.operators.' + module_name)
     return getattr(module, name)

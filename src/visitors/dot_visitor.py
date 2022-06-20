@@ -24,23 +24,28 @@ from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
 from src.operators.real_theory import *
 from src.operators.string_theory import *
+from src.operators.bitvector_theory import *
 
 
-class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
+class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, BitVectorVisitor):
     def __init__(self):
         self.id = 0
 
-    def visit_boolean_xor(self, operator: BooleanXor):
-        return self._visit_operator("xor", operator, 2)
-
     def visit_boolean_not(self, operator: BooleanNot):
         return self._visit_operator("not", operator, 1)
+
+    def visit_boolean_xor(self, operator: BooleanXor):
+        return self._visit_operator("xor", operator, 2)
 
     def visit_boolean_constant(self, operator: BooleanConstant):
         return self._visit_constant(operator)
 
     def visit_boolean_variable(self, operator: BooleanVariable):
         return self._visit_variable(operator)
+
+    def visit_boolean_literal(self, operator: BooleanLiteral):
+        name = self._generate_node_name()
+        return name, {name: str(operator.value).lower()}, {}
 
     def visit_boolean_equality(self, operator: BooleanEquality):
         return self._visit_root("=", operator)
@@ -63,6 +68,10 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
     def visit_integer_variable(self, operator: IntegerVariable):
         return self._visit_variable(operator)
 
+    def visit_integer_literal(self, operator: IntegerLiteral):
+        name = self._generate_node_name()
+        return name, {name: str(operator.value)}, {}
+
     def visit_integer_equality(self, operator: IntegerEquality):
         return self._visit_root("=", operator)
 
@@ -83,6 +92,10 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
 
     def visit_real_variable(self, operator: RealVariable):
         return self._visit_variable(operator)
+
+    def visit_real_literal(self, operator: RealLiteral):
+        name = self._generate_node_name()
+        return name, {name: str(operator.value)}, {}
 
     def visit_real_equality(self, operator: RealEquality):
         return self._visit_root("=", operator)
@@ -108,24 +121,40 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
     def visit_string_constant(self, operator: StringLiteral):
         return self._visit_constant(operator)
 
-    def visit_string_equality(self, operator: StringEquality):
-        return self._visit_root("=", operator)
-
-    def visit_boolean_literal(self, operator: BooleanLiteral):
-        name = self._generate_node_name()
-        return name, {name: str(operator.value).lower()}, {}
-
-    def visit_integer_literal(self, operator: IntegerLiteral):
-        name = self._generate_node_name()
-        return name, {name: str(operator.value)}, {}
-
-    def visit_real_literal(self, operator: RealLiteral):
-        name = self._generate_node_name()
-        return name, {name: str(operator.value)}, {}
-
     def visit_string_literal(self, operator: StringLiteral):
         name = self._generate_node_name()
         return name, {name: f"\"{operator.value}\""}, {}
+
+    def visit_string_equality(self, operator: StringEquality):
+        return self._visit_root("=", operator)
+
+    def visit_bit_vector_not(self, operator: BitVectorNot):
+        return self._visit_operator("bvnot", operator, 1)
+
+    def visit_bit_vector_negation(self, operator: BitVectorNegation):
+        return self._visit_operator("bvneg", operator, 1)
+
+    def visit_bit_vector_xor(self, operator: BitVectorXor):
+        return self._visit_operator("bvxor", operator, 2)
+
+    def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
+        return self._visit_operator("concat", operator, 2)
+
+    def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
+        return self._visit_operator("extract", operator, 3)
+
+    def visit_bit_vector_variable(self, operator: BitVectorVariable):
+        return self._visit_variable(operator)
+
+    def visit_bit_vector_constant(self, operator: BitVectorConstant):
+        return self._visit_constant(operator)
+
+    def visit_bit_vector_literal(self, operator: BitVectorLiteral):
+        name = self._generate_node_name()
+        return name, {name: f"#b{''.join([str(bit) for bit in operator.value])}"}, {}
+
+    def visit_bit_vector_equality(self, operator: BitVectorEquality):
+        return self._visit_root("=", operator)
 
     def _visit_root(self, label, operator):
         heading = "digraph {\n"
@@ -135,10 +164,8 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
         op_2, children_2, edges_2 = operator.operator_2.accept(self)
         nodes = {name: label, **children_1, **children_2}
         edges = {name: [op_1, op_2], **edges_1, **edges_2}
-        nodes = [
-            f"    {child} [label=\"{nodes[child]}\"]" for child in nodes.keys()]
-        edges = [
-            f"    {key} -> {'{' + ' '.join(edges[key]) + '}'}" for key in edges.keys()]
+        nodes = [f"    {child} [label=\"{nodes[child]}\"]" for child in nodes.keys()]
+        edges = [f"    {key} -> {'{' + ' '.join(edges[key]) + '}'}" for key in edges.keys()]
         content = heading + "\n".join(nodes) + "\n" + "\n".join(edges) + ending
         return content
 

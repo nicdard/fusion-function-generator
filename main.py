@@ -43,7 +43,7 @@ def parse_args():
                         default='fusion_functions', help='name of the output file')
     parser.add_argument('--dot', '-d', action='store_true',
                         help='emit formulas and inverses also to dot files')
-    parser.add_argument('--theories', choices=['bool', 'int', 'real', 'string'], nargs='+',
+    parser.add_argument('--theories', choices=['bool', 'int', 'real', 'string', 'bitvector'], nargs='+',
                         default=[], help='specify the theories to be used during generation')
     return parser.parse_args()
 
@@ -56,10 +56,12 @@ def main(args):
     if not file_name.endswith('.txt'):
         file_name += '.txt'
 
-    operator_types = gen_configuration.get_theories()
     if args.theories:
         operator_types = [gen_configuration.option_to_operator_type[option]
                           for option in args.theories]
+    else:
+        operator_types = gen_configuration.get_theories()
+
     if args.verbose:
         print(f"Using theories: {operator_types}")
         print(f"Output to: {os.path.join(output_dir, file_name)}")
