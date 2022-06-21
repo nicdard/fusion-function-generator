@@ -199,17 +199,20 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
             operator.size = operator.operator_1.size + operator.operator_2.size
 
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
+        # operator_2 and operator_3 of type IntegerLiteral
+        output_size = operator.operator_3.value - operator.operator_2.value + 1
+
         if operator in self.size:
             excess = self.size[operator] - operator.size
             if excess > 0:
                 operator.size += excess
                 operator.operator_3.value += excess
-            self.size[operator.operator_1] = operator.operator_1.size + excess
+
+            self.size[operator.operator_1] = max(operator.operator_1.size, output_size)
             self._visit_operator(operator, 3)
         else:
             self._visit_operator(operator, 3)
-            # operator_2 and operator_3 of type IntegerLiteral
-            operator.size = operator.operator_3.value - operator.operator_2.value + 1
+            operator.size = output_size
 
     def visit_bit_vector_variable(self, operator: BitVectorVariable):
         if operator in self.size:

@@ -30,6 +30,7 @@ from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
 from src.operators.real_theory import *
 from src.operators.string_theory import *
+from src.operators.bitvector_theory import *
 
 from src.visitors.rewrite_visitor import RewriteVisitor
 from src.visitors.printer_visitor import PrinterVisitor
@@ -38,6 +39,12 @@ from src.visitors.printer_visitor import PrinterVisitor
 def init_named(op_class, name):
     op = op_class()
     op.name = name
+    return op
+
+
+def init_bv(op_class, name, size):
+    op = init_named(op_class, name)
+    op.size = size
     return op
 
 
@@ -81,6 +88,13 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(1, len(inverses))
         expected = StringEquality(init_named(StringVariable, 'y'), init_named(StringVariable, 'x'))
+        self.assert_equal_trees(expected, inverses[0])
+
+    def test_bitvector_visitor_easy(self):
+        tree = BitVectorEquality(init_bv(BitVectorVariable, 'x', 8), init_bv(BitVectorVariable, 'y', 8))
+        inverses = tree.accept(RewriteVisitor())
+        self.assertEqual(1, len(inverses))
+        expected = BitVectorEquality(init_bv(BitVectorVariable, 'y', 8), init_bv(BitVectorVariable, 'x', 8))
         self.assert_equal_trees(expected, inverses[0])
 
     def test_boolean_visitor_inequality(self):
@@ -134,6 +148,20 @@ class TestRewriteVisitor(unittest.TestCase):
 
         tree_2 = StringEquality(init_named(StringVariable, 'x'), StringConcatenation(
             init_named(StringVariable, 'y'), init_named(StringConstant, 'c')))
+        inverses_2 = tree_2.accept(visitor)
+        self.assertEqual(1, len(inverses_2))
+
+        self.assert_not_equal_trees(inverses_1[0], inverses_2[0])
+
+    def test_bitvector_visitor_inequality(self):
+        visitor = RewriteVisitor()
+
+        tree_1 = BitVectorEquality(init_bv(BitVectorVariable, 'x', 8), init_bv(BitVectorVariable, 'y', 8))
+        inverses_1 = tree_1.accept(visitor)
+        self.assertEqual(1, len(inverses_1))
+
+        tree_2 = BitVectorEquality(init_bv(BitVectorVariable, 'x', 16), BitVectorConcatenation(
+            init_bv(BitVectorVariable, 'y', 8), init_bv(BitVectorConstant, 'c', 8)))
         inverses_2 = tree_2.accept(visitor)
         self.assertEqual(1, len(inverses_2))
 
@@ -571,6 +599,46 @@ class TestRewriteVisitor(unittest.TestCase):
                                   expected_y_8,
                                   expected_y_9,
                                   ], inverses[1])
+
+    def test_bitvector_visitor_hard(self):
+        subtree_1 = BitVectorNegation(init_bv(BitVectorVariable, 'x', 16))
+        subtree_1.size = 16
+        subtree_2 = BitVectorXor(
+                        BitVectorNot(
+                            init_bv(BitVectorConstant, 'c0', 12)),
+                        BitVectorConcatenation(
+                            init_bv(BitVectorVariable, 'y', 8),
+                            init_bv(BitVectorConstant, 'c1', 4)
+                        ))
+        subtree_2.size = 12
+
+        tree = BitVectorEquality(
+            init_bv(BitVectorVariable, 'z', 28),
+            BitVectorConcatenation(subtree_1, subtree_2))
+        inverses = tree.accept(RewriteVisitor())
+        self.assertEqual(2, len(inverses))
+
+        expected_x = BitVectorEquality(
+            init_bv(BitVectorVariable, 'x', 16),
+            BitVectorNegation(
+                BitVectorExtraction(
+                    init_bv(BitVectorVariable, 'z', 28),
+                    IntegerLiteral(0),
+                    IntegerLiteral(15))))
+        self.assert_equal_trees(expected_x, inverses[0])
+
+        expected_y = BitVectorEquality(
+            init_bv(BitVectorVariable, 'y', 8),
+            BitVectorExtraction(
+                BitVectorXor(
+                    BitVectorNot(init_bv(BitVectorConstant, 'c0', 12)),
+                    BitVectorExtraction(
+                        init_bv(BitVectorVariable, 'z', 28),
+                        IntegerLiteral(16),
+                        IntegerLiteral(27))),
+                IntegerLiteral(0),
+                IntegerLiteral(7)))
+        self.assert_equal_trees(expected_y, inverses[1])
 
 
 if __name__ == '__main__':
