@@ -103,8 +103,20 @@ class VariableVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
     def visit_string_variable(self, operator: StringVariable):
         return {operator.name: "String"}
 
-    def visit_string_literal(self, operator: StringLiteral):
+    def visit_string_constant(self, operator: StringLiteral):
         return {}
 
     def visit_string_equality(self, operator: StringEquality):
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
+
+    def visit_boolean_literal(self, operator: BooleanLiteral):
+        return {}
+
+    def visit_integer_literal(self, operator: IntegerLiteral):
+        return {}
+
+    def visit_real_literal(self, operator: RealLiteral):
+        return {}
+
+    def visit_string_literal(self, operator: StringLiteral):
+        return {}

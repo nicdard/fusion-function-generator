@@ -24,10 +24,8 @@
 # WARNING: This file has been generated and shouldn't be edited manually!
 # Look at the README to learn more.
 
-import random
-import string
 from abc import ABC, abstractmethod
-from src.operators.generic import StringOperator, IntegerOperator
+from src.operators.generic import IntegerOperator, StringOperator
 
 
 class StringConcatenation(StringOperator):
@@ -60,17 +58,24 @@ class Substring(StringOperator):
 
 
 class StringVariable(StringOperator):
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self):
+        pass
 
     def accept(self, visitor: 'StringVisitor'):
         return visitor.visit_string_variable(self)
 
 
+class StringConstant(StringOperator):
+    def __init__(self):
+        pass
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_constant(self)
+
+
 class StringLiteral(StringOperator):
-    def __init__(self, name: str):
-        self.name = name
-        self.value = ''.join(random.sample(string.ascii_letters + string.digits, random.randint(0, 50)))
+    def __init__(self, value):
+        self.value = value
 
     def accept(self, visitor: 'StringVisitor'):
         return visitor.visit_string_literal(self)
@@ -100,6 +105,10 @@ class StringVisitor(ABC):
 
     @abstractmethod
     def visit_string_variable(self, operator: StringVariable):
+        pass
+
+    @abstractmethod
+    def visit_string_constant(self, operator: StringConstant):
         pass
 
     @abstractmethod

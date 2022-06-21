@@ -24,7 +24,6 @@
 # WARNING: This file has been generated and shouldn't be edited manually!
 # Look at the README to learn more.
 
-import random
 from abc import ABC, abstractmethod
 from src.operators.generic import RealOperator
 
@@ -66,20 +65,27 @@ class RealDivision(RealOperator):
 
 
 class RealVariable(RealOperator):
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self):
+        pass
 
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visit_real_variable(self)
 
 
 class RealConstant(RealOperator):
-    def __init__(self, name: str):
-        self.name = name
-        self.value = random.random() * 1000
+    def __init__(self):
+        pass
 
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visit_real_constant(self)
+
+
+class RealLiteral(RealOperator):
+    def __init__(self, value):
+        self.value = value
+
+    def accept(self, visitor: 'RealVisitor'):
+        return visitor.visit_real_literal(self)
 
 
 class RealEquality(RealOperator):
@@ -114,6 +120,10 @@ class RealVisitor(ABC):
 
     @abstractmethod
     def visit_real_constant(self, operator: RealConstant):
+        pass
+
+    @abstractmethod
+    def visit_real_literal(self, operator: RealLiteral):
         pass
 
     @abstractmethod

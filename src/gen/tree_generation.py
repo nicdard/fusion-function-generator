@@ -35,6 +35,7 @@ from src.gen.gen_configuration import (
     get_arities,
     get_operator_parameters
 )
+from src.visitors.initialization_visitor import InitializationVisitor
 
 constant_name_pattern = re.compile(r"^c\d+$")
 
@@ -86,9 +87,8 @@ def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
     return tree
 
 
-def _generate_operator_tree(theory, arity_tree, in_variables, out_variable) -> Operator:
+def _generate_operator_tree(theory, arity_tree, num_variables) -> Operator:
     num_leaves = len([n for n in arity_tree if n == 0])
-    num_variables = len(in_variables)
     num_constants = num_leaves - num_variables
 
     if num_leaves < num_variables:
@@ -99,23 +99,19 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable) -> O
     random.shuffle(leaves)
 
     def recursive_generation(idx, operator_type):
-        nonlocal num_leaves, num_variables, num_constants
         n = arity_tree[idx]
         idx += 1
         params = []
 
         if n == 0:
+            nonlocal num_leaves
             num_leaves -= 1
             is_variable = leaves[num_leaves]
 
             if is_variable:
                 op_name = get_variable(operator_type)
-                num_variables -= 1
-                params.append(in_variables[num_variables])
             else:
                 op_name = get_constant(operator_type)
-                params.append(f"c{num_constants}")
-                num_constants -= 1
         else:
             op_name = get_eligible_operator(operator_type, n)
 
@@ -128,7 +124,7 @@ def _generate_operator_tree(theory, arity_tree, in_variables, out_variable) -> O
     operator_tree, _ = recursive_generation(0, theory)
     root_name = get_root(theory)
 
-    output_var = get_operator_class(theory, get_variable(theory))(out_variable)
+    output_var = get_operator_class(theory, get_variable(theory))()
     root = get_operator_class(theory, root_name)(output_var, operator_tree)
 
     return root
@@ -151,7 +147,11 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
         raise ValueError("Tree size too small to accommodate all variables")
 
     tree = _generate_arity_tree(size, arities, num_variables)
-    return _generate_operator_tree(theory, tree, in_variables, out_variable)
+    tree = _generate_operator_tree(theory, tree, num_variables)
+
+    init_visitor = InitializationVisitor(in_variables, out_variable)
+    tree.accept(init_visitor)
+    return tree
 
 
 def validate(tree: List[int]) -> bool:

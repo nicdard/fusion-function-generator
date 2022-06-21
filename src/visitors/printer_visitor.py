@@ -35,7 +35,7 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
         return f"(not {operator.operator_1.accept(self)})"
 
     def visit_boolean_constant(self, operator: BooleanConstant):
-        return str(operator.value).lower()
+        return operator.name
 
     def visit_boolean_variable(self, operator: BooleanVariable):
         return operator.name
@@ -56,7 +56,7 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
         return f"(div {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
     def visit_integer_constant(self, operator: IntegerConstant):
-        return str(operator.value)
+        return operator.name
 
     def visit_integer_variable(self, operator: IntegerVariable):
         return operator.name
@@ -77,7 +77,7 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
         return f"(/ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
     def visit_real_constant(self, operator: RealConstant):
-        return str(operator.value)
+        return operator.name
 
     def visit_real_variable(self, operator: RealVariable):
         return operator.name
@@ -106,8 +106,20 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
     def visit_string_variable(self, operator: StringVariable):
         return operator.name
 
-    def visit_string_literal(self, operator: StringLiteral):
-        return f"\"{operator.value}\""
+    def visit_string_constant(self, operator: StringLiteral):
+        return operator.name
 
     def visit_string_equality(self, operator: StringEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visit_boolean_literal(self, operator: BooleanLiteral):
+        return str(operator.value).lower()
+
+    def visit_integer_literal(self, operator: IntegerLiteral):
+        return str(operator.value)
+
+    def visit_real_literal(self, operator: RealLiteral):
+        return str(operator.value)
+
+    def visit_string_literal(self, operator: StringLiteral):
+        return f"\"{operator.value}\""

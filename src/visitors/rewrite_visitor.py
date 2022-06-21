@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import random
 
 from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
@@ -158,16 +159,13 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
 
     def visit_string_concatenation(self, operator: StringConcatenation):
         output = self.output[operator]
-        zero = IntegerConstant("0")
-        zero.value = 0
-        empty_string = StringLiteral("\"\"")
-        empty_string.value = ""
 
         def inv_1_rule_1():
-            return Substring(output, zero, StringLength(operator.operator_1))
+            return Substring(output, IntegerLiteral(0), StringLength(operator.operator_1))
 
         def inv_1_rule_2():
-            return Substring(output, zero, StringIndexof(output, operator.operator_2, StringLength(operator.operator_1)))
+            return Substring(output, IntegerLiteral(0),
+                             StringIndexof(output, operator.operator_2, StringLength(operator.operator_1)))
 
         def inv_2_rule_1():
             return Substring(output, StringLength(operator.operator_1), StringLength(operator.operator_2))
@@ -179,7 +177,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
                              StringLength(operator.operator_2))
 
         def inv_2_rule_3():
-            return StringReplacement(output, operator.operator_1, empty_string)
+            return StringReplacement(output, operator.operator_1, StringLiteral(""))
 
         output_1 = random.choice([inv_1_rule_1, inv_1_rule_2])()
         output_2 = random.choice([inv_2_rule_1, inv_2_rule_2, inv_2_rule_3])()
@@ -207,10 +205,22 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
     def visit_string_variable(self, operator: StringVariable):
         return {operator: self.output[operator]}
 
-    def visit_string_literal(self, operator: StringLiteral):
+    def visit_string_constant(self, operator: StringLiteral):
         return {}
 
     def visit_string_equality(self, operator: StringEquality):
         self.output[operator.operator_2] = operator.operator_1
         inverse_dict = operator.operator_2.accept(self)
         return [StringEquality(var, operator) for var, operator in inverse_dict.items()]
+
+    def visit_boolean_literal(self, operator: BooleanLiteral):
+        return {}
+
+    def visit_integer_literal(self, operator: IntegerLiteral):
+        return {}
+
+    def visit_real_literal(self, operator: RealLiteral):
+        return {}
+
+    def visit_string_literal(self, operator: StringLiteral):
+        return {}

@@ -28,7 +28,7 @@ import re
 from typing import List
 from gen_configuration import (
     get_constant,
-    get_constant_initializer,
+    get_literal,
     get_operator_parameters,
     get_operators,
     get_root,
@@ -37,7 +37,7 @@ from gen_configuration import (
     get_theory_name,
     get_module_name,
     get_operator_types,
-    get_required_modules
+    get_all_nodes
 )
 
 WARNING_MESSAGE = "# WARNING: This file has been generated and shouldn't be edited manually!\n" \
@@ -112,7 +112,7 @@ def define_visitor_interface(theory: str) -> List[str]:
     content.extend([
         f"class {get_theory_name(theory)}Visitor(ABC):",
     ])
-    for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
+    for operator in get_all_nodes(theory):
         content.append(f"    @abstractmethod")
         content.append(
             f"    def visit_{camel_to_snake_case(operator)}(self, operator: {operator}):")
@@ -132,7 +132,6 @@ def define_ast(base_name: pathlib.Path, license_text: str):
         content = [
             license_text,
             WARNING_MESSAGE,
-            *[f"import {module}" for module in get_required_modules(theory)],
             "from abc import ABC, abstractmethod",
             f"from src.operators.generic import {', '.join(operator_types)}",
             "\n",
@@ -166,8 +165,8 @@ def define_ast(base_name: pathlib.Path, license_text: str):
         # Create variable class.
         content.extend([
             f"class {get_variable(theory)}({theory}):",
-            f"    def __init__(self, name: str):",
-            f"        self.name = name",
+            f"    def __init__(self):",
+            f"        pass",
             "",
             *accept_fun(get_variable(theory)),
             "",
@@ -175,11 +174,19 @@ def define_ast(base_name: pathlib.Path, license_text: str):
         # Create constant class.
         content.extend([
             f"class {get_constant(theory)}({theory}):",
-            f"    def __init__(self, name: str):",
-            f"        self.name = name",
-            f"        self.value = {get_constant_initializer(theory)}",
+            f"    def __init__(self):",
+            f"        pass",
             "",
             *accept_fun(get_constant(theory)),
+            "",
+        ])
+        # Create literal class
+        content.extend([
+            f"class {get_literal(theory)}({theory}):",
+            f"    def __init__(self, value):",
+            f"        self.value = value",
+            "",
+            *accept_fun(get_literal(theory)),
             "",
         ])
         # Create root operator class.
@@ -214,27 +221,19 @@ def define_visitor(output_dir: pathlib.Path, name: str, license_text: str):
     path = output_dir.joinpath(file_name)
 
     content = [license_text]
-    extends = []
+    super_classes = []
 
     for theory in get_theories():
         visitor_name = f"{get_theory_name(theory)}Visitor"
-        extends.append(f"{visitor_name}")
-
-        content.append(
-            f"from src.operators.{get_module_name(theory)} import (")
-        for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
-            content.append(f"    {operator},")
-        content.append(f"    {visitor_name}")
-        content.append(")")
-
-    extends = ", ".join(extends)
+        super_classes.append(f"{visitor_name}")
+        content.append(f"from src.operators.{get_module_name(theory)} import *")
 
     content.extend([
         "\n",
-        f"class {class_name}({extends}):",
+        f"class {class_name}({', '.join(super_classes)}):",
     ])
     for theory in get_theories():
-        for operator in [*get_operators(theory), get_variable(theory), get_constant(theory), get_root(theory)]:
+        for operator in get_all_nodes(theory):
             content.append(
                 f"    def visit_{camel_to_snake_case(operator)}(self, operator: {operator}):")
             content.append(f"        pass")
