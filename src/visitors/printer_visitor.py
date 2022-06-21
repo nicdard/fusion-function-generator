@@ -138,8 +138,8 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         return f"(concat {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
-        return f"(_ extract {operator.operator_1.accept(self)} " \
-               f"{operator.operator_2.accept(self)} {operator.operator_3.accept(self)})"
+        return f"((_ extract {operator.operator_3.accept(self)} {operator.operator_2.accept(self)}) " \
+               f"{operator.operator_1.accept(self)})"
 
     def visit_bit_vector_variable(self, operator: BitVectorVariable):
         return operator.name

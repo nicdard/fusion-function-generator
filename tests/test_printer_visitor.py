@@ -137,7 +137,7 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
                         init_named(BitVectorConstant, 'c2')
                     ))))
         symbolic_repr = tree.accept(PrinterVisitor())
-        self.assertEqual("(= x (concat (_ extract c0 0 3) (bvxor c1 (concat y c2))))", symbolic_repr)
+        self.assertEqual("(= x (concat ((_ extract 3 0) c0) (bvxor c1 (concat y c2))))", symbolic_repr)
 
     def test_boolean_visitor_inequality(self):
         tree_1 = BooleanEquality(init_named(BooleanConstant, 'c0'), init_named(BooleanConstant, 'c1'))
