@@ -27,6 +27,8 @@ from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
 from src.operators.real_theory import *
 from src.operators.string_theory import *
+from src.operators.bitvector_theory import *
+
 from src.visitors.printer_visitor import PrinterVisitor
 
 
@@ -51,6 +53,10 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
 
     def test_string_visitor_easy(self):
         tree = StringEquality(init_named(StringConstant, 'c0'), init_named(StringConstant, 'c1'))
+        self.assertEqual("(= c0 c1)", tree.accept(PrinterVisitor()))
+
+    def test_bitvector_visitor_easy(self):
+        tree = BitVectorEquality(init_named(BitVectorConstant, 'c0'), init_named(BitVectorConstant, 'c1'))
         self.assertEqual("(= c0 c1)", tree.accept(PrinterVisitor()))
 
     def test_boolean_visitor_hard(self):
@@ -116,6 +122,23 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
         self.assertEqual(
             "(= z (str.++ (str.replace x c0 c1) (str.substr y (str.len c2) (str.indexof z y c3))))", symbolic_repr)
 
+    def test_bitvector_visitor_hard(self):
+        tree = BitVectorEquality(
+            init_named(BitVectorVariable, 'x'),
+            BitVectorConcatenation(
+                BitVectorExtraction(
+                    init_named(BitVectorConstant, 'c0'),
+                    IntegerLiteral(0),
+                    IntegerLiteral(3)),
+                BitVectorXor(
+                    init_named(BitVectorConstant, 'c1'),
+                    BitVectorConcatenation(
+                        init_named(BitVectorVariable, 'y'),
+                        init_named(BitVectorConstant, 'c2')
+                    ))))
+        symbolic_repr = tree.accept(PrinterVisitor())
+        self.assertEqual("(= x (concat ((_ extract 3 0) c0) (bvxor c1 (concat y c2))))", symbolic_repr)
+
     def test_boolean_visitor_inequality(self):
         tree_1 = BooleanEquality(init_named(BooleanConstant, 'c0'), init_named(BooleanConstant, 'c1'))
         tree_2 = BooleanEquality(init_named(BooleanVariable, 'x'), init_named(BooleanVariable, 'y'))
@@ -137,6 +160,12 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
     def test_string_visitor_inequality(self):
         tree_1 = StringEquality(init_named(StringConstant, 'c0'), init_named(StringConstant, 'c1'))
         tree_2 = StringEquality(init_named(StringVariable, 'x'), init_named(StringVariable, 'y'))
+        visitor = PrinterVisitor()
+        self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
+
+    def test_bitvector_visitor_inequality(self):
+        tree_1 = BitVectorEquality(init_named(BitVectorConstant, 'c0'), init_named(BitVectorConstant, 'c1'))
+        tree_2 = BitVectorEquality(init_named(BitVectorVariable, 'x'), init_named(BitVectorVariable, 'y'))
         visitor = PrinterVisitor()
         self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 

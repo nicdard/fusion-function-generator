@@ -31,13 +31,13 @@ from gen_configuration import (
     get_literal,
     get_operator_parameters,
     get_operators,
+    get_all_nodes,
     get_root,
     get_variable,
     get_theories,
     get_theory_name,
     get_module_name,
-    get_operator_types,
-    get_all_nodes
+    get_operator_types
 )
 
 WARNING_MESSAGE = "# WARNING: This file has been generated and shouldn't be edited manually!\n" \
@@ -180,7 +180,7 @@ def define_ast(base_name: pathlib.Path, license_text: str):
             *accept_fun(get_constant(theory)),
             "",
         ])
-        # Create literal class
+        # Create literal class.
         content.extend([
             f"class {get_literal(theory)}({theory}):",
             f"    def __init__(self, value):",
@@ -270,8 +270,11 @@ def main():
 
     print(sys.argv[1])
     if sys.argv[1] == "stub":
-        define_visitor(script_path.parent.joinpath(
-            "visitors"), sys.argv[2], license_text)
+        define_visitor(
+            script_path.parent.joinpath("visitors"),
+            sys.argv[2],
+            license_text
+        )
 
 
 if __name__ == '__main__':

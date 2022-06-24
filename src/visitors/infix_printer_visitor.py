@@ -25,20 +25,24 @@ from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
 from src.operators.real_theory import *
 from src.operators.string_theory import *
+from src.operators.bitvector_theory import *
 
 
-class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
-    def visit_boolean_xor(self, operator: BooleanXor):
-        return f"({operator.operator_1.accept(self)} xor {operator.operator_2.accept(self)})"
-
+class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, BitVectorVisitor):
     def visit_boolean_not(self, operator: BooleanNot):
         return f"(not {operator.operator_1.accept(self)})"
+
+    def visit_boolean_xor(self, operator: BooleanXor):
+        return f"({operator.operator_1.accept(self)} xor {operator.operator_2.accept(self)})"
 
     def visit_boolean_constant(self, operator: BooleanConstant):
         return operator.name
 
     def visit_boolean_variable(self, operator: BooleanVariable):
         return operator.name
+
+    def visit_boolean_literal(self, operator: BooleanLiteral):
+        return str(operator.value).lower()
 
     def visit_boolean_equality(self, operator: BooleanEquality):
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
@@ -61,6 +65,9 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_integer_variable(self, operator: IntegerVariable):
         return operator.name
 
+    def visit_integer_literal(self, operator: IntegerLiteral):
+        return str(operator.value)
+
     def visit_integer_equality(self, operator: IntegerEquality):
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
 
@@ -81,6 +88,9 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
 
     def visit_real_variable(self, operator: RealVariable):
         return operator.name
+
+    def visit_real_literal(self, operator: RealLiteral):
+        return str(operator.value)
 
     def visit_real_equality(self, operator: RealEquality):
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
@@ -109,17 +119,36 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_string_constant(self, operator: StringLiteral):
         return operator.name
 
+    def visit_string_literal(self, operator: StringLiteral):
+        return f"\"{operator.value}\""
+
     def visit_string_equality(self, operator: StringEquality):
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
 
-    def visit_boolean_literal(self, operator: BooleanLiteral):
-        return str(operator.value).lower()
+    def visit_bit_vector_not(self, operator: BitVectorNot):
+        return f"(not {operator.operator_1.accept(self)})"
 
-    def visit_integer_literal(self, operator: IntegerLiteral):
-        return str(operator.value)
+    def visit_bit_vector_negation(self, operator: BitVectorNegation):
+        return f"(neg {operator.operator_1.accept(self)})"
 
-    def visit_real_literal(self, operator: RealLiteral):
-        return str(operator.value)
+    def visit_bit_vector_xor(self, operator: BitVectorXor):
+        return f"({operator.operator_1.accept(self)} xor {operator.operator_2.accept(self)})"
 
-    def visit_string_literal(self, operator: StringLiteral):
-        return f"\"{operator.value}\""
+    def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
+        return f"({operator.operator_1.accept(self)} || {operator.operator_2.accept(self)})"
+
+    def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
+        return f"{operator.operator_1.accept(self)}.extract" \
+               f"({operator.operator_2.accept(self)}, {operator.operator_3.accept(self)})"
+
+    def visit_bit_vector_variable(self, operator: BitVectorVariable):
+        return operator.name
+
+    def visit_bit_vector_constant(self, operator: BitVectorConstant):
+        return operator.name
+
+    def visit_bit_vector_literal(self, operator: BitVectorLiteral):
+        return f"#b{''.join([str(bit) for bit in operator.value])}"
+
+    def visit_bit_vector_equality(self, operator: BitVectorEquality):
+        return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"

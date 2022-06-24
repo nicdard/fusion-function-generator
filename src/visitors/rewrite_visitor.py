@@ -26,32 +26,34 @@ from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
 from src.operators.real_theory import *
 from src.operators.string_theory import *
+from src.operators.bitvector_theory import *
 
 
-class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor):
+class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, BitVectorVisitor):
     def __init__(self):
         self.output = {}
-
-    def visit_boolean_xor(self, operator: BooleanXor):
-        output = self.output[operator]
-        self.output[operator.operator_1] = BooleanXor(
-            operator.operator_2, output)
-        self.output[operator.operator_2] = BooleanXor(
-            operator.operator_1, output)
-        inverse_1 = operator.operator_1.accept(self)
-        inverse_2 = operator.operator_2.accept(self)
-        return {**inverse_1, **inverse_2}
 
     def visit_boolean_not(self, operator: BooleanNot):
         output = self.output[operator]
         self.output[operator.operator_1] = BooleanNot(output)
         return operator.operator_1.accept(self)
 
+    def visit_boolean_xor(self, operator: BooleanXor):
+        output = self.output[operator]
+        self.output[operator.operator_1] = BooleanXor(operator.operator_2, output)
+        self.output[operator.operator_2] = BooleanXor(operator.operator_1, output)
+        inverse_1 = operator.operator_1.accept(self)
+        inverse_2 = operator.operator_2.accept(self)
+        return {**inverse_1, **inverse_2}
+
     def visit_boolean_constant(self, operator: BooleanConstant):
         return {}
 
     def visit_boolean_variable(self, operator: BooleanVariable):
         return {operator: self.output[operator]}
+
+    def visit_boolean_literal(self, operator: BooleanLiteral):
+        return {}
 
     def visit_boolean_equality(self, operator: BooleanEquality):
         self.output[operator.operator_2] = operator.operator_1
@@ -96,6 +98,9 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
 
     def visit_integer_variable(self, operator: IntegerVariable):
         return {operator: self.output[operator]}
+
+    def visit_integer_literal(self, operator: IntegerLiteral):
+        return {}
 
     def visit_integer_equality(self, operator: IntegerEquality):
         self.output[operator.operator_2] = operator.operator_1
@@ -149,6 +154,9 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
 
     def visit_real_variable(self, operator: RealVariable):
         return {operator: self.output[operator]}
+
+    def visit_real_literal(self, operator: RealLiteral):
+        return {}
 
     def visit_real_equality(self, operator: RealEquality):
         self.output[operator.operator_2] = operator.operator_1
@@ -208,19 +216,63 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor)
     def visit_string_constant(self, operator: StringLiteral):
         return {}
 
+    def visit_string_literal(self, operator: StringLiteral):
+        return {}
+
     def visit_string_equality(self, operator: StringEquality):
         self.output[operator.operator_2] = operator.operator_1
         inverse_dict = operator.operator_2.accept(self)
+        # Prepare the visitor to be reused
+        self.output = {}
         return [StringEquality(var, operator) for var, operator in inverse_dict.items()]
 
-    def visit_boolean_literal(self, operator: BooleanLiteral):
+    def visit_bit_vector_not(self, operator: BitVectorNot):
+        output = self.output[operator]
+        self.output[operator.operator_1] = BitVectorNot(output)
+        self.output[operator.operator_1].size = output.size
+        return operator.operator_1.accept(self)
+
+    def visit_bit_vector_negation(self, operator: BitVectorNegation):
+        output = self.output[operator]
+        self.output[operator.operator_1] = BitVectorNegation(output)
+        self.output[operator.operator_1].size = output.size
+        return operator.operator_1.accept(self)
+
+    def visit_bit_vector_xor(self, operator: BitVectorXor):
+        output = self.output[operator]
+        self.output[operator.operator_1] = BitVectorXor(operator.operator_2, output)
+        self.output[operator.operator_1].size = output.size
+        self.output[operator.operator_2] = BitVectorXor(operator.operator_1, output)
+        self.output[operator.operator_2].size = output.size
+        return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
+
+    def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
+        output = self.output[operator]
+        zero = IntegerLiteral(0)
+        index_1 = IntegerLiteral(operator.operator_1.size - 1)
+        index_2 = IntegerLiteral(operator.operator_1.size)
+        index_3 = IntegerLiteral(output.size - 1)
+        self.output[operator.operator_1] = BitVectorExtraction(output, zero, index_1)
+        self.output[operator.operator_1].size = operator.operator_1.size
+        self.output[operator.operator_2] = BitVectorExtraction(output, index_2, index_3)
+        self.output[operator.operator_2].size = operator.operator_2.size
+        return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
+
+    def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
         return {}
 
-    def visit_integer_literal(self, operator: IntegerLiteral):
+    def visit_bit_vector_variable(self, operator: BitVectorVariable):
+        return {operator: self.output[operator]}
+
+    def visit_bit_vector_constant(self, operator: BitVectorConstant):
         return {}
 
-    def visit_real_literal(self, operator: RealLiteral):
+    def visit_bit_vector_literal(self, operator: BitVectorLiteral):
         return {}
 
-    def visit_string_literal(self, operator: StringLiteral):
-        return {}
+    def visit_bit_vector_equality(self, operator: BitVectorEquality):
+        self.output[operator.operator_2] = operator.operator_1
+        inverse_dict = operator.operator_2.accept(self)
+        # Prepare the visitor to be reused
+        self.output = {}
+        return [BitVectorEquality(var, operator) for var, operator in inverse_dict.items()]
