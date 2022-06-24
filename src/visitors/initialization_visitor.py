@@ -40,6 +40,7 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         self.var_index = 0
         self.const_index = 0
         self.size = {}
+        self.var_size = random.choice([8, 16, 20, 32, 64])
 
     def visit_boolean_not(self, operator: BooleanNot):
         self._visit_operator(operator, 1)
@@ -216,17 +217,30 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
 
     def visit_bit_vector_variable(self, operator: BitVectorVariable):
         if operator in self.size:
-            operator.size = self.size[operator]
+            excess = self.size[operator] - operator.size
+            if excess > 0:
+                # transfer to new variable
+                var = BitVectorVariable()
+                var.__dict__ = operator.__dict__.copy()
+                # define new constant
+                const = BitVectorConstant()
+                const.accept(self)
+                const.size = excess
+                # convert to concatenation
+                concat = BitVectorConcatenation(var, const)
+                operator.__class__ = concat.__class__
+                operator.__dict__ = concat.__dict__
+                operator.size = self.size[operator]
         else:
             self._visit_variable(operator)
-            operator.size = 1
+            operator.size = self.var_size
 
     def visit_bit_vector_constant(self, operator: BitVectorConstant):
         if operator in self.size:
             operator.size = self.size[operator]
         else:
             self._visit_constant(operator)
-            operator.size = 1
+            operator.size = random.randint(1, self.var_size)
 
     def visit_bit_vector_literal(self, operator: BitVectorLiteral):
         if operator in self.size:
@@ -246,7 +260,6 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
             operator.operator_1.accept(self)
 
         operator.size = max([operator.operator_1.size, operator.operator_2.size])
-        operator.size += random.randint(0, 16)  # increase size randomly
 
         # propagate size through tree
         self.size[operator.operator_1] = operator.size
