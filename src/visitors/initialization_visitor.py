@@ -34,14 +34,14 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
     def __init__(self, in_variables, out_variable):
         self.in_variables = in_variables
         self.out_variable = out_variable
+        self.var_size = random.choice([8, 16, 20, 32, 64])
         self._reset()
 
     def _reset(self):
-        self.var_index = 0
-        self.const_index = 0
-        self.size = {}
-        self.var_size = random.choice([8, 16, 20, 32, 64])
-        self.is_var = {}
+        self._var_idx = 0
+        self._const_idx = 0
+        self._size = {}
+        self._is_var = {}
 
     def visit_boolean_not(self, operator: BooleanNot):
         self._visit_operator(operator, 1)
@@ -161,78 +161,76 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         self._reset()
 
     def visit_bit_vector_not(self, operator: BitVectorNot):
-        if operator in self.size:
-            operator.size = self.size[operator]
-            self.size[operator.operator_1] = self.size[operator]
+        if operator in self._size:
+            operator.size = self._size[operator]
+            self._size[operator.operator_1] = self._size[operator]
             self._visit_operator(operator, 1)
         else:
             self._visit_operator(operator, 1)
             operator.size = operator.operator_1.size
-            self.is_var[operator] = self.is_var[operator.operator_1]
+            self._is_var[operator] = self._is_var[operator.operator_1]
 
     def visit_bit_vector_negation(self, operator: BitVectorNegation):
-        if operator in self.size:
-            operator.size = self.size[operator]
-            self.size[operator.operator_1] = operator.size
+        if operator in self._size:
+            operator.size = self._size[operator]
+            self._size[operator.operator_1] = operator.size
             self._visit_operator(operator, 1)
         else:
             self._visit_operator(operator, 1)
             operator.size = operator.operator_1.size
-            self.is_var[operator] = self.is_var[operator.operator_1]
+            self._is_var[operator] = self._is_var[operator.operator_1]
 
     def visit_bit_vector_xor(self, operator: BitVectorXor):
-        if operator in self.size:
-            operator.size = self.size[operator]
-            self.size[operator.operator_1] = operator.size
-            self.size[operator.operator_2] = operator.size
+        if operator in self._size:
+            operator.size = self._size[operator]
+            self._size[operator.operator_1] = operator.size
+            self._size[operator.operator_2] = operator.size
             self._visit_operator(operator, 2)
         else:
             self._visit_operator(operator, 2)
             operator.size = max([operator.operator_1.size, operator.operator_2.size])
-            self.is_var[operator] = self.is_var[operator.operator_1] and self.is_var[operator.operator_2]
+            self._is_var[operator] = self._is_var[operator.operator_1] and self._is_var[operator.operator_2]
 
     def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
-        if operator in self.size:
-            excess = self.size[operator] - operator.size
-            left_is_var = self.is_var[operator.operator_1]
-            right_is_var = self.is_var[operator.operator_2]
+        if operator in self._size:
+            excess = self._size[operator] - operator.size
+            left_is_var = self._is_var[operator.operator_1]
+            right_is_var = self._is_var[operator.operator_2]
             if left_is_var and right_is_var:
                 excess_1 = excess * round(random.random())
-            elif left_is_var and not right_is_var:
-                excess_1 = 0
-            elif not left_is_var and right_is_var:
-                excess_1 = excess
-            else:
+            elif not left_is_var and not right_is_var:
                 excess_1 = random.randint(0, excess)
+            else:
+                excess_1 = excess * int(right_is_var)
             excess_2 = excess - excess_1
-            self.size[operator.operator_1] = operator.operator_1.size + excess_1
-            self.size[operator.operator_2] = operator.operator_2.size + excess_2
+            self._size[operator.operator_1] = operator.operator_1.size + excess_1
+            self._size[operator.operator_2] = operator.operator_2.size + excess_2
             self._visit_operator(operator, 2)
         else:
             self._visit_operator(operator, 2)
             operator.size = operator.operator_1.size + operator.operator_2.size
-            self.is_var[operator] = self.is_var[operator.operator_1] and self.is_var[operator.operator_2]
+            self._is_var[operator] = self._is_var[operator.operator_1] and self._is_var[operator.operator_2]
 
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
         # operator_2 and operator_3 of type IntegerLiteral
         output_size = operator.operator_3.value - operator.operator_2.value + 1
 
-        if operator in self.size:
-            excess = self.size[operator] - operator.size
+        if operator in self._size:
+            excess = self._size[operator] - operator.size
             if excess > 0:
                 operator.size += excess
                 operator.operator_3.value += excess
 
-            self.size[operator.operator_1] = max(operator.operator_1.size, output_size)
+            self._size[operator.operator_1] = max(operator.operator_1.size, output_size)
             self._visit_operator(operator, 3)
         else:
             self._visit_operator(operator, 3)
             operator.size = output_size
-            self.is_var[operator] = self.is_var[operator.operator_1]
+            self._is_var[operator] = self._is_var[operator.operator_1]
 
     def visit_bit_vector_variable(self, operator: BitVectorVariable):
-        if operator in self.size:
-            excess = self.size[operator] - operator.size
+        if operator in self._size:
+            excess = self._size[operator] - operator.size
             if excess > 0:
                 # transfer to new variable
                 var = BitVectorVariable()
@@ -245,29 +243,29 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
                 concat = BitVectorConcatenation(var, const)
                 operator.__class__ = concat.__class__
                 operator.__dict__ = concat.__dict__
-                operator.size = self.size[operator]
+                operator.size = self._size[operator]
         else:
             self._visit_variable(operator)
             operator.size = self.var_size
-            self.is_var[operator] = True
+            self._is_var[operator] = True
 
     def visit_bit_vector_constant(self, operator: BitVectorConstant):
-        if operator in self.size:
-            operator.size = self.size[operator]
+        if operator in self._size:
+            operator.size = self._size[operator]
         else:
             self._visit_constant(operator)
             operator.size = random.randint(1, self.var_size)
-            self.is_var[operator] = False
+            self._is_var[operator] = False
 
     def visit_bit_vector_literal(self, operator: BitVectorLiteral):
-        if operator in self.size:
-            excess = self.size[operator] - operator.size
+        if operator in self._size:
+            excess = self._size[operator] - operator.size
             if excess > 0:
                 operator.value = excess * [0] + operator.value
-                operator.size = self.size[operator]
+                operator.size = self._size[operator]
         else:
             operator.size = len(operator.value)
-            self.is_var[operator] = False
+            self._is_var[operator] = False
 
     def visit_bit_vector_equality(self, operator: BitVectorEquality):
         # initially, find minimum viable assignment
@@ -275,15 +273,15 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         if isinstance(operator.operator_1, BitVectorVariable):
             operator.operator_1.name = self.out_variable
             operator.operator_1.size = operator.operator_2.size
-            self.is_var[operator.operator_1] = False  # only in-vars relevant
+            self._is_var[operator.operator_1] = False  # only in-vars relevant
         else:
             operator.operator_1.accept(self)
 
         operator.size = max([operator.operator_1.size, operator.operator_2.size])
 
         # propagate size through tree
-        self.size[operator.operator_1] = operator.size
-        self.size[operator.operator_2] = operator.size
+        self._size[operator.operator_1] = operator.size
+        self._size[operator.operator_2] = operator.size
         self._visit_operator(operator, 2)
 
     def _visit_operator(self, operator, arity):
@@ -291,9 +289,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
             getattr(operator, f"operator_{i + 1}").accept(self)
 
     def _visit_variable(self, operator):
-        operator.name = self.in_variables[self.var_index]
-        self.var_index += 1
+        operator.name = self.in_variables[self._var_idx]
+        self._var_idx += 1
 
     def _visit_constant(self, operator):
-        operator.name = f"c{self.const_index}"
-        self.const_index += 1
+        operator.name = f"c{self._const_idx}"
+        self._const_idx += 1
