@@ -34,7 +34,6 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
     def __init__(self, in_variables, out_variable):
         self.in_variables = in_variables
         self.out_variable = out_variable
-        self.var_size = random.choice([8, 16, 20, 32, 64])
         self._reset()
 
     def _reset(self):
@@ -246,7 +245,7 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
                 operator.size = self._size[operator]
         else:
             self._visit_variable(operator)
-            operator.size = self.var_size
+            operator.size = random.choice([8, 16, 20, 32, 64])
             self._is_var[operator] = True
 
     def visit_bit_vector_constant(self, operator: BitVectorConstant):
@@ -254,7 +253,7 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
             operator.size = self._size[operator]
         else:
             self._visit_constant(operator)
-            operator.size = random.randint(1, self.var_size)
+            operator.size = random.randint(1, 64)
             self._is_var[operator] = False
 
     def visit_bit_vector_literal(self, operator: BitVectorLiteral):
