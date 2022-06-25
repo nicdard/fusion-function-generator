@@ -176,8 +176,8 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
             op_id, op, sub_edges = getattr(
                 operator, f'operator_{i+1}').accept(self)
             op_ids.append(op_id)
-            ops = {**ops, **op}
-            edges = {**edges, **sub_edges}
+            ops.update(op)
+            edges.update(sub_edges)
 
         name = self._generate_node_name()
         return name, {name: label, **ops}, {name: op_ids, **edges}

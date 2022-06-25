@@ -153,5 +153,5 @@ class VariableVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
         out = dict()
         for i in range(arity):
             op_out = getattr(operator, f'operator_{i + 1}').accept(self)
-            out = {**out, **op_out}
+            out.update(op_out)
         return out
