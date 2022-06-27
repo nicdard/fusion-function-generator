@@ -623,8 +623,8 @@ class TestRewriteVisitor(unittest.TestCase):
             BitVectorNegation(
                 BitVectorExtraction(
                     init_bv(BitVectorVariable, 'z', 28),
-                    IntegerLiteral(0),
-                    IntegerLiteral(15))))
+                    IntegerLiteral(12),
+                    IntegerLiteral(27))))
         self.assert_equal_trees(expected_x, inverses[0])
 
         expected_y = BitVectorEquality(
@@ -634,10 +634,10 @@ class TestRewriteVisitor(unittest.TestCase):
                     BitVectorNot(init_bv(BitVectorConstant, 'c0', 12)),
                     BitVectorExtraction(
                         init_bv(BitVectorVariable, 'z', 28),
-                        IntegerLiteral(16),
-                        IntegerLiteral(27))),
-                IntegerLiteral(0),
-                IntegerLiteral(7)))
+                        IntegerLiteral(0),
+                        IntegerLiteral(11))),
+                IntegerLiteral(4),
+                IntegerLiteral(11)))
         self.assert_equal_trees(expected_y, inverses[1])
 
 

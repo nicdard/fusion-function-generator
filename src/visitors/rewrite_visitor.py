@@ -249,13 +249,13 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
         output = self.output[operator]
         zero = IntegerLiteral(0)
-        index_1 = IntegerLiteral(operator.operator_1.size - 1)
-        index_2 = IntegerLiteral(operator.operator_1.size)
+        index_1 = IntegerLiteral(operator.operator_2.size - 1)
+        index_2 = IntegerLiteral(operator.operator_2.size)
         index_3 = IntegerLiteral(output.size - 1)
-        self.output[operator.operator_1] = BitVectorExtraction(output, zero, index_1)
-        self.output[operator.operator_1].size = operator.operator_1.size
-        self.output[operator.operator_2] = BitVectorExtraction(output, index_2, index_3)
+        self.output[operator.operator_2] = BitVectorExtraction(output, zero, index_1)
         self.output[operator.operator_2].size = operator.operator_2.size
+        self.output[operator.operator_1] = BitVectorExtraction(output, index_2, index_3)
+        self.output[operator.operator_1].size = operator.operator_1.size
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
 
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
