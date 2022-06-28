@@ -245,7 +245,7 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
                 operator.size = self._size[operator]
         else:
             self._visit_variable(operator)
-            operator.size = random.choice([8, 16, 20, 32, 64])
+            operator.size = random.choice([1, 8, 16, 20, 32, 64])
             self._is_var[operator] = True
 
     def visit_bit_vector_constant(self, operator: BitVectorConstant):
