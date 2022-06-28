@@ -88,7 +88,7 @@ class TestConstantVisitor(unittest.TestCase):
         tree = BitVectorVariable()
         self.assert_equal_value({}, tree)
         tree = BitVectorConstant()
-        self.assert_equal_value({'c0': '(_ BitVec 4)'}, tree)
+        self.assert_equal_value({'c0': '(_ BitVec 15)'}, tree)
         tree = BitVectorEquality(BitVectorConstant(), BitVectorConstant())
         self.assert_equal_value({'c0': '(_ BitVec 36)', 'c1': '(_ BitVec 36)'}, tree)
 
@@ -193,7 +193,7 @@ class TestConstantVisitor(unittest.TestCase):
                         BitVectorVariable(),
                         BitVectorConstant()
                     ))))
-        expected = {'c0': '(_ BitVec 29)', 'c1': '(_ BitVec 20)', 'c2': '(_ BitVec 12)'}
+        expected = {'c0': '(_ BitVec 32)', 'c1': '(_ BitVec 29)', 'c2': '(_ BitVec 21)'}
         self.assert_equal_value(expected, tree)
 
 
