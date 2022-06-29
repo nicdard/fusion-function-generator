@@ -95,8 +95,26 @@ class VariableVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
     def visit_real_equality(self, operator: RealEquality):
         return self._visit_operator(operator, 2)
 
-    def visit_string_concatenation(self, operator: StringConcatenation):
+    def _visit_string_concatenation(self, operator: StringOperator):
         return self._visit_operator(operator, 2)
+
+    def visit_string_concatenation1_1(self, operator: StringConcatenation1_1):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation1_2(self, operator: StringConcatenation1_2):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation1_3(self, operator: StringConcatenation1_3):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation2_1(self, operator: StringConcatenation2_1):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation2_2(self, operator: StringConcatenation2_2):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation2_3(self, operator: StringConcatenation2_3):
+        return self._visit_string_concatenation(operator)
 
     def visit_string_length(self, operator: StringLength):
         return operator.operator_1.accept(self)
