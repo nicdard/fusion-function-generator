@@ -29,13 +29,13 @@ from src.visitors.rewrite_visitor import RewriteVisitor
 from src.visitors.variable_visitor import VariableVisitor
 
 
-def emit(trees: List[Operator], file, args):
+def emit(trees: List[Operator], file_path, args):
     """
     Emits multiple fusion functions and its inverses to yinyan's configuration file.
 
     is_symbolic: when traversing constants, emits either the names (true) or the values (false).
     """
-    with open(file, 'w', encoding='utf-8') as file:
+    with open(file_path, 'w', encoding='utf-8') as file:
         emit_options(file, args)
         for tree in trees:
             emit_function(tree, file)

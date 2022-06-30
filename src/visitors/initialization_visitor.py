@@ -22,6 +22,7 @@
 
 
 import random
+from typing import List
 
 from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
@@ -31,7 +32,7 @@ from src.operators.bitvector_theory import *
 
 
 class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, BitVectorVisitor):
-    def __init__(self, in_variables, out_variable):
+    def __init__(self, in_variables: List[str], out_variable: str):
         self.in_variables = in_variables
         self.out_variable = out_variable
         self._reset()
