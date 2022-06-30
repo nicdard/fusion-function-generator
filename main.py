@@ -71,7 +71,7 @@ def main(args):
     trees = []
     for i in range(args.num_functions):
         root_type = random.choice(operator_types)
-        tree = generate_tree(root_type, args.size, ['y', 'x'], 'z')
+        tree = generate_tree(root_type, args.size, ['x', 'y'], 'z')
         trees.append(tree)
         if args.verbose:
             print(f"{i + 1}. {tree.accept(infix_printer)}")
