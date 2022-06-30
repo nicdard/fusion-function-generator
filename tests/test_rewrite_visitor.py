@@ -146,7 +146,7 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
-        tree_2 = StringEquality(init_named(StringVariable, 'x'), StringConcatenation1_1(
+        tree_2 = StringEquality(init_named(StringVariable, 'x'), StringConcatenation1n1(
             init_named(StringVariable, 'y'), init_named(StringConstant, 'c')))
         inverses_2 = tree_2.accept(visitor)
         self.assertEqual(1, len(inverses_2))
@@ -298,9 +298,9 @@ class TestRewriteVisitor(unittest.TestCase):
     def test_string_visitor_hard(self):
         tree = StringEquality(
             init_named(StringVariable, 'z'),
-            StringConcatenation2_1(
+            StringConcatenation2n1(
                 init_named(StringVariable, 'x'),
-                StringConcatenation2_2(
+                StringConcatenation2n2(
                     StringReplacement(
                         init_named(StringConstant, 'c0'),
                         init_named(StringConstant, 'c1'),
@@ -316,7 +316,7 @@ class TestRewriteVisitor(unittest.TestCase):
                 init_named(IntegerConstant, '0'),
                 StringIndexof(
                     init_named(StringVariable, 'z'),
-                    StringConcatenation1_1(
+                    StringConcatenation1n1(
                         StringReplacement(
                             init_named(StringConstant, 'c0'),
                             init_named(StringConstant, 'c1'),
@@ -332,7 +332,7 @@ class TestRewriteVisitor(unittest.TestCase):
                     init_named(StringVariable, 'z'),
                     StringLength(init_named(StringVariable, 'x')),
                     StringLength(
-                        StringConcatenation1_1(
+                        StringConcatenation1n1(
                             StringReplacement(
                                 init_named(StringConstant, 'c0'),
                                 init_named(StringConstant, 'c1'),
@@ -343,7 +343,7 @@ class TestRewriteVisitor(unittest.TestCase):
                         init_named(StringVariable, 'z'),
                         StringLength(init_named(StringVariable, 'x')),
                         StringLength(
-                            StringConcatenation1_1(
+                            StringConcatenation1n1(
                                 StringReplacement(
                                     init_named(StringConstant, 'c0'),
                                     init_named(StringConstant, 'c1'),

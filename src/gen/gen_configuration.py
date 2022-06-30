@@ -45,12 +45,12 @@ main_operators: Dict[str, Dict[str, List[str]]] = {
         "RealMultiplication": ["RealOperator", "RealOperator"],
     },
     "StringOperator": {
-        "StringConcatenation1_1": ["StringOperator", "StringOperator"],
-        "StringConcatenation1_2": ["StringOperator", "StringOperator"],
-        "StringConcatenation1_3": ["StringOperator", "StringOperator"],
-        "StringConcatenation2_1": ["StringOperator", "StringOperator"],
-        "StringConcatenation2_2": ["StringOperator", "StringOperator"],
-        "StringConcatenation2_3": ["StringOperator", "StringOperator"],
+        "StringConcatenation1n1": ["StringOperator", "StringOperator"],
+        "StringConcatenation1n2": ["StringOperator", "StringOperator"],
+        "StringConcatenation1n3": ["StringOperator", "StringOperator"],
+        "StringConcatenation2n1": ["StringOperator", "StringOperator"],
+        "StringConcatenation2n2": ["StringOperator", "StringOperator"],
+        "StringConcatenation2n3": ["StringOperator", "StringOperator"],
     },
     "BitVectorOperator": {
         "BitVectorNot": ["BitVectorOperator"],

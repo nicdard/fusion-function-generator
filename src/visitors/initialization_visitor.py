@@ -136,22 +136,22 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
     def _visit_string_concatenation(self, operator: StringOperator):
         return self._visit_operator(operator, 2)
 
-    def visit_string_concatenation1_1(self, operator: StringConcatenation1_1):
+    def visit_string_concatenation1n1(self, operator: StringConcatenation1n1):
         return self._visit_string_concatenation(operator)
 
-    def visit_string_concatenation1_2(self, operator: StringConcatenation1_2):
+    def visit_string_concatenation1n2(self, operator: StringConcatenation1n2):
         return self._visit_string_concatenation(operator)
 
-    def visit_string_concatenation1_3(self, operator: StringConcatenation1_3):
+    def visit_string_concatenation1n3(self, operator: StringConcatenation1n3):
         return self._visit_string_concatenation(operator)
 
-    def visit_string_concatenation2_1(self, operator: StringConcatenation2_1):
+    def visit_string_concatenation2n1(self, operator: StringConcatenation2n1):
         return self._visit_string_concatenation(operator)
 
-    def visit_string_concatenation2_2(self, operator: StringConcatenation2_2):
+    def visit_string_concatenation2n2(self, operator: StringConcatenation2n2):
         return self._visit_string_concatenation(operator)
 
-    def visit_string_concatenation2_3(self, operator: StringConcatenation2_3):
+    def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         return self._visit_string_concatenation(operator)
 
     def visit_string_replacement(self, operator: StringReplacement):
