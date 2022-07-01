@@ -1,0 +1,1035 @@
+%%
+%% This is file `sample-sigplan.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% samples.dtx  (with options: `sigplan')
+%% 
+%% IMPORTANT NOTICE:
+%% 
+%% For the copyright see the source file.
+%% 
+%% Any modified versions of this file must be renamed
+%% with new filenames distinct from sample-sigplan.tex.
+%% 
+%% For distribution of the original source see the terms
+%% for copying and modification in the file samples.dtx.
+%% 
+%% This generated file may be distributed as long as the
+%% original source files, as listed above, are part of the
+%% same distribution. (The sources need not necessarily be
+%% in the same archive or directory.)
+%%
+%% Commands for TeXCount
+%TC:macro \cite [option:text,text]
+%TC:macro \citep [option:text,text]
+%TC:macro \citet [option:text,text]
+%TC:envir table 0 1
+%TC:envir table* 0 1
+%TC:envir tabular [ignore] word
+%TC:envir displaymath 0 word
+%TC:envir math 0 word
+%TC:envir comment 0 0
+%%
+%%
+%% The first command in your LaTeX source must be the \documentclass command.
+\documentclass[sigplan,screen]{acmart}
+%% NOTE that a single column version is required for 
+%% submission and peer review. This can be done by changing
+%% the \doucmentclass[...]{acmart} in this template to 
+%% \documentclass[manuscript,screen,review]{acmart}
+%% 
+%% To ensure 100% compatibility, please check the white list of
+%% approved LaTeX packages to be used with the Master Article Template at
+%% https://www.acm.org/publications/taps/whitelist-of-latex-packages 
+%% before creating your document. The white list page provides 
+%% information on how to submit additional LaTeX packages for 
+%% review and adoption.
+%% Fonts used in the template cannot be substituted; margin 
+%% adjustments are not allowed.
+%%
+%% \BibTeX command to typeset BibTeX logo in the docs
+%\AtBeginDocument{%
+%  \providecommand\BibTeX{{%
+%    \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
+
+%% Rights management information.  This information is sent to you
+%% when you complete the rights form.  These commands have SAMPLE
+%% values in them; it is your responsibility as an author to replace
+%% the commands and values with those provided to you when you
+%% complete the rights form.
+\copyrightyear{2022}
+
+%%
+%% For managing citations, it is recommended to use bibliography
+%% files in BibTeX format.
+%%
+%% You can then either use BibTeX with the ACM-Reference-Format style,
+%% or BibLaTeX with the acmnumeric or acmauthoryear sytles, that include
+%% support for advanced citation of software artefact from the
+%% biblatex-software package, also separately available on CTAN.
+%%
+%% Look at the sample-*-biblatex.tex files for templates showcasing
+%% the biblatex styles.
+%%
+
+%%
+%% The majority of ACM publications use numbered citations and
+%% references.  The command \citestyle{authoryear} switches to the
+%% "author year" style.
+%%
+%% If you are preparing content for an event
+%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
+%% citations and references.
+%% Uncommenting
+%% the next command will enable that style.
+%%\citestyle{acmauthoryear}
+
+%% Additional packages
+\usepackage{svg}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{listings}
+
+\usepackage{xcolor}
+
+\makeatletter
+\newcommand{\ccell}[3][]{%
+  \kern-\fboxsep
+  \if\relax\detokenize{#1}\relax
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+  {\colorbox{#2}}%
+  {\colorbox[#1]{#2}}%
+  {#3}\kern-\fboxsep
+}
+\makeatother
+\definecolor{cellgray}{gray}{0.9}
+\AtBeginDocument{\setlength{\cmidrulekern}{0.3em}}
+
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{8.5pt}
+\setlength{\parindent}{0}
+
+%%
+%% end of the preamble, start of the body of the document source.
+\begin{document}
+
+
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+\title{Validating SMT Solvers via \\ Automatic Generation of Fusion Functions}
+
+%%
+%% The "author" command and its associated commands are used to define
+%% the authors and their affiliations.
+%% Of note is the shared affiliation of the first two authors, and the
+%% "authornote" and "authornotemark" commands
+%% used to denote shared contribution to the research.
+\author{Nicola Dardanis}
+\authornote{Both authors contributed equally to this research.}
+\email{ndardanis@student.ethz.ch}
+\affiliation{%
+  \institution{ETH Zurich}
+  \country{Switzerland}
+}
+
+\author{Lucas Weitzendorf}
+\email{lweitzendorf@student.ethz.ch}
+\authornotemark[1]
+\affiliation{%
+  \institution{ETH Zurich}
+  \country{Switzerland}
+}
+
+
+
+%%
+%% By default, the full list of authors will be used in the page
+%% headers. Often, this list is too long, and will overlap
+%% other information printed in the page headers. This command allows
+%% the author to define a more concise list
+%% of authors' names for this purpose.
+\renewcommand{\shortauthors}{Dardanis and Weitzendorf}
+
+%%
+%% The abstract is a short summary of the work to be presented in the
+%% article.
+\begin{abstract}
+  We introduce an effective and extensible method to automatically generate \textit{fusion functions} to be used in \textit{Semantic Fusion} for Satisfiability Modulo Theory (SMT) solver validation. The key idea of Semantic Fusion is to \textit{fuse} two existing equisatisfiable formulas into a new formula, which combines the structures of its ancestors and preserves the satisfiability by construction. To this end, Semantic Fusion relies on \textit{fusion functions}, whose main characteristic is invertibility.
+  \par 
+  We realized a fusion function generator tool which aims to overcome the main limitation of Semantic Fusion, namely the manual definition and design of fusion functions. The tool is able to generate functions of arbitrary complexity by nesting operators while guaranteeing the invertibility of the resulting function with respect to all of its arguments. The tool's domain can be extended by adding operators to its definition module along with their inversion rules. As the set of SMT-LIB operators is limited, the structure of our tool also allows for nested operator expressions to be defined as basic building blocks. This provides the ability to incorporate operators which might not be invertible on their own.
+\end{abstract}
+
+%%
+%% The code below is generated by the tool at http://dl.acm.org/ccs.cfm.
+%% Please copy and paste the code instead of the example below.
+%%
+\begin{CCSXML}
+<ccs2012>
+ <concept>
+  <concept_id>10010520.10010553.10010562</concept_id>
+  <concept_desc>Computer systems organization~Embedded systems</concept_desc>
+  <concept_significance>500</concept_significance>
+ </concept>
+ <concept>
+  <concept_id>10010520.10010575.10010755</concept_id>
+  <concept_desc>Computer systems organization~Redundancy</concept_desc>
+  <concept_significance>300</concept_significance>
+ </concept>
+ <concept>
+  <concept_id>10010520.10010553.10010554</concept_id>
+  <concept_desc>Computer systems organization~Robotics</concept_desc>
+  <concept_significance>100</concept_significance>
+ </concept>
+ <concept>
+  <concept_id>10003033.10003083.10003095</concept_id>
+  <concept_desc>Networks~Network reliability</concept_desc>
+  <concept_significance>100</concept_significance>
+ </concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Formal methods; Correctness}
+
+%%
+%% Keywords. The author(s) should pick words that accurately describe
+%% the work being presented. Separate the keywords with commas.
+\keywords{Semantic fusion, SMT solvers, Fuzz testing, Mutation based testing, Code generation}
+
+%%
+%% This command processes the author and affiliation and title
+%% information and builds the first part of the formatted document.
+\maketitle
+
+\section{Introduction}
+
+SMT solvers are extensively used in formal methods, most notably in software verification, systematic test case generation, and program synthesis. Due to their high degree of complexity, even mature solvers still contain many correctness issues. Their wide applicability amplifies the severity of any such issue. In particular, soundness bugs in SMT solvers betray their users' trust and can have severe consequences in safety-critical and security-critical domains.
+
+\paragraph{Semantic Fusion.} Semantic Fusion is a general and effective approach to validate SMT solvers. It is a metamorphic testing approach that can work with a single SMT solver. The basic idea behind fusion is to fuse formula pairs into a new formula of known satisfiability (either both sat or both unsat). Given two seed formulas $\phi_1$, $\phi_2$, and variables $x$, $y$ of $\phi_1$ and $\phi_2$ and respectively, the idea is to
+\begin{enumerate}
+    \item Concatenate the formulas $\phi_1$ and $\phi_2$
+    \item Add a fresh variable $z = f(x, y)$
+    \item Replace random occurences of $x = g_x(y)$ and $y = g_y(x)$ within the concatenated formula.
+\end{enumerate}
+$f$ is called a \textit{fusion function} and $g_x, g_y$ are the respective inversion functions for variable $x, y$. The major limitation of \textit{Semantic Fusion}, as noted by the authors, is to manually design these functions. This approach has been implemented in YinYang \cite{YinYang}, an SMT fuzzing tool.
+
+\paragraph{SMT-LIB Language}
+The SMT-LIB language \cite{SMTLIB} is the current standard input language for SMT solvers and the base format used in the fusion function specification \cite{fusionfunctions} for YinYang \cite{YinYang}. We focus on the following statements of the SMT-LIB language: \texttt{declare-fun}, \texttt{declare-const}, \texttt{assert}, \texttt{check-sat}. Variables are declared as zero-valued functions. For example, the statement \lstinline[columns=fullflexible]{(declare-fun x () Int)} declares variable x of type integer. An \texttt{assert} statement specifies constraints. The predicates within the asserts can be of mixed types, e.g., the assertion \lstinline[columns=fullflexible]{(assert (= (/ x 10) (* 5 x)))} includes predicates of real and Boolean types. Operations are specified in the prefix notation. Multiple asserts are translated as the conjunction of the constraints in each individual assert statement. The \texttt{check-sat} statement queries the solver on the satisfiability of a formula. The formula is satisfiable if all constraints are satisfiable; otherwise, the formula is unsatisfiable.
+
+\paragraph{Fusion Function Generation} We introduce an effective and general approach to automatically generate arbitrarily complex fusion functions. Our key insight is to treat the problem at an operator level by encoding rewriting rules for each operator. Not all operators are invertible, so we restrict each theory to the subset of operators for which an inverse function can be defined for each input. When operators are not invertible at the SMT solver level, the definition structure of our tool is able to treat invertible compound operators as basic building blocks.
+
+\paragraph{Results}
+We have engineered a generator for fusion functions which is capable of producing configuration files for YinYang that are generally able to achieve better code coverage on widely used SMT solvers than its default configuration. Moreover, with a total running period of 2 weeks, we have collected and reported 4 confirmed bugs in Z3 \cite{z3}, a state-of-the-art SMT solver.
+
+\paragraph{Main Contributions}
+\begin{itemize}
+    \item We introduce an effective technique to automatically generate arbitrarily complex fusion functions.
+    \item We implement this technique in an efficient generator tool, which is able to handle multiple theories and is conveniently extensible. To this end, we provide a utility to automatically generate template code for operator definitions from a simple entry in its configuration module. 
+    \item We modify YinYang to support a wider range of fusion functions.
+    \item We extensively benchmark generated fusion functions against vanilla YinYang using code coverage metrics calculated with gcov.
+\end{itemize}
+
+\paragraph{Paper organization}
+The rest of the paper is structured as follows. Section \ref{sec:approach} illustrates the high-level idea behind our approach and formalizes it. A description of the implementation and the algorithms is also given. Next, we provide details on our evaluation strategy and results (Section \ref{sec:evaluation}). Finally, in Section \ref{sec:relatedwork} we give a survey on related work. 
+
+\section{Approach} \label{sec:approach}
+This section presents two examples of rewriting rules that our tool is capable of handling. \textit{Atomic Rewriting} produces the inversions of an atomic operator, \textit{Expression Rewriting} uses a nested operator expression to represent more complex rewriting rules. In the end we give a more complete example of fusion function expressed as a tree of operators. A complete description of the idea and implementation of the tree rewriting algorithm as well as the tree generation algorithm follows.
+
+\subsection{Atomic Rewriting}
+Atomic Rewriting simply represents the inverse of a SMT operator as another unique SMT operator. Consider the real addition operator \lstinline[columns=fullflexible]{(= z (+ x y))}, the inverses are uniquely determined: \lstinline[columns=fullflexible]{(= x (- z y))}, \lstinline[columns=fullflexible]{(= y (- z x)}.
+
+\subsection{Expression Rewriting}
+As not every inverse has a direct SMT representation, we allow rewriting rules to be made up of more complex nested operator expressions. These inverses are not necessarily unique. For example, string concatenation \lstinline[columns=fullflexible]{(= z (str.++ x y))} can be inverted with respect to y using at least three different expressions containing different operators:
+\begin{enumerate}
+    \item \lstinline[columns=fullflexible]{(= y (str.replace z x ""))}
+    \item \lstinline[columns=fullflexible]{(= y (str.substr z (str.len x) (str.len y)))}
+    \item \lstinline[columns=fullflexible]{(= y (str.substr z (str.indexof z y (str.len x)) (str.len y)))}
+\end{enumerate}
+
+
+\subsection{Tree Rewriting}
+A fusion function can be naturally represented by a tree of operators and their inputs. The internal nodes of such a tree consist of simple operators, while leaves are made up of constants and free variables, serving as inputs to the operators. The root of the tree represents the output of the fusion function. Each edge of the tree represents the result of the sub-tree rooted in the child node, thus having the type of the output of the child node operator. The tree will be subject to the following constraints:
+
+\begin{enumerate}
+    \item Each operator node has a defined inverse operation.
+    \item Each free variable only appears in a single leaf.
+    \item Each edge is type-consistent, i.e. its output type matches the input type of its parent.
+\end{enumerate}
+
+From these three properties, we can guarantee that there exists a unique path from the root to each free variable. Informally speaking, the unique path property allows us to ``undo'' each operation in order to retrieve an expression for the variable values from the root output without introducing self-dependencies between branches. This allows us to automatically infer the inverse of the tree w.r.t. each free variable. More specifically, we inductively apply syntactic rewriting rules along the unique path from root to leaf. 
+\\ \\
+Fulfilling the first tree constraint requires manual specification. For a given solver theory, we identify basic invertible operators along with their atomic and Expression Rewriting rules. These basic operators can then be used as operator nodes. The tool is also capable of treating expressions made of more than one basic operator at the SMT solver level as a unique node if the inverse relation for the whole expression is given. This allows it to handle theories in which the basic SMT operators aren't already invertible. To this end, we encode a definition of invertible operators for each theory in a module inside the tool.
+
+\begin{algorithm}[H]
+\caption{invert operator tree}
+\begin{algorithmic}
+    \Procedure{invert}{$t$, $out$}
+        \State $inv\_map \gets \{\}$
+        \For{$sub\_t \in children(t)$}
+            \State $inv\_op \gets t.get\_inverse\_op(sub\_t, out)$
+            \State $sub\_map \gets invert(sub\_t, inv\_op)$
+            \State $inv\_map \gets merge(inv\_map, sub\_inv)$
+        \EndFor
+        \State \textbf{return} $inv\_map$
+    \EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Fusion functions in two variables are a triplet of functions $f(x, y) = z$, $f^{-1}(y, z) = x$ and $f^{-1}(x, z) = y$. We use a recursive approach to make use of these inverses along the tree. Since the inverses are always defined in terms of the output, we provide it as the argument $out$. To keep track of multiple inverses, we map variable names to their inverses. Inverse trees are collected on down-traversal using $out$ and kept track of in $inv\_map$ by merging maps of multiple branches on the way back up the tree.
+
+\begin{figure}[H]
+  \centering
+  \includesvg[inkscapelatex=false, width=\linewidth]{img/tree_z}
+  \caption{Initial tree}
+  \label{fig:gen_tree}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includesvg[inkscapelatex=false, width=.45\linewidth]{img/tree_x}
+  \includesvg[inkscapelatex=false, width=.45\linewidth]{img/tree_y}
+  \caption{Inverses}
+  \label{fig:tree_inv}
+\end{figure}
+
+\subsection{Tree Generation}
+Generation of the tree is separated into generation of the tree structure and operator selection.  
+
+\begin{algorithm}[H]
+\caption{generate operator tree}
+\begin{algorithmic}
+\State $a \gets available\_arities(theory)$
+\State $t\_a \gets get\_arity\_tree(size, a, len(vars\_in))$
+\State $t\_o \gets get\_operator\_tree(t\_a, vars\_in, var\_out)$
+\State \textbf{return} $t\_o$
+\end{algorithmic}
+\end{algorithm}
+We store the tree structure as a list of branching factors in level order and refer to this as the arity tree. The following algorithms are slight simplifications which disregard certain implementation-specific details. The generation algorithm is given a list of available $arities$ of the theory we use, desired $size$ of the tree and the minimum number of leaves $min\_lf$ as we need them to use all of the specified variables.
+\\ \\
+In each loop iteration, one node is added to the tree until we reach the desired size. The number of currently expected nodes is the sum of arities in the tree + 1 for the root. As this should never be higher than $size$, we subtract it from the desired size to obtain the highest branching factor $max\_a$ we can use for the next operator. Calculating the lower bound is more complex. We need to make sure that the operator enables us to place sufficiently many leaves in the tree. We therefore calculate the hypothetical number of leaves we would be able to generate if all subsequent operators use the maximum available arity as $max\_sub\_lf$ and the number of empty subtrees of existing operators (which could all be leaves if needed) as $node\_gap$. We then subtract both of these from $rem\_lf$ to get the lower bound $min\_a$. Finally, we simply need to select a random arity between $min\_a$ and $max\_a$ and add it to the tree. The only scenario in which we can't use a leaf is if it would complete the last subtree and subsequently lead to $len(tree) < size$.
+\begin{algorithm}[H]
+\caption{generate arity tree}
+\label{alg:aritytree}
+\begin{algorithmic}
+\State $t \gets []$
+\State $rem\_lf \gets min\_lf$
+\While{$len(t) < size$}
+    \State $max\_a \gets size - sum(t) - 1$
+    \State $rem\_op \gets size - len(t) - rem\_lf$
+    \State $max\_sub\_lf \gets (rem\_op - 1) * (max(arities) - 1) + 1$
+     \State $node\_gap \gets sum(t) - len(t)$
+    \State $min\_a \gets rem\_lf - node\_gap - max\_sub\_lf + 1$
+    \State $a\_opt \gets arities.filter(min\_a...max\_a)$
+    \If{$!(sum(t) == len(t) \ \&\& \  max\_a > 0)$}
+        \State $a\_opt.add(0)$
+    \EndIf
+    \State $arity \gets random\_choice(a\_opt)$
+    \If{$arity == 0$}
+        \State $rem\_lf \gets rem\_lf - 1$
+    \EndIf
+    \State t.add(arity)
+\EndWhile
+\State \textbf{return} $t$
+
+\end{algorithmic}
+\end{algorithm}
+
+Once the generation of the arity tree is done, selecting operators to match is fairly straightforward. As the number of leaves can be obtained from the arity tree and the number of variables is fixed, the ratio of constants to variables is well-defined. We use a shuffled list of Booleans to easily obtain a random distribution of them in the tree. Then, we simply need to choose a random operator with the given arity at each step and recursively initialize each subtree before using them as input to the operator. At the end, we wrap the operator tree in an equality for our output variable.
+
+\begin{algorithm} 
+\caption{choose operators}
+\label{alg:operatorselection}
+\begin{algorithmic}
+\State $rem\_leaves \gets t\_a.count(0)$
+\State $rem\_vars \gets len(vars\_in)$
+\State $rem\_const \gets rem\_leaves - rem\_vars$
+\State $leaves[1:rem\_const] \gets false$
+\State $leaves[rem\_const+1:rem\_leaves] \gets true$
+\State $leaves \gets shuffle(leaves)$
+\State $t\_o, i = recursive\_generation(0)$
+\State \textbf{return} $Equality(Variable(var\_out), t\_o)$
+\\
+\Procedure{$recursive\_generation$}{$i$}
+    \State $arity \gets t\_a[i]$
+    \State $i \gets i + 1$
+    \If{$arity == 0$}
+        \State $rem\_leaves \gets rem\_leaves - 1$
+        \If{$leaves[rem\_leaves]$}
+            \State $rem\_vars \gets rem\_vars - 1$
+            \State $name \gets vars_{in}[rem\_vars]$
+            \State \textbf{return} $Variable(name), i$
+        \Else
+            \State $rem\_const \gets rem\_const - 1$
+            \State $name \gets "c" + rem\_const$
+            \State \textbf{return} $Constant(name), i$
+        \EndIf
+    \Else
+        \State $children \gets []$
+        \For{$j \in 1...arity$}
+            \State $sub\_node, i \gets recursive\_generation(i)$
+            \State $children.add(sub\_node)$
+        \EndFor
+        \State $node \gets get\_random\_operator(arity)$
+        \State $node.set\_children(children)$
+        \State \textbf{return} $node, i$
+    \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Implementation Details and Technical Challenges}
+In order to implement the generation and inversion in an intuitive way, we have made several important design decisions which will be discussed in this section.
+
+\paragraph{Nested Operator Classes}
+Just like YinYang, our fusion function generator is implemented Python, which provides us with the ability to represent operators as objects. By defining the parameters an operator takes as members of the class, we can easily nest these classes to represent a tree. This reification of the operators also allows us to easily represent arbitrarily complex expressions as a single operator, thus allowing better support for Expression Rewriting.
+
+\paragraph{Tree Visitors}
+Operator classes provide us with a definition of the basic building blocks for generation. In order to decouple functionality from definition, we decided to implement actions on the operators in separate visitor classes, which also allows code reuse without imposing hierarchical constraints. We implemented visitors for inversion, printing, export to DOT, and emission to fusion function files. These visitors might be used as follows:
+
+\begin{lstlisting}[language=Python, basicstyle=\tiny]
+    inverses = tree.accept(RewriteVisitor())
+    print_visitor = PrintVisitor()
+    for inv in inverses:
+        print(inv.accept(print_visitor))
+\end{lstlisting}
+
+Here is an example of how these visitors are implemented for integer addition:
+
+\begin{lstlisting}[language=Python, basicstyle=\tiny, title={RewriteVisitor}, captionpos=b]
+    def visit_integer_addition(self, operator: IntegerAddition):
+        output = self.output[operator]
+        self.output[operator.operator_1] =
+            IntegerSubtraction(output, operator.operator_2)
+        self.output[operator.operator_2] =
+            IntegerSubtraction(output, operator.operator_1)
+        inverse_1 = operator.operator_1.accept(self)
+        inverse_2 = operator.operator_2.accept(self)
+        return {**inverse_1, **inverse_2}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, basicstyle=\tiny, title={PrintVisitor}, captionpos=b]
+    def visit_integer_addition(self, operator: IntegerAddition):
+        return f"(+ {operator.operator_1.accept(self)} " \
+               f"{operator.operator_2.accept(self)})"
+\end{lstlisting}
+
+\paragraph{Extensibility}
+This unified way of treating classes and providing functionality in visitors, however, leads to a lot of boilerplate code. As previously mentioned, our tool uses an easy-to-use generation module, which can be easily extended with new operators by simply specifying the name, input types and output type. Once done, we provide a generator to automatically generate definitions for the operator classes and stubs for relevant visitor implementations. The principle behind this architectural choice is the "single source of truth". More precisely, by generating the operator classes and by decoupling the algorithms from the data as described above, we are able to derive all the configuration and boilerplate needed to run the generation algorithm from a single point of truth, thus again providing better support for further extensions. The core generation algorithm is indeed capable of using any new operator automatically as soon as it is included in the configuration file and the basic relevant visitors are implemented to provide rewriting rules and string representation of the new operation.
+
+\paragraph{YinYang Extensions}
+Since our tool is able to generate fusion functions of arbitrary size, we fill all leaves that are not variables with symbolic or literal constants.
+We therefore modified YinYang to handle fusion functions containing multiple symbolic constants, allowing for greater flexibility and delaying the instantiation of actual values to happen at runtime. Furthermore, to enable better error tracking, we modified the tool to use the name of both seeds in the mutant file name.
+
+\section{Empirical Evaluation} \label{sec:evaluation}
+In this section we present the results of our evaluation of the generator. We first explore whether the generated fusion functions can enhance Semantic Fusion by comparing coverage information obtained both with the original functions and some generated ones. Second, we provide an overview of the bugs we obtained during 2 weeks of fuzzing using generated fusion functions.
+
+\begin{table*}
+\bigskip
+    
+    \caption{\label{tab:results1} Code coverage evaluations (LIA, LRA).
+    The numbers represent the percentage (\%) coverage for the corresponding coverage metric. Column l, f, b represent line coverage, function coverage, and branch coverage respectively. Vanilla is the original version of YinYang. FFG indicates the modified version of YinYang and the usage of one of the fusion function files generated for benchmarking. The numbers represent the number of nodes per fusion function and the SMT solver timeout in seconds.}
+    
+    \toprule
+    
+    \begin{tabular}{c c c c}
+   %-------------------
+\begin{tabular}{l r}
+  \\
+  \\
+  \\
+  \textbf{CVC5} & \textit{FFG-10 - 30} \\
+              & \textit{FFG-10 - 60} \\
+              & \textit{FFG-20 - 30} \\
+              & \textit{FFG-20 - 60} \\
+              & \textit{FFG-25 - 30} \\
+              & \textit{FFG-25 - 60} \\
+              & \textit{FFG-30 - 30} \\
+              & \textit{FFG-30 - 60} \\
+              & \textit{FFG-5 - 30} \\
+              & \textit{FFG-5 - 60} \\
+              & \textit{FFG-50 - 30} \\
+              & \textit{FFG-50 - 60} \\
+              & \textit{Vanilla - 30} \\
+              & \textit{Vanilla - 60} \\
+  \rule{0pt}{4ex}    
+  \textbf{Z3} & \textit{FFG-10 - 30} \\
+              & \textit{FFG-10 - 60} \\
+              & \textit{FFG-20 - 30} \\
+              & \textit{FFG-20 - 60} \\
+              & \textit{FFG-25 - 30} \\
+              & \textit{FFG-25 - 60} \\
+              & \textit{FFG-30 - 30} \\
+              & \textit{FFG-30 - 60} \\
+              & \textit{FFG-5 - 30} \\
+              & \textit{FFG-5 - 60} \\
+              & \textit{FFG-50 - 30} \\
+              & \textit{FFG-50 - 60} \\
+              & \textit{Vanilla - 30} \\
+              & \textit{Vanilla - 60} \\
+\end{tabular}
+\begin{tabular}{c c c c c c}
+  \multicolumn{6}{c}{\textbf{LIA}} \\
+   \cline{2-5}
+  \multicolumn{3}{c}{SAT} & \multicolumn{3}{c}{UNSAT} \\
+   \hline
+  \textit{l} & \textit{f} & \textit{b} & \textit{l} & \textit{f} & \textit{b} \\
+      \textit{19.9} & \textit{32.7} & \textit{5.9} & \textit{19.9} & \textit{33.1} & \textit{5.9} \\
+      \textit{18.7} & \textit{31.8} & \textit{5.5} &  \ccell[gray]{0.9}{\textit{20.6}} &  \ccell[gray]{0.9}{\textit{33.5}} &  \ccell[gray]{0.9}{\textit{6.2}} \\
+      \textit{17.9} & \textit{30.9} & \textit{5.1} & \textit{19.9} & \textit{33.0} & \textit{5.9} \\
+      \textit{17.9} & \textit{30.8} & \textit{5.2} & \textit{19.5} & \textit{32.7} & \textit{5.8} \\
+       \ccell[gray]{0.9}{\textit{20.2}} & \textit{32.9} &  \ccell[gray]{0.9}{\textit{6.1}} & \textit{20.0} & \textit{33.1} & \textit{6.0} \\
+      \textit{17.8} & \textit{30.6} & \textit{5.1} & \textit{20.1} & \textit{33.2} & \textit{6.0} \\
+      \textit{17.9} & \textit{30.9} & \textit{5.1} & \textit{19.8} & \textit{32.9} & \textit{5.9} \\
+      \textit{19.5} & \textit{32.6} & \textit{5.7} & \textit{20.1} & \textit{33.2} & \textit{6.0} \\
+      \textit{17.9} & \textit{30.9} & \textit{5.2} & \textit{19.8} & \textit{33.1} & \textit{5.9} \\
+      \textit{19.6} & \textit{32.7} & \textit{5.8} & \textit{20.1} & \textit{33.3} & \textit{6.1} \\
+      \textit{17.9} & \textit{30.9} & \textit{5.1} & \textit{18.5} & \textit{31.6} & \textit{5.4} \\
+      \textit{18.3} & \textit{31.1} & \textit{5.3} & \textit{18.8} & \textit{32.1} & \textit{5.5} \\
+      \textit{19.6} &  \ccell[gray]{0.9}{\textit{33.0}} & \textit{5.8} & \textit{19.6} & \textit{32.9} & \textit{5.8} \\
+      \textit{19.1} & \textit{32.7} & \textit{5.6} & \textit{19.8} & \textit{33.0} & \textit{5.9} \\
+      
+      \rule{0pt}{4ex}    
+      
+      \textit{15.3} &  \ccell[gray]{0.9}{\textit{20.1}} &  \ccell[gray]{0.9}{\textit{4.5}} & \textit{16.7} & \textit{21.6} & \textit{4.9} \\
+      \textit{15.3} & \textit{20.0} &  \ccell[gray]{0.9}{\textit{4.5}} & \textit{18.1} & \textit{22.9} & \textit{5.3} \\
+      \textit{15.1} & \textit{19.9} & \textit{4.4} & \textit{19.2} & \textit{23.9} & \textit{5.7} \\
+      \textit{11.7} & \textit{16.6} & \textit{3.2} & \textit{19.3} & \textit{23.9} & \textit{5.7} \\
+      \textit{15.2} & \textit{20.0} &  \ccell[gray]{0.9}{\textit{4.5}} & \textit{19.9} & \textit{24.3} & \textit{6.0} \\
+      \textit{15.0} & \textit{19.9} & \textit{4.4} & \textit{17.6} & \textit{22.5} & \textit{5.2} \\
+      \textit{15.1} & \textit{20.0} & \textit{4.4} & \textit{19.8} & \textit{24.2} & \textit{5.9} \\
+      \textit{15.3} & \textit{20.0} &  \ccell[gray]{0.9}{\textit{4.5}} &  \ccell[gray]{0.9}{\textit{20.2}} &  \ccell[gray]{0.9}{\textit{24.4}} &  \ccell[gray]{0.9}{\textit{6.1}} \\
+      \textit{15.2} & \textit{20.0} &  \ccell[gray]{0.9}{\textit{4.5}} & \textit{17.3} & \textit{22.2} & \textit{5.1} \\
+       \ccell[gray]{0.9}{\textit{15.4}} &  \ccell[gray]{0.9}{\textit{20.1}} &  \ccell[gray]{0.9}{\textit{4.5}} & \textit{17.3} & \textit{22.2} & \textit{5.1} \\
+      \textit{11.5} & \textit{16.4} & \textit{3.1} & \textit{14.5} & \textit{19.6} & \textit{4.1} \\
+      \textit{10.6} & \textit{15.8} & \textit{2.7} & \textit{14.6} & \textit{19.5} & \textit{4.1} \\
+       \ccell[gray]{0.9}{\textit{15.4}} &  \ccell[gray]{0.9}{\textit{20.1}} &  \ccell[gray]{0.9}{\textit{4.5}} & \textit{16.4} & \textit{21.4} & \textit{4.8} \\
+      \textit{11.6} & \textit{16.5} & \textit{3.1} & \textit{16.3} & \textit{21.4} & \textit{4.8} \\
+\end{tabular}
+\begin{tabular}{c c c c c c}
+  \multicolumn{6}{c}{\textbf{LRA}} \\
+   \cline{2-5}
+  \multicolumn{3}{c}{SAT} & \multicolumn{3}{c}{UNSAT} \\
+   \hline
+  \textit{l} & \textit{f} & \textit{b} & \textit{l} & \textit{f} & \textit{b} \\
+      \textit{15.2} & \textit{28.3} & \textit{4.0} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{18.4} & \textit{31.9} & \textit{5.3} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{15.6} & \textit{28.5} & \textit{4.2} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{19.0} & \textit{31.9} & \textit{5.5} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{17.7} & \textit{30.9} & \textit{5.0} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{19.1}} & \textit{32.1} &  \ccell[gray]{0.9}{\textit{5.6}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{19.0} & \textit{32.1} & \textit{5.5} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{18.0} & \textit{31.6} & \textit{5.1} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{15.9} & \textit{28.9} & \textit{4.3} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{17.8} & \textit{31.3} & \textit{5.0} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{18.4} & \textit{31.5} & \textit{5.3} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{18.7} & \textit{32.0} & \textit{5.4} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{19.1}} &  \ccell[gray]{0.9}{\textit{32.4}} & \textit{5.5} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      \textit{17.5} & \textit{30.9} & \textit{4.9} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+      
+      \rule{0pt}{4ex}    
+      
+      \textit{12.8} & \textit{17.5} & \textit{3.3} &  \ccell[gray]{0.9}{\textit{14.2}} &  \ccell[gray]{0.9}{\textit{18.2}} &  \ccell[gray]{0.9}{\textit{3.9}} \\
+      \textit{12.9} & \textit{17.6} & \textit{3.4} & \textit{13.6} & \textit{17.9} & \textit{3.7} \\
+       \ccell[gray]{0.9}{\textit{13.3}} &  \ccell[gray]{0.9}{\textit{17.8}} &  \ccell[gray]{0.9}{\textit{3.5}} & \textit{13.5} & \textit{17.9} & \textit{3.7} \\
+      \textit{13.2} &  \ccell[gray]{0.9}{\textit{17.8}} &  \ccell[gray]{0.9}{\textit{3.5}} & \textit{13.4} & \textit{17.8} & \textit{3.6} \\
+      \textit{12.8} & \textit{17.5} & \textit{3.4} & \textit{13.9} & \textit{18.0} & \textit{3.8} \\
+      \textit{12.9} & \textit{17.6} & \textit{3.4} &  \ccell[gray]{0.9}{\textit{14.2}} &  \ccell[gray]{0.9}{\textit{18.2}} &  \ccell[gray]{0.9}{\textit{3.9}} \\
+      \textit{12.8} & \textit{17.5} & \textit{3.4} & \textit{13.6} & \textit{17.9} & \textit{3.7} \\
+      \textit{13.0} & \textit{17.7} & \textit{3.4} & \textit{13.1} & \textit{17.6} & \textit{3.5} \\
+      \textit{12.9} & \textit{17.6} & \textit{3.4} & \textit{13.2} & \textit{17.7} & \textit{3.5} \\
+      \textit{12.9} & \textit{17.6} & \textit{3.4} & \textit{14.0} & \textit{18.1} & \textit{3.8} \\
+      \textit{13.1} & \textit{17.6} &  \ccell[gray]{0.9}{\textit{3.5}} &  \ccell[gray]{0.9}{\textit{14.2}} &  \ccell[gray]{0.9}{\textit{18.2}} & \textit{3.8} \\
+      \textit{12.8} & \textit{17.5} & \textit{3.4} & \textit{13.5} & \textit{17.8} & \textit{3.6} \\
+      \textit{13.0} & \textit{17.6} & \textit{3.4} & \textit{13.5} & \textit{17.8} & \textit{3.6} \\
+      \textit{12.9} & \textit{17.7} & \textit{3.4} & \textit{13.9} & \textit{18.1} & \textit{3.8} \\
+\end{tabular}
+\\
+%-------------------
+
+    \end{tabular}
+    
+\bigskip
+
+\end{table*}
+    
+
+\begin{table*}
+
+    \caption{\label{tab:results2} Code coverage evaluations (NRA, QF\_LIA).}
+    
+    \toprule
+    
+    \begin{tabular}{c c c c}
+    
+    
+    %-------------------
+   %-------------------
+\begin{tabular}{l r}
+  \\
+  \\
+  \\
+  \textbf{CVC5} & \textit{FFG-10 - 30} \\
+              & \textit{FFG-10 - 60} \\
+              & \textit{FFG-20 - 30} \\
+              & \textit{FFG-20 - 60} \\
+              & \textit{FFG-25 - 30} \\
+              & \textit{FFG-25 - 60} \\
+              & \textit{FFG-30 - 30} \\
+              & \textit{FFG-30 - 60} \\
+              & \textit{FFG-5 - 30} \\
+              & \textit{FFG-5 - 60} \\
+              & \textit{FFG-50 - 30} \\
+              & \textit{FFG-50 - 60} \\
+              & \textit{Vanilla - 30} \\
+              & \textit{Vanilla - 60} \\
+  
+      \rule{0pt}{4ex} \textbf{Z3} & \textit{FFG-10 - 30} \\
+              & \textit{FFG-10 - 60} \\
+              & \textit{FFG-20 - 30} \\
+              & \textit{FFG-20 - 60} \\
+              & \textit{FFG-25 - 30} \\
+              & \textit{FFG-25 - 60} \\
+              & \textit{FFG-30 - 30} \\
+              & \textit{FFG-30 - 60} \\
+              & \textit{FFG-5 - 30} \\
+              & \textit{FFG-5 - 60} \\
+              & \textit{FFG-50 - 30} \\
+              & \textit{FFG-50 - 60} \\
+              & \textit{Vanilla - 30} \\
+              & \textit{Vanilla - 60} \\
+\end{tabular}
+\begin{tabular}{c c c c c c}
+  \multicolumn{6}{c}{\textbf{NRA}} \\
+   \cline{2-5}
+  \multicolumn{3}{c}{SAT} & \multicolumn{3}{c}{UNSAT} \\
+   \hline
+  \textit{l} & \textit{f} & \textit{b} & \textit{l} & \textit{f} & \textit{b} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       \ccell[gray]{0.9}{\textit{0.6}} &  \ccell[gray]{0.9}{\textit{2.0}} &  \ccell[gray]{0.9}{\textit{0.1}} &  \ccell[gray]{0.9}{\textit{2.7}} &  \ccell[gray]{0.9}{\textit{5.8}} &  \ccell[gray]{0.9}{\textit{0.6}} \\
+       
+      \rule{0pt}{4ex}    
+      
+      \textit{9.9} & \textit{12.8} &  \ccell[gray]{0.9}{\textit{2.6}} & \textit{9.9} & \textit{12.5} & \textit{2.6} \\
+      \textit{9.7} & \textit{12.7} & \textit{2.5} & \textit{10.1} & \textit{12.9} & \textit{2.7} \\
+      \textit{8.9} & \textit{12.3} & \textit{2.2} & \textit{9.7} & \textit{12.4} & \textit{2.6} \\
+      \textit{0.4} & \textit{0.4} & \textit{0.1} & \textit{9.6} & \textit{12.4} & \textit{2.5} \\
+      \textit{9.2} & \textit{12.4} & \textit{2.4} & \textit{9.7} & \textit{12.5} & \textit{2.6} \\
+       \ccell[gray]{0.9}{\textit{10.0}} & \textit{12.8} &  \ccell[gray]{0.9}{\textit{2.6}} & \textit{9.6} & \textit{12.4} & \textit{2.5} \\
+      \textit{9.7} & \textit{12.7} & \textit{2.5} & \textit{9.6} & \textit{12.4} & \textit{2.5} \\
+      \textit{9.7} & \textit{12.7} & \textit{2.5} & \textit{9.9} & \textit{12.5} & \textit{2.6} \\
+      \textit{9.9} & \textit{12.8} &  \ccell[gray]{0.9}{\textit{2.6}} &  \ccell[gray]{0.9}{\textit{10.5}} &  \ccell[gray]{0.9}{\textit{13.4}} &  \ccell[gray]{0.9}{\textit{2.8}} \\
+      \textit{9.6} & \textit{12.6} & \textit{2.5} & \textit{10.1} & \textit{12.9} & \textit{2.7} \\
+      \textit{9.8} & \textit{12.8} &  \ccell[gray]{0.9}{\textit{2.6}} & \textit{9.5} & \textit{12.3} & \textit{2.5} \\
+      \textit{9.6} & \textit{12.6} & \textit{2.5} & \textit{9.6} & \textit{12.3} & \textit{2.5} \\
+       \ccell[gray]{0.9}{\textit{10.0}} & \textit{12.8} &  \ccell[gray]{0.9}{\textit{2.6}} &  \ccell[gray]{0.9}{\textit{10.5}} & \textit{13.2} &  \ccell[gray]{0.9}{\textit{2.8}} \\
+       \ccell[gray]{0.9}{\textit{10.0}} &  \ccell[gray]{0.9}{\textit{12.9}} &  \ccell[gray]{0.9}{\textit{2.6}} & \textit{9.9} & \textit{12.5} & \textit{2.6} \\
+\end{tabular}
+\begin{tabular}{c c c c c c}
+  \multicolumn{6}{c}{\textbf{QF\_LIA}} \\
+   \cline{2-5}
+  \multicolumn{3}{c}{SAT} & \multicolumn{3}{c}{UNSAT} \\
+   \hline
+  \textit{l} & \textit{f} & \textit{b} & \textit{l} & \textit{f} & \textit{b} \\
+      \textit{17.1} & \textit{29.9} & \textit{4.8} & \textit{14.3} & \textit{27.1} & \textit{3.9} \\
+       \ccell[gray]{0.9}{\textit{17.6}} &  \ccell[gray]{0.9}{\textit{30.5}} &  \ccell[gray]{0.9}{\textit{5.1}} & \textit{14.5} & \textit{27.3} &  \ccell[gray]{0.9}{\textit{4.0}} \\
+      \textit{17.5} & \textit{30.4} & \textit{5.0} & \textit{13.7} & \textit{26.2} & \textit{3.7} \\
+      \textit{17.3} & \textit{30.2} & \textit{4.9} & \textit{14.4} & \textit{27.3} & \textit{3.9} \\
+      \textit{17.0} & \textit{30.2} & \textit{4.8} & \textit{14.3} & \textit{27.2} & \textit{3.9} \\
+      \textit{17.4} & \textit{30.3} & \textit{5.0} & \textit{14.3} & \textit{27.1} & \textit{3.9} \\
+      \textit{17.1} & \textit{30.2} & \textit{4.8} & \textit{14.5} & \textit{27.2} & \textit{3.9} \\
+       \ccell[gray]{0.9}{\textit{17.6}} &  \ccell[gray]{0.9}{\textit{30.5}} & \textit{5.0} & \textit{13.3} & \textit{25.6} & \textit{3.5} \\
+      \textit{16.9} & \textit{30.1} & \textit{4.7} & \textit{14.5} & \textit{27.3} &  \ccell[gray]{0.9}{\textit{4.0}} \\
+       \ccell[gray]{0.9}{\textit{17.6}} &  \ccell[gray]{0.9}{\textit{30.5}} &  \ccell[gray]{0.9}{\textit{5.1}} &  \ccell[gray]{0.9}{\textit{14.6}} &  \ccell[gray]{0.9}{\textit{27.4}} &  \ccell[gray]{0.9}{\textit{4.0}} \\
+      \textit{13.8} & \textit{26.5} & \textit{3.5} & \textit{14.0} & \textit{26.7} & \textit{3.8} \\
+      \textit{14.4} & \textit{27.4} & \textit{3.8} & \textit{13.9} & \textit{26.8} & \textit{3.7} \\
+      \textit{16.6} & \textit{29.8} & \textit{4.6} & \textit{14.5} & \textit{27.3} & \textit{3.9} \\
+      \textit{17.1} & \textit{30.3} & \textit{4.8} &  \ccell[gray]{0.9}{\textit{14.6}} &  \ccell[gray]{0.9}{\textit{27.4}} &  \ccell[gray]{0.9}{\textit{4.0}} \\
+      
+      
+      \rule{0pt}{4ex}    
+      
+      
+      \textit{16.8} & \textit{21.0} & \textit{4.8} & \textit{12.9} & \textit{17.3} & \textit{3.5} \\
+      \textit{16.0} & \textit{20.4} & \textit{4.6} & \textit{12.7} & \textit{17.2} & \textit{3.4} \\
+      \textit{15.1} & \textit{19.7} & \textit{4.2} & \textit{13.0} & \textit{17.3} & \textit{3.5} \\
+      \textit{16.0} & \textit{20.3} & \textit{4.6} & \textit{12.9} & \textit{17.3} & \textit{3.5} \\
+      \textit{15.8} & \textit{20.3} & \textit{4.5} & \textit{12.8} & \textit{17.3} & \textit{3.5} \\
+      \textit{17.0} & \textit{21.0} & \textit{4.9} &  \ccell[gray]{0.9}{\textit{13.6}} &  \ccell[gray]{0.9}{\textit{17.6}} &  \ccell[gray]{0.9}{\textit{3.7}} \\
+      \textit{8.8} & \textit{13.6} & \textit{2.2} & \textit{12.8} & \textit{17.2} & \textit{3.4} \\
+      \textit{16.4} & \textit{20.6} & \textit{4.7} & \textit{13.2} & \textit{17.4} & \textit{3.6} \\
+      \textit{17.0} & \textit{21.0} & \textit{4.9} & \textit{12.7} & \textit{17.2} & \textit{3.4} \\
+      \textit{16.4} & \textit{20.5} & \textit{4.7} & \textit{12.8} & \textit{17.2} & \textit{3.4} \\
+      \textit{10.5} & \textit{15.6} & \textit{2.8} & \textit{9.2} & \textit{13.4} & \textit{2.4} \\
+      \textit{10.5} & \textit{15.6} & \textit{2.7} & \textit{9.4} & \textit{13.6} & \textit{2.5} \\
+      \textit{16.8} & \textit{21.1} & \textit{4.8} & \textit{13.0} & \textit{17.4} & \textit{3.5} \\
+       \ccell[gray]{0.9}{\textit{17.2}} &  \ccell[gray]{0.9}{\textit{21.4}} &  \ccell[gray]{0.9}{\textit{5.0}} & \textit{12.6} & \textit{17.1} & \textit{3.3} \\
+\end{tabular}
+\\
+%-------------------
+
+    \end{tabular}
+    
+\bigskip
+
+\end{table*}
+    
+\begin{table*}
+    \caption{\label{tab:results3} Code coverage evaluations (QF\_LRA, QF\_NRA).}
+    \toprule
+    \begin{tabular}{l l l l}
+  %-------------------
+\begin{tabular}{l r}
+  \\
+  \\
+  \\
+  \textbf{CVC5} & \textit{FFG-10 - 30} \\
+              & \textit{FFG-10 - 60} \\
+              & \textit{FFG-20 - 30} \\
+              & \textit{FFG-20 - 60} \\
+              & \textit{FFG-25 - 30} \\
+              & \textit{FFG-25 - 60} \\
+              & \textit{FFG-30 - 30} \\
+              & \textit{FFG-30 - 60} \\
+              & \textit{FFG-5 - 30} \\
+              & \textit{FFG-5 - 60} \\
+              & \textit{FFG-50 - 30} \\
+              & \textit{FFG-50 - 60} \\
+              & \textit{Vanilla - 30} \\
+              & \textit{Vanilla - 60} \\
+  
+      \rule{0pt}{4ex}    \textbf{Z3} & \textit{FFG-10 - 30} \\
+              & \textit{FFG-10 - 60} \\
+              & \textit{FFG-20 - 30} \\
+              & \textit{FFG-20 - 60} \\
+              & \textit{FFG-25 - 30} \\
+              & \textit{FFG-25 - 60} \\
+              & \textit{FFG-30 - 30} \\
+              & \textit{FFG-30 - 60} \\
+              & \textit{FFG-5 - 30} \\
+              & \textit{FFG-5 - 60} \\
+              & \textit{FFG-50 - 30} \\
+              & \textit{FFG-50 - 60} \\
+              & \textit{Vanilla - 30} \\
+              & \textit{Vanilla - 60} \\
+\end{tabular}
+\begin{tabular}{c c c c c c}
+  \multicolumn{6}{c}{\textbf{QF\_LRA}} \\
+   \cline{2-5}
+  \multicolumn{3}{c}{SAT} & \multicolumn{3}{c}{UNSAT} \\
+   \hline
+  \textit{l} & \textit{f} & \textit{b} & \textit{l} & \textit{f} & \textit{b} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.3} & \textit{25.8} & \textit{3.5} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.3} & \textit{25.8} & \textit{3.5} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.3} & \textit{25.8} & \textit{3.5} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.3} & \textit{25.8} & \textit{3.5} \\
+       \ccell[gray]{0.9}{\textit{16.9}} &  \ccell[gray]{0.9}{\textit{29.6}} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.2} & \textit{25.8} & \textit{3.5} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.3} & \textit{25.8} & \textit{3.5} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.2} & \textit{25.8} & \textit{3.5} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.2} & \textit{25.8} & \textit{3.5} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.3} & \textit{25.8} & \textit{3.5} \\
+      \textit{16.8} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.4} & \textit{25.9} & \textit{3.5} \\
+      \textit{16.6} & \textit{29.0} & \textit{4.6} & \textit{13.0} & \textit{25.6} & \textit{3.4} \\
+      \textit{16.7} & \textit{29.1} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.0} & \textit{25.7} & \textit{3.4} \\
+      \textit{16.7} &  \ccell[gray]{0.9}{\textit{29.6}} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{13.4} & \textit{25.9} &  \ccell[gray]{0.9}{\textit{3.6}} \\
+      \textit{16.7} & \textit{29.5} &  \ccell[gray]{0.9}{\textit{4.7}} &  \ccell[gray]{0.9}{\textit{13.5}} &  \ccell[gray]{0.9}{\textit{26.0}} &  \ccell[gray]{0.9}{\textit{3.6}} \\
+      
+      \rule{0pt}{4ex}    
+      
+      \textit{11.7} &  \ccell[gray]{0.9}{\textit{15.8}} &  \ccell[gray]{0.9}{\textit{3.0}} & \textit{12.4} & \textit{17.1} &  \ccell[gray]{0.9}{\textit{3.3}} \\
+      \textit{11.5} & \textit{15.7} & \textit{2.9} & \textit{12.3} & \textit{16.9} &  \ccell[gray]{0.9}{\textit{3.3}} \\
+      \textit{10.9} & \textit{15.5} & \textit{2.8} & \textit{12.1} & \textit{16.5} & \textit{3.2} \\
+       \ccell[gray]{0.9}{\textit{11.8}} &  \ccell[gray]{0.9}{\textit{15.8}} &  \ccell[gray]{0.9}{\textit{3.0}} & \textit{12.5} & \textit{17.2} &  \ccell[gray]{0.9}{\textit{3.3}} \\
+      \textit{11.6} &  \ccell[gray]{0.9}{\textit{15.8}} &  \ccell[gray]{0.9}{\textit{3.0}} & \textit{12.1} & \textit{16.8} & \textit{3.2} \\
+      \textit{11.5} & \textit{15.7} &  \ccell[gray]{0.9}{\textit{3.0}} & \textit{12.4} & \textit{17.1} &  \ccell[gray]{0.9}{\textit{3.3}} \\
+      \textit{11.6} &  \ccell[gray]{0.9}{\textit{15.8}} & \textit{2.9} & \textit{12.2} & \textit{16.8} & \textit{3.2} \\
+      \textit{10.9} & \textit{15.4} & \textit{2.7} & \textit{12.3} & \textit{16.9} &  \ccell[gray]{0.9}{\textit{3.3}} \\
+      \textit{10.8} & \textit{15.3} & \textit{2.7} & \textit{12.3} & \textit{16.9} & \textit{3.2} \\
+      \textit{10.8} & \textit{15.3} & \textit{2.7} & \textit{12.5} & \textit{17.2} &  \ccell[gray]{0.9}{\textit{3.3}} \\
+      \textit{11.1} & \textit{15.4} & \textit{2.8} & \textit{11.9} & \textit{16.4} & \textit{3.1} \\
+       \ccell[gray]{0.9}{\textit{11.8}} &  \ccell[gray]{0.9}{\textit{15.8}} &  \ccell[gray]{0.9}{\textit{3.0}} & \textit{12.1} & \textit{16.7} & \textit{3.2} \\
+      \textit{11.1} & \textit{15.5} & \textit{2.8} & \textit{12.5} &  \ccell[gray]{0.9}{\textit{17.3}} &  \ccell[gray]{0.9}{\textit{3.3}} \\
+      \textit{11.2} & \textit{15.6} & \textit{2.8} &  \ccell[gray]{0.9}{\textit{12.6}} &  \ccell[gray]{0.9}{\textit{17.3}} &  \ccell[gray]{0.9}{\textit{3.3}} \\
+\end{tabular}
+\begin{tabular}{c c c c c c}
+  \multicolumn{6}{c}{\textbf{QF\_NRA}} \\
+   \cline{2-5}
+  \multicolumn{3}{c}{SAT} & \multicolumn{3}{c}{UNSAT} \\
+   \hline
+  \textit{l} & \textit{f} & \textit{b} & \textit{l} & \textit{f} & \textit{b} \\
+      \textit{16.7} & \textit{29.1} &  \ccell[gray]{0.9}{\textit{4.7}} & \textit{16.1} & \textit{28.7} & \textit{4.4} \\
+      \textit{16.1} & \textit{28.6} & \textit{4.4} &  \ccell[gray]{0.9}{\textit{16.6}} & \textit{29.4} &  \ccell[gray]{0.9}{\textit{4.6}} \\
+      \textit{16.7} & \textit{29.4} & \textit{4.6} & \textit{16.2} & \textit{28.9} & \textit{4.5} \\
+       \ccell[gray]{0.9}{\textit{16.8}} &  \ccell[gray]{0.9}{\textit{29.5}} &  \ccell[gray]{0.9}{\textit{4.7}} &  \ccell[gray]{0.9}{\textit{16.6}} & \textit{29.4} &  \ccell[gray]{0.9}{\textit{4.6}} \\
+      \textit{16.4} & \textit{28.7} & \textit{4.6} & \textit{16.2} & \textit{28.9} & \textit{4.5} \\
+      \textit{16.7} & \textit{29.1} &  \ccell[gray]{0.9}{\textit{4.7}} &  \ccell[gray]{0.9}{\textit{16.6}} & \textit{29.4} &  \ccell[gray]{0.9}{\textit{4.6}} \\
+      \textit{16.3} & \textit{28.5} & \textit{4.5} &  \ccell[gray]{0.9}{\textit{16.6}} & \textit{29.0} &  \ccell[gray]{0.9}{\textit{4.6}} \\
+      \textit{16.3} & \textit{29.2} & \textit{4.5} & \textit{16.4} & \textit{29.3} & \textit{4.5} \\
+      \textit{16.6} & \textit{29.0} & \textit{4.6} & \textit{16.3} & \textit{29.0} & \textit{4.5} \\
+      \textit{16.7} &  \ccell[gray]{0.9}{\textit{29.5}} &  \ccell[gray]{0.9}{\textit{4.7}} &  \ccell[gray]{0.9}{\textit{16.6}} &  \ccell[gray]{0.9}{\textit{29.5}} &  \ccell[gray]{0.9}{\textit{4.6}} \\
+      \textit{16.2} & \textit{28.6} & \textit{4.5} & \textit{16.5} & \textit{29.3} &  \ccell[gray]{0.9}{\textit{4.6}} \\
+      \textit{16.6} & \textit{29.0} & \textit{4.6} &  \ccell[gray]{0.9}{\textit{16.6}} & \textit{29.4} &  \ccell[gray]{0.9}{\textit{4.6}} \\
+      \textit{16.5} & \textit{28.9} & \textit{4.6} & \textit{16.2} & \textit{28.9} & \textit{4.5} \\
+      \textit{16.6} & \textit{29.1} & \textit{4.6} & \textit{16.5} & \textit{29.4} &  \ccell[gray]{0.9}{\textit{4.6}} \\
+      
+      \rule{0pt}{4ex}    
+      
+      
+       \ccell[gray]{0.9}{\textit{16.3}} & \textit{20.3} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{15.3} & \textit{19.1} & \textit{4.3} \\
+      \textit{16.2} & \textit{20.2} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{15.5} & \textit{19.1} & \textit{4.3} \\
+      \textit{15.9} & \textit{20.0} & \textit{4.5} & \textit{15.2} & \textit{19.0} & \textit{4.2} \\
+      \textit{16.2} & \textit{20.2} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{15.6} & \textit{19.2} & \textit{4.4} \\
+      \textit{16.2} & \textit{20.3} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{15.1} & \textit{18.9} & \textit{4.2} \\
+       \ccell[gray]{0.9}{\textit{16.3}} &  \ccell[gray]{0.9}{\textit{20.4}} &  \ccell[gray]{0.9}{\textit{4.6}} &  \ccell[gray]{0.9}{\textit{16.0}} &  \ccell[gray]{0.9}{\textit{20.0}} &  \ccell[gray]{0.9}{\textit{4.5}} \\
+      \textit{16.0} & \textit{20.1} & \textit{4.5} & \textit{9.7} & \textit{12.3} & \textit{2.6} \\
+      \textit{16.1} & \textit{20.2} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{15.6} & \textit{19.2} & \textit{4.4} \\
+      \textit{16.2} & \textit{20.3} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{14.8} & \textit{18.1} & \textit{4.2} \\
+       \ccell[gray]{0.9}{\textit{16.3}} & \textit{20.3} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{15.5} & \textit{19.2} & \textit{4.4} \\
+      \textit{15.5} & \textit{19.8} & \textit{4.3} & \textit{12.9} & \textit{16.9} & \textit{3.4} \\
+      \textit{16.2} & \textit{20.3} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{15.6} & \textit{19.2} & \textit{4.4} \\
+      \textit{16.1} & \textit{20.2} & \textit{4.5} & \textit{15.1} & \textit{18.9} & \textit{4.2} \\
+       \ccell[gray]{0.9}{\textit{16.3}} & \textit{20.2} &  \ccell[gray]{0.9}{\textit{4.6}} & \textit{15.9} & \textit{19.4} &  \ccell[gray]{0.9}{\textit{4.5}} \\
+\end{tabular}
+\\
+%-------------------
+
+
+%-------------------
+
+
+    \end{tabular}
+    
+\bigskip
+
+\end{table*}
+    
+
+\begin{table*}
+
+    \caption{\label{tab:results4} Code coverage evaluations (QF\_S, QF\_SLIA).}
+    
+    \toprule
+    
+    \begin{tabular}{c c c c}
+  %-------------------
+\begin{tabular}{l r}
+  \\
+  \\
+  \\
+  \textbf{CVC5} & \textit{FFG-10 - 30} \\
+              & \textit{FFG-10 - 60} \\
+              & \textit{FFG-20 - 30} \\
+              & \textit{FFG-20 - 60} \\
+              & \textit{FFG-25 - 30} \\
+              & \textit{FFG-25 - 60} \\
+              & \textit{FFG-30 - 30} \\
+              & \textit{FFG-30 - 60} \\
+              & \textit{FFG-5 - 30} \\
+              & \textit{FFG-5 - 60} \\
+              & \textit{FFG-50 - 30} \\
+              & \textit{FFG-50 - 60} \\
+              & \textit{Vanilla - 30} \\
+              & \textit{Vanilla - 60} \\
+  
+      \rule{0pt}{4ex}    
+      \textbf{Z3} & \textit{FFG-10 - 30} \\
+              & \textit{FFG-10 - 60} \\
+              & \textit{FFG-20 - 30} \\
+              & \textit{FFG-20 - 60} \\
+              & \textit{FFG-25 - 30} \\
+              & \textit{FFG-25 - 60} \\
+              & \textit{FFG-30 - 30} \\
+              & \textit{FFG-30 - 60} \\
+              & \textit{FFG-5 - 30} \\
+              & \textit{FFG-5 - 60} \\
+              & \textit{FFG-50 - 30} \\
+              & \textit{FFG-50 - 60} \\
+              & \textit{Vanilla - 30} \\
+              & \textit{Vanilla - 60} \\
+\end{tabular}
+\begin{tabular}{c c c c c c}
+  \multicolumn{6}{c}{\textbf{QF\_S}} \\
+   \cline{2-5}
+  \multicolumn{3}{c}{SAT} & \multicolumn{3}{c}{UNSAT} \\
+   \hline
+  \textit{l} & \textit{f} & \textit{b} & \textit{l} & \textit{f} & \textit{b} \\
+      \textit{21.1} & \textit{33.4} & \textit{6.8} & \textit{13.7} & \textit{25.8} & \textit{3.8} \\
+      \textit{21.0} & \textit{33.0} & \textit{6.8} & \textit{13.8} & \textit{25.9} & \textit{3.8} \\
+      \textit{20.9} & \textit{33.3} & \textit{6.7} &  \ccell[gray]{0.9}{\textit{13.9}} &  \ccell[gray]{0.9}{\textit{26.0}} &  \ccell[gray]{0.9}{\textit{3.9}} \\
+      \textit{21.0} & \textit{33.3} & \textit{6.7} & \textit{13.8} & \textit{25.9} &  \ccell[gray]{0.9}{\textit{3.9}} \\
+      \textit{20.9} & \textit{33.3} & \textit{6.7} & \textit{13.8} &  \ccell[gray]{0.9}{\textit{26.0}} &  \ccell[gray]{0.9}{\textit{3.9}} \\
+      \textit{20.9} & \textit{33.3} & \textit{6.6} &  \ccell[gray]{0.9}{\textit{13.9}} &  \ccell[gray]{0.9}{\textit{26.0}} &  \ccell[gray]{0.9}{\textit{3.9}} \\
+      \textit{20.9} & \textit{33.2} & \textit{6.7} & \textit{13.8} & \textit{25.9} & \textit{3.8} \\
+      \textit{21.0} & \textit{33.3} & \textit{6.7} & \textit{13.8} &  \ccell[gray]{0.9}{\textit{26.0}} &  \ccell[gray]{0.9}{\textit{3.9}} \\
+      \textit{21.1} &  \ccell[gray]{0.9}{\textit{33.5}} & \textit{6.8} & \textit{13.7} & \textit{25.9} & \textit{3.8} \\
+       \ccell[gray]{0.9}{\textit{21.2}} & \textit{33.4} &  \ccell[gray]{0.9}{\textit{6.9}} & \textit{13.8} &  \ccell[gray]{0.9}{\textit{26.0}} & \textit{3.8} \\
+      \textit{20.7} & \textit{32.9} & \textit{6.6} & \textit{13.7} & \textit{25.9} & \textit{3.8} \\
+      \textit{20.9} & \textit{33.0} & \textit{6.7} & \textit{13.7} & \textit{25.8} & \textit{3.8} \\
+      \textit{21.1} & \textit{33.4} & \textit{6.8} & \textit{13.6} & \textit{25.9} & \textit{3.7} \\
+       \ccell[gray]{0.9}{\textit{21.2}} & \textit{33.4} & \textit{6.8} & \textit{13.6} & \textit{25.9} & \textit{3.7} \\
+       
+       
+      \rule{0pt}{4ex}    
+      
+      \textit{11.9} & \textit{16.5} & \textit{3.3} & \textit{11.8} & \textit{15.4} & \textit{3.4} \\
+       \ccell[gray]{0.9}{\textit{12.5}} & \textit{16.7} &  \ccell[gray]{0.9}{\textit{3.6}} & \textit{11.9} & \textit{15.6} & \textit{3.5} \\
+      \textit{12.0} & \textit{16.5} & \textit{3.4} & \textit{11.9} & \textit{15.6} & \textit{3.5} \\
+      \textit{12.1} & \textit{16.6} & \textit{3.5} & \textit{11.9} & \textit{15.6} & \textit{3.5} \\
+      \textit{11.6} & \textit{16.4} & \textit{3.2} & \textit{11.5} & \textit{15.4} & \textit{3.2} \\
+      \textit{12.2} & \textit{16.6} & \textit{3.5} & \textit{11.8} & \textit{15.5} & \textit{3.4} \\
+      \textit{12.1} & \textit{16.6} & \textit{3.4} & \textit{11.9} & \textit{15.6} & \textit{3.5} \\
+       \ccell[gray]{0.9}{\textit{12.5}} &  \ccell[gray]{0.9}{\textit{16.8}} &  \ccell[gray]{0.9}{\textit{3.6}} & \textit{12.1} & \textit{15.8} &  \ccell[gray]{0.9}{\textit{3.6}} \\
+      \textit{11.9} & \textit{16.5} & \textit{3.3} &  \ccell[gray]{0.9}{\textit{12.3}} &  \ccell[gray]{0.9}{\textit{16.4}} &  \ccell[gray]{0.9}{\textit{3.6}} \\
+      \textit{11.5} & \textit{16.4} & \textit{3.2} & \textit{12.0} & \textit{15.7} & \textit{3.5} \\
+      \textit{11.9} & \textit{16.4} & \textit{3.3} & \textit{10.0} & \textit{14.5} & \textit{2.6} \\
+      \textit{11.9} & \textit{16.4} & \textit{3.4} & \textit{9.2} & \textit{13.9} & \textit{2.3} \\
+      \textit{12.4} & \textit{16.7} &  \ccell[gray]{0.9}{\textit{3.6}} & \textit{10.9} & \textit{15.3} & \textit{3.0} \\
+       \ccell[gray]{0.9}{\textit{12.5}} &  \ccell[gray]{0.9}{\textit{16.8}} &  \ccell[gray]{0.9}{\textit{3.6}} & \textit{11.1} & \textit{15.3} & \textit{3.0} \\
+\end{tabular}
+\begin{tabular}{c c c c c c}
+  \multicolumn{6}{c}{\textbf{QF\_SLIA}} \\
+   \cline{2-5}
+  \multicolumn{3}{c}{SAT} & \multicolumn{3}{c}{UNSAT} \\
+   \hline
+  \textit{l} & \textit{f} & \textit{b} & \textit{l} & \textit{f} & \textit{b} \\
+      \textit{22.2} & \textit{34.4} & \textit{7.3} & \textit{21.1} & \textit{33.5} & \textit{6.9} \\
+      \textit{22.5} & \textit{35.0} & \textit{7.5} & \textit{19.5} & \textit{30.9} & \textit{6.3} \\
+      \textit{21.7} & \textit{34.1} & \textit{7.2} & \textit{17.7} & \textit{29.4} & \textit{5.5} \\
+      \textit{19.1} & \textit{30.6} & \textit{6.1} & \textit{18.1} & \textit{29.6} & \textit{5.8} \\
+      \textit{22.5} & \textit{34.8} & \textit{7.5} & \textit{17.8} & \textit{29.4} & \textit{5.6} \\
+      \textit{21.8} & \textit{33.9} & \textit{7.2} & \textit{17.7} & \textit{29.5} & \textit{5.6} \\
+      \textit{18.8} & \textit{30.2} & \textit{5.9} & \textit{17.7} & \textit{29.5} & \textit{5.5} \\
+      \textit{21.0} & \textit{32.6} & \textit{6.8} & \textit{21.2} & \textit{33.8} & \textit{6.9} \\
+       \ccell[gray]{0.9}{\textit{23.4}} &  \ccell[gray]{0.9}{\textit{35.4}} & \textit{7.8} &  \ccell[gray]{0.9}{\textit{21.8}} &  \ccell[gray]{0.9}{\textit{34.0}} &  \ccell[gray]{0.9}{\textit{7.2}} \\
+       \ccell[gray]{0.9}{\textit{23.4}} &  \ccell[gray]{0.9}{\textit{35.4}} &  \ccell[gray]{0.9}{\textit{7.9}} & \textit{18.9} & \textit{29.9} & \textit{6.1} \\
+      \textit{0.6} & \textit{2.0} & \textit{0.1} & \textit{17.0} & \textit{28.9} & \textit{5.2} \\
+      \textit{0.6} & \textit{2.0} & \textit{0.1} & \textit{16.9} & \textit{28.7} & \textit{5.2} \\
+      \textit{22.8} & \textit{34.5} & \textit{7.7} & \textit{19.2} & \textit{30.2} & \textit{6.2} \\
+      \textit{23.2} & \textit{34.9} & \textit{7.8} & \textit{18.8} & \textit{29.8} & \textit{6.1} \\
+      
+       
+      
+      \rule{0pt}{4ex}    
+      
+      
+      
+      \textit{12.0} & \textit{16.2} & \textit{3.4} & \textit{11.9} & \textit{15.6} & \textit{3.5} \\
+      \textit{11.7} & \textit{16.1} & \textit{3.3} & \textit{12.1} & \textit{15.8} & \textit{3.6} \\
+      \textit{12.5} & \textit{16.7} & \textit{3.6} & \textit{11.8} & \textit{15.6} & \textit{3.5} \\
+       \ccell[gray]{0.9}{\textit{12.7}} & \textit{16.9} &  \ccell[gray]{0.9}{\textit{3.7}} & \textit{11.6} & \textit{15.5} & \textit{3.4} \\
+      \textit{11.8} & \textit{16.1} & \textit{3.3} & \textit{11.4} & \textit{15.0} & \textit{3.3} \\
+      \textit{12.5} & \textit{16.7} & \textit{3.6} & \textit{12.6} & \textit{16.2} &  \ccell[gray]{0.9}{\textit{3.8}} \\
+      \textit{12.3} & \textit{16.6} & \textit{3.5} & \textit{11.7} & \textit{15.5} & \textit{3.4} \\
+      \textit{11.7} & \textit{16.1} & \textit{3.3} & \textit{11.4} & \textit{15.0} & \textit{3.3} \\
+      \textit{11.9} & \textit{16.2} & \textit{3.3} & \textit{12.6} & \textit{16.4} &  \ccell[gray]{0.9}{\textit{3.8}} \\
+      \textit{12.5} &  \ccell[gray]{0.9}{\textit{17.1}} & \textit{3.5} & \textit{12.2} & \textit{15.9} & \textit{3.6} \\
+      \textit{0.4} & \textit{0.4} & \textit{0.1} & \textit{11.1} & \textit{14.8} & \textit{3.1} \\
+      \textit{0.4} & \textit{0.4} & \textit{0.1} & \textit{11.3} & \textit{14.9} & \textit{3.3} \\
+      \textit{12.6} & \textit{16.7} & \textit{3.6} &  \ccell[gray]{0.9}{\textit{12.7}} &  \ccell[gray]{0.9}{\textit{16.6}} &  \ccell[gray]{0.9}{\textit{3.8}} \\
+      \textit{11.9} & \textit{16.1} & \textit{3.4} & \textit{12.2} & \textit{16.1} & \textit{3.6} \\
+\end{tabular}
+\\
+
+
+       
+    \end{tabular} \\
+    
+\bigskip
+\end{table*} \\
+
+\subsection{Do generated fusion functions improve Semantic Fusion coverage?}
+
+To evaluate our generator, we compare the coverage, a conventional evaluation metric for software testing, obtained by fuzzing for a limited amount of time with YinYang. We run the fuzzer using a sample of generated fusion functions of different sizes and the ones from the original (vanilla) implementation. 
+
+\paragraph{Test Seed Formulas}
+The seeds have already been classified and are available as an open source project on GitHub \cite{SEEDS}. The repository contains 114615 files in SMT-LIB format.
+We choose the following logics: LIA, LRA, NRA, QF\_LIA,
+QF\_LRA, QF\_NRA, QF\_SLIA, and QF\_S, for a total of 38459 seeds where L = linear,
+N = non-linear, IA = integer arithmetic,
+RA = real arithmetic, QF = quantifier-free and S = string logic. However, two seeds are misclassfied as of June 4 2022. We corrected their classifications before each test run to avoid false positives.
+
+\paragraph{SMT Solvers} We selected the SMT solvers Z3 \cite{z3} and CVC5 \cite{cvc5} for the evaluation for the following reasons:
+\begin{itemize}
+    \item Z3 (7,498 stars on GitHub) and CVC5 (615 stars on GitHub) are the two most popular solvers. They are widely used in academia and industry.
+    \item Z3 and CVC5 support most of the logics and features in the SMT-LIB standard.
+    \item Z3 and CVC5 have open source issue trackers on GitHub with active and responsive developers.
+\end{itemize}
+
+The solvers are compiled in debug mode without optimizations. The coverage measurement tool is Gcov \cite{GCOV}. In CVC5, we use the \texttt{----strings-exp} option to enable support for string logic and \texttt{smt.string\_solver=z3str3} in Z3. For every other logic, we use the solvers' default configuration.
+
+\paragraph{Fusion Functions} We want to explore how function size affects coverage, the we generate 6 configuration files, each containing 60 functions, with the following sizes (number of nodes): 5, 10, 20, 25, 30, 50. 
+
+\paragraph{YinYang} For each fusion function configuration file and logic we run YinYang with two solver timeouts: 30 and 60 seconds. It is indeed possible that, given functions of different sizes, the solver is unable to solve the bigger test case within the time allocated. We bound the execution of the fuzzer for 1 and 2 hours to compare the different results. When running for 1 hour we allocate 30 seconds as timeout for each call to the solver and 60 seconds for the 2 hour long run.
+
+\paragraph{Infrastructure} The experiments are conducted in a Dockerized environment and the project is published as an open source project on GitHub \cite{FFG}. In the benchmarking folder, we provide the Dockerfile used to build the image containing all the dependencies and utilities required to run the tests, collect and analyse the results. Moreover, we provide the fusion functions used for the benchmarks. Z3 was compiled at commit sha \texttt{ea365de}, 4 June 2022, while CVC5 was compiled at commit sha \texttt{2abc3c30}, 4 June 2022. To use these exact heads, the Dockerfile should be slightly modified as it is configured to always use the latest commit.
+
+\paragraph{Results}
+Table \ref{tab:results1}, Table \ref{tab:results2}, Table \ref{tab:results3} and Table \ref{tab:results4} show the results. The numbers are all expressed in percentages (\%) of line (l), functions (f) and branch (b) coverage respectively. The highest coverages are shaded. The various run configurations used are identified as follows:
+\begin{itemize}
+    \item \texttt{Vanilla - 30}: 1 hour long run of the original YinYang and fusion functions with a timeout of 30 seconds for the solver.
+    \item \texttt{Vanilla - 60}: 2 hour long run of the original YinYang and fusion functions with a timeout of 60 seconds for the solver.
+    \item \texttt{FFG-5 - 30}: 1 hour long run of the modified YinYang with fusion functions of size 5 and a timeout of 30 seconds for the solver.
+    \item \texttt{FFG-5 - 60}: 2 hour long run of the modified YinYang with fusion functions of size 5 and a timeout of 60 seconds for the solver.
+    \item \texttt{FFG-10 - 30}: 1 hour long run of the modified YinYang with fusion functions of size 10 and a timeout of 30 seconds for the solver.
+    \item \texttt{FFG-10 - 60}: 2 hour long run of the modified YinYang with fusion functions of size 10 and a timeout of 60 seconds for the solver.
+    \item \texttt{FFG-20 - 30}: 1 hour long run of the modified YinYang with fusion functions of size 20 and a timeout of 30 seconds for the solver.
+    \item \texttt{FFG-20 - 60}: 2 hour long run of the modified YinYang with fusion functions of size 20 and a timeout of 60 seconds for the solver.
+    \item \texttt{FFG-25 - 30}: 1 hour long run of the modified YinYang with fusion functions of size 25 and a timeout of 30 seconds for the solver.
+    \item \texttt{FFG-25 - 60}: 2 hour long run of the modified YinYang with fusion functions of size 25 and a timeout of 60 seconds for the solver.
+    \item \texttt{FFG-30 - 30}: 1 hour long run of the modified YinYang with fusion functions of size 30 and a timeout of 30 seconds for the solver.
+    \item \texttt{FFG-30 - 60}: 2 hour long run of the modified YinYang with fusion functions of size 30 and a timeout of 60 seconds for the solver.
+    
+    \item \texttt{FFG-50 - 30}: 1 hour long run of the modified YinYang with fusion functions of size 50 and a timeout of 30 seconds for the solver.
+    \item \texttt{FFG-50 - 60}: 2 hour long run of the modified YinYang with fusion functions of size 50 and a timeout of 60 seconds for the solver.
+    
+\end{itemize}
+
+We can observe that the generator produces fusion functions which, compared to manually designed ones, achieves greater or equal code coverage on average. These improvements are mostly in the order of 1\%, which is still a considerable improvement given the large code bases of the two solvers (Z3 consists of more than 487K LOC and CVC5 has over 369K LOC).
+We notice that in the case of CVC5 over QF\_SLIA unsat seeds, the line coverage of the best run is improved by 2.6\% line coverage, 3.8\% for function coverage and 1\% for branch coverage compared to the run of vanilla YinaYang with the same time and timeout parameters. This suggest that our Expression Rewriting of non-trivial operators allows for good flexibility and that there is a lot of room for improvement, especially for theories where the technique can be used extensively to include more and more operators. 
+We also notice that, to the best of our knowledge, all the functions that have been designed for YinYang up until now are eventually derivable from our generator by selecting the right amount of nodes to be used in the formula. This can also be seen by the similarity of results achieved on average by FFG-5 and vanilla tests. Indeed, our generator is eventually capable of producing all fusion functions of a given size over a fixed set of operators. More generally, we can observe that when the vanilla case achieves better coverage it is almost always limited to 0.1-0.2\% compared to the best run of the generated functions.
+
+\subsection{Bugs}
+During a short period of 2 weeks we have been running YinYang with fusion functions generated with our generator. Since it was still under development, we couldn't use all theories during the whole time frame (String theory has been added only later). Nevertheless, in this short period we were able to find 4 confirmed bugs in Z3. One of them was rejected by the maintainer, even though it is a segmention fault regression introduced in the last 3 months. The others have been accepted but still not fixed. One of them is a memory leak affecting string solver \texttt{z3str3}. The other two are soundness issues. We also found a lot of possible duplicates. We avoid posting possible instances of the same problem and wait for the developer to fix the first bug and only post a new one if the input is still triggering an error with the updated code. We also compare the behavior of the version under test against previous versions to identify regressions. We de-duplicate segmentation faults by comparing their ASAN traces.
+We have noticed that with bigger fusion functions it's easier to trigger crashes and memory faults than with shorter ones (around 10-20\% more such inputs are generated). However, solve time also increases significantly in relation to the fusion function size, subsequently reducing the efficiency of YinYang.
+
+\paragraph{Reduction}
+Before submitting bugs to the developers, we use delta debugging tools to reduce the input size. ddSMT \cite{DDSMT}
+has shown to be particularly efficient in reducing most of the bugs. In addition, we use C-Reduce \cite{CREDUCE}
+mainly to reduce crashes. Since C-Reduce is not intended for SMT-LIB format, however, it may generate input that is not valid SMT-LIB or type inconsistent, even if it still triggers the problem. Even if not a real issue, we prefer to have report inputs that are well-formed, especially in the case of regressions, where we can then show that the bug is only triggered in recent versions of the solver. A technique we found particularly effective and also seems to deal well with this issue, is to run ddSMT and C-Reduce interleaved and then always finish by running ddSMT, which can understand and remove malformed parts from the input most of the time.
+A problem related to the usage of bigger formulas is that the mutated test input is bigger, thus requiring more time and effort for reduction before being able to report.
+
+\section{Related Work} \label{sec:relatedwork}
+Previous research from Mansur et al. (STORM) \cite{STORM} has explored the possibility of generating new satisfiable formulas by recombining sub-expressions from an initial pool of seeds. While their approach is applicable to formulas containing multiple theories, individual sub-expressions can only be combined at the Boolean operator level. Comparing the generation procedure involved in our approach and theirs, we notice that we are starting from scratch, while their mutations rely on the initial pool of available expressions. Furthermore, our approach can also instantiate constants without giving them values, which is not always true when dealing with sub-expressions. The idea itself of generating new formulas by combining expressions is fundamental in their approach and also a key point of extensibility in ours, allowing Expression Rewriting. 
+\\ \\
+Other methods such as Type-Aware Operator Mutation \cite{TAOM} replace operators by randomly chosen ones of the same (sub)type. This idea of compatibility of types can be found in our operator selection Algorithm \ref{alg:operatorselection}. Generative Type-Aware Mutation \cite{GTAM} expands on Type-Aware Operator Mutation by replacing a sub-expression of type $T$ with the application of a randomly chosen operator returning the same type $T$ over sub-expressions of matching argument types. However, these techniques do not provide any satisfiability guarantees and therefore rely on differential testing. Despite this, operator mutation has proved to be highly effective at discovering critical bugs. As already seen above, the idea of using expressions in place of operators and vice versa is necessary to support non-invertible operators in our generator.
+\\ \\
+In the field of automatic generation of SMT formulas, an important contribution has been made by Blotsky et a. with StringFuzz \cite{StringFuzz}, which is both a fuzzer and a generator for string constraints. The tool ships with 7 different built-in generators for string formulas. Those generators are configurable with many options. It also provides transformers to generate new instances by mutating seeds. Some of them ensure satisfiability-preservation. A key similarity of the approaches is the focus on extensibility as StringFuzz implements its components as Unix filters. However, the tool is specifically designed for string theory manipulation only, whereas our tool is also extensible at the theory level.
+
+\section{Conclusion}
+We have introduced an effective and easily extensible approach to automatically generate fusion functions to be used in Semantic Fusion for Satisfiability Modulo Theory (SMT) solver validation. The key idea is to treat the problem at an operator level by encoding rewriting rules for each operator. Our approach ensures the invertibility of the generated functions. Fundamentally, we make use of syntactic rewriting rules and Expression Rewriting, which enables the treatment of multiple nested STM solver level operators as atomic operators during rewriting, allowing for great flexibility and overcoming the limitation of non-invertible operators. Our tool produces configuration files that achieve equal or better coverage metric results when used to test state-of-the-art SMT solvers such as Z3 and CVC5 with YinYang. We also discovered and reported 4 confirmed bugs in Z3 in a time frame of only 2 weeks. Finally, we also modified YinYang to support a wider range of fusion functions.
+\\ \\
+In our future work, we want to extend the tool by providing new rewriting rules for already supported theories as well as introduce new theories such as Boolean Vectors and Arrays, which could allow to greatly enhance the coverage achieved by YinYang. It would also be interesting to further modify YinYang to accept more complex fusion functions, e.g. by considering more than two variables during Semantic Fusion. These types of functions are already obtainable from our tool. An exploration in this direction can possibly give more insights on Semantic Fusion itself and possibly achieve better bug finding results. Finally, it could be interesting to extend the tool to generate fusion functions with mixed variable types, which would allow to better test the interaction of multiple theories at the level of the SMT solver.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{sample-base}
+
+\end{document}
+\endinput
+%%
+%% End of file `sample-sigplan.tex'.
