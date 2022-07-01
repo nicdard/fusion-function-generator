@@ -105,7 +105,7 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
     def test_string_visitor_hard(self):
         tree = StringEquality(
             init_named(StringVariable, 'z'),
-            StringConcatenation(
+            StringConcatenation1n3(
                 StringReplacement(
                     init_named(StringVariable, 'x'),
                     init_named(StringConstant, 'c0'),

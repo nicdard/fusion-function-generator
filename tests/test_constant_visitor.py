@@ -163,7 +163,7 @@ class TestConstantVisitor(unittest.TestCase):
     def test_string_visitor_hard(self):
         tree = StringEquality(
             StringVariable(),
-            StringConcatenation(
+            StringConcatenation2n3(
                 StringReplacement(
                     StringVariable(),
                     StringConstant(),

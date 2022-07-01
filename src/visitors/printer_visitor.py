@@ -95,8 +95,26 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_real_equality(self, operator: RealEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
-    def visit_string_concatenation(self, operator: StringConcatenation):
+    def _visit_string_concatenation(self, operator: StringOperator):
         return f"(str.++ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visit_string_concatenation1n1(self, operator: StringConcatenation1n1):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation1n2(self, operator: StringConcatenation1n2):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation1n3(self, operator: StringConcatenation1n3):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation2n1(self, operator: StringConcatenation2n1):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation2n2(self, operator: StringConcatenation2n2):
+        return self._visit_string_concatenation(operator)
+
+    def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
+        return self._visit_string_concatenation(operator)
 
     def visit_string_length(self, operator: StringLength):
         return f"(str.len {operator.operator_1.accept(self)})"

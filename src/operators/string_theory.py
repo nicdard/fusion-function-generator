@@ -28,13 +28,58 @@ from abc import ABC, abstractmethod
 from src.operators.generic import IntegerOperator, StringOperator
 
 
-class StringConcatenation(StringOperator):
+class StringConcatenation1n1(StringOperator):
     def __init__(self, input_1: StringOperator, input_2: StringOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 
     def accept(self, visitor: 'StringVisitor'):
-        return visitor.visit_string_concatenation(self)
+        return visitor.visit_string_concatenation1n1(self)
+
+
+class StringConcatenation1n2(StringOperator):
+    def __init__(self, input_1: StringOperator, input_2: StringOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_concatenation1n2(self)
+
+
+class StringConcatenation1n3(StringOperator):
+    def __init__(self, input_1: StringOperator, input_2: StringOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_concatenation1n3(self)
+
+
+class StringConcatenation2n1(StringOperator):
+    def __init__(self, input_1: StringOperator, input_2: StringOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_concatenation2n1(self)
+
+
+class StringConcatenation2n2(StringOperator):
+    def __init__(self, input_1: StringOperator, input_2: StringOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_concatenation2n2(self)
+
+
+class StringConcatenation2n3(StringOperator):
+    def __init__(self, input_1: StringOperator, input_2: StringOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_concatenation2n3(self)
 
 
 class StringReplacement(StringOperator):
@@ -92,7 +137,27 @@ class StringEquality(StringOperator):
 
 class StringVisitor(ABC):
     @abstractmethod
-    def visit_string_concatenation(self, operator: StringConcatenation):
+    def visit_string_concatenation1n1(self, operator: StringConcatenation1n1):
+        pass
+
+    @abstractmethod
+    def visit_string_concatenation1n2(self, operator: StringConcatenation1n2):
+        pass
+
+    @abstractmethod
+    def visit_string_concatenation1n3(self, operator: StringConcatenation1n3):
+        pass
+
+    @abstractmethod
+    def visit_string_concatenation2n1(self, operator: StringConcatenation2n1):
+        pass
+
+    @abstractmethod
+    def visit_string_concatenation2n2(self, operator: StringConcatenation2n2):
+        pass
+
+    @abstractmethod
+    def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         pass
 
     @abstractmethod

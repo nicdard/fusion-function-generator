@@ -146,7 +146,7 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
-        tree_2 = StringEquality(init_named(StringVariable, 'x'), StringConcatenation(
+        tree_2 = StringEquality(init_named(StringVariable, 'x'), StringConcatenation1n1(
             init_named(StringVariable, 'y'), init_named(StringConstant, 'c')))
         inverses_2 = tree_2.accept(visitor)
         self.assertEqual(1, len(inverses_2))
@@ -298,9 +298,9 @@ class TestRewriteVisitor(unittest.TestCase):
     def test_string_visitor_hard(self):
         tree = StringEquality(
             init_named(StringVariable, 'z'),
-            StringConcatenation(
+            StringConcatenation2n1(
                 init_named(StringVariable, 'x'),
-                StringConcatenation(
+                StringConcatenation2n2(
                     StringReplacement(
                         init_named(StringConstant, 'c0'),
                         init_named(StringConstant, 'c1'),
@@ -309,22 +309,14 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(2, len(inverses))
 
-        expected_x_1 = StringEquality(
-            init_named(StringVariable, 'x'),
-            Substring(
-                init_named(StringVariable, 'z'),
-                init_named(IntegerConstant, '0'),
-                StringLength(
-                    init_named(StringVariable, 'x'))))
-
-        expected_x_2 = StringEquality(
+        expected_x = StringEquality(
             init_named(StringVariable, 'x'),
             Substring(
                 init_named(StringVariable, 'z'),
                 init_named(IntegerConstant, '0'),
                 StringIndexof(
                     init_named(StringVariable, 'z'),
-                    StringConcatenation(
+                    StringConcatenation1n1(
                         StringReplacement(
                             init_named(StringConstant, 'c0'),
                             init_named(StringConstant, 'c1'),
@@ -332,82 +324,15 @@ class TestRewriteVisitor(unittest.TestCase):
                         init_named(StringVariable, 'y')),
                     StringLength(init_named(StringVariable, 'x')))))
 
-        self.assert_any_of_trees([expected_x_1, expected_x_2], inverses[0])
-
-        expected_y_1 = StringEquality(
-            init_named(StringVariable, 'y'),
-            StringReplacement(
-                StringReplacement(
-                    init_named(StringVariable, 'z'),
-                    init_named(StringVariable, 'x'),
-                    init_named(StringConstant, '""')),
-                StringReplacement(
-                    init_named(StringConstant, 'c0'),
-                    init_named(StringConstant, 'c1'),
-                    init_named(StringConstant, 'c2')),
-                init_named(StringConstant, '""')))
-        expected_y_2 = StringEquality(
-            init_named(StringVariable, 'y'),
-            Substring(
-                StringReplacement(
-                    init_named(StringVariable, 'z'),
-                    init_named(StringVariable, 'x'),
-                    init_named(StringConstant, '""')),
-                StringLength(
-                    StringReplacement(
-                        init_named(StringConstant, 'c0'),
-                        init_named(StringConstant, 'c1'),
-                        init_named(StringConstant, 'c2'))),
-                StringLength(
-                    init_named(StringVariable, 'y'))))
-        expected_y_3 = StringEquality(
-            init_named(StringVariable, 'y'),
-            StringReplacement(
-                Substring(
-                    init_named(StringVariable, 'z'),
-                    StringLength(
-                        init_named(StringVariable, 'x')),
-                    StringLength(
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')))),
-                StringReplacement(
-                    init_named(StringConstant, 'c0'),
-                    init_named(StringConstant, 'c1'),
-                    init_named(StringConstant, 'c2')),
-                init_named(StringConstant, '""')))
-        expected_y_4 = StringEquality(
-            init_named(StringVariable, 'y'),
-            Substring(
-                Substring(
-                    init_named(StringVariable, 'z'),
-                    StringLength(
-                        init_named(StringVariable, 'x')),
-                    StringLength(
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')))),
-                StringLength(
-                    StringReplacement(
-                        init_named(StringConstant, 'c0'),
-                        init_named(StringConstant, 'c1'),
-                        init_named(StringConstant, 'c2'))),
-                StringLength(
-                    init_named(StringVariable, 'y'))))
-        expected_y_5 = StringEquality(
+        self.assert_equal_trees(expected_x, inverses[0])
+        expected_y = StringEquality(
             init_named(StringVariable, 'y'),
             Substring(
                 Substring(
                     init_named(StringVariable, 'z'),
                     StringLength(init_named(StringVariable, 'x')),
                     StringLength(
-                        StringConcatenation(
+                        StringConcatenation1n1(
                             StringReplacement(
                                 init_named(StringConstant, 'c0'),
                                 init_named(StringConstant, 'c1'),
@@ -418,7 +343,7 @@ class TestRewriteVisitor(unittest.TestCase):
                         init_named(StringVariable, 'z'),
                         StringLength(init_named(StringVariable, 'x')),
                         StringLength(
-                            StringConcatenation(
+                            StringConcatenation1n1(
                                 StringReplacement(
                                     init_named(StringConstant, 'c0'),
                                     init_named(StringConstant, 'c1'),
@@ -431,185 +356,18 @@ class TestRewriteVisitor(unittest.TestCase):
                             init_named(StringConstant, 'c1'),
                             init_named(StringConstant, 'c2')))),
                 StringLength(init_named(StringVariable, 'y'))))
-        expected_y_6 = StringEquality(
-            init_named(StringVariable, 'y'),
-            Substring(
-                Substring(
-                    init_named(StringVariable, 'z'),
-                    StringIndexof(
-                        init_named(StringVariable, 'z'),
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')),
-                        StringLength(init_named(StringVariable, 'x'))),
-                    StringLength(
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')))),
-                StringLength(
-                    StringReplacement(
-                        init_named(StringConstant, 'c0'),
-                        init_named(StringConstant, 'c1'),
-                        init_named(StringConstant, 'c2'))),
-                StringLength(init_named(StringVariable, 'y'))))
-        expected_y_7 = StringEquality(
-            init_named(StringVariable, 'y'),
-            StringReplacement(
-                Substring(
-                    init_named(StringVariable, 'z'),
-                    StringIndexof(
-                        init_named(StringVariable, 'z'),
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')),
-                        StringLength(init_named(StringVariable, 'x'))),
-                    StringLength(
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')))),
-                StringReplacement(
-                    init_named(StringConstant, 'c0'),
-                    init_named(StringConstant, 'c1'),
-                    init_named(StringConstant, 'c2')),
-                init_named(StringConstant, '""')))
-        expected_y_8 = StringEquality(
-            init_named(StringVariable, 'y'),
-            Substring(
-                Substring(
-                    init_named(StringVariable, 'z'),
-                    StringIndexof(
-                        init_named(StringVariable, 'z'),
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')),
-                        StringLength(init_named(StringVariable, 'x'))),
-                    StringLength(
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')))),
-                StringIndexof(
-                    Substring(
-                        init_named(StringVariable, 'z'),
-                        StringLength(init_named(StringVariable, 'x')),
-                        StringLength(
-                            StringConcatenation(
-                                StringReplacement(
-                                    init_named(StringConstant, 'c0'),
-                                    init_named(StringConstant, 'c1'),
-                                    init_named(StringConstant, 'c2')),
-                                init_named(StringVariable, 'y')))),
-                    init_named(StringVariable, 'y'),
-                    StringLength(
-                        StringReplacement(
-                            init_named(StringConstant, 'c0'),
-                            init_named(StringConstant, 'c1'),
-                            init_named(StringConstant, 'c2')))),
-                StringLength(init_named(StringVariable, 'y'))))
-        expected_y_9 = StringEquality(
-            init_named(StringVariable, 'y'),
-            Substring(
-                StringReplacement(
-                    init_named(StringVariable, 'z'),
-                    init_named(StringVariable, 'x'),
-                    init_named(StringConstant, '""')),
-                StringIndexof(
-                    StringReplacement(
-                        init_named(StringVariable, 'z'),
-                        init_named(StringVariable, 'x'),
-                        init_named(StringConstant, '""')),
-                    init_named(StringVariable, 'y'),
-                    StringLength(
-                        StringReplacement(
-                            init_named(StringConstant, 'c0'),
-                            init_named(StringConstant, 'c1'),
-                            init_named(StringConstant, 'c2')))),
-                StringLength(init_named(StringVariable, 'y'))))
-
-        expected_y_8 = StringEquality(
-            init_named(StringVariable, 'y'),
-            Substring(
-                Substring(
-                    init_named(StringVariable, 'z'),
-                    StringIndexof(
-                        init_named(StringVariable, 'z'),
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')),
-                        StringLength(init_named(StringVariable, 'x'))),
-                    StringLength(
-                        StringConcatenation(
-                            StringReplacement(
-                                init_named(StringConstant, 'c0'),
-                                init_named(StringConstant, 'c1'),
-                                init_named(StringConstant, 'c2')),
-                            init_named(StringVariable, 'y')))),
-                StringIndexof(
-                    Substring(
-                        init_named(StringVariable, 'z'),
-                        StringIndexof(
-                            init_named(StringVariable, 'z'),
-                            StringConcatenation(
-                                StringReplacement(
-                                    init_named(StringConstant, 'c0'),
-                                    init_named(StringConstant, 'c1'),
-                                    init_named(StringConstant, 'c2')),
-                                init_named(StringVariable, 'y')),
-                            StringLength(init_named(StringVariable, 'x'))),
-                        StringLength(
-                            StringConcatenation(
-                                StringReplacement(
-                                    init_named(StringConstant, 'c0'),
-                                    init_named(StringConstant, 'c1'),
-                                    init_named(StringConstant, 'c2')),
-                                init_named(StringVariable, 'y')))),
-                    init_named(StringVariable, 'y'),
-                    StringLength(StringReplacement(
-                        init_named(StringConstant, 'c0'),
-                        init_named(StringConstant, 'c1'),
-                        init_named(StringConstant, 'c2')))),
-                StringLength(init_named(StringVariable, 'y'))))
-        self.assert_any_of_trees([expected_y_1,
-                                  expected_y_2,
-                                  expected_y_3,
-                                  expected_y_4,
-                                  expected_y_5,
-                                  expected_y_6,
-                                  expected_y_7,
-                                  expected_y_8,
-                                  expected_y_9,
-                                  ], inverses[1])
+        self.assert_equal_trees(expected_y, inverses[1])
 
     def test_bitvector_visitor_hard(self):
         subtree_1 = BitVectorNegation(init_bv(BitVectorVariable, 'x', 16))
         subtree_1.size = 16
         subtree_2 = BitVectorXor(
-                        BitVectorNot(
-                            init_bv(BitVectorConstant, 'c0', 12)),
-                        BitVectorConcatenation(
-                            init_bv(BitVectorVariable, 'y', 8),
-                            init_bv(BitVectorConstant, 'c1', 4)
-                        ))
+            BitVectorNot(
+                init_bv(BitVectorConstant, 'c0', 12)),
+            BitVectorConcatenation(
+                init_bv(BitVectorVariable, 'y', 8),
+                init_bv(BitVectorConstant, 'c1', 4)
+            ))
         subtree_2.size = 12
 
         tree = BitVectorEquality(

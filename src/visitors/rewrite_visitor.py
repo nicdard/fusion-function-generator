@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import random
 
 from src.operators.boolean_theory import *
 from src.operators.integer_theory import *
@@ -165,7 +164,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         self.output = {}
         return [RealEquality(var, operator) for var, operator in inverse_dict.items()]
 
-    def visit_string_concatenation(self, operator: StringConcatenation):
+    def _visit_string_concatenation(self, operator: StringOperator, inv1: int, inv2: int):
         output = self.output[operator]
 
         def inv_1_rule_1():
@@ -187,8 +186,8 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         def inv_2_rule_3():
             return StringReplacement(output, operator.operator_1, StringLiteral(""))
 
-        output_1 = random.choice([inv_1_rule_1, inv_1_rule_2])()
-        output_2 = random.choice([inv_2_rule_1, inv_2_rule_2, inv_2_rule_3])()
+        output_1 = [inv_1_rule_1, inv_1_rule_2][inv1 - 1]()
+        output_2 = [inv_2_rule_1, inv_2_rule_2, inv_2_rule_3][inv2 - 1]()
 
         self.output[operator.operator_1] = output_1
         self.output[operator.operator_2] = output_2
@@ -197,6 +196,24 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         inverse_2 = operator.operator_2.accept(self)
 
         return {**inverse_1, **inverse_2}
+
+    def visit_string_concatenation1n1(self, operator: StringConcatenation1n1):
+        return self._visit_string_concatenation(operator, 1, 1)
+
+    def visit_string_concatenation1n2(self, operator: StringConcatenation1n2):
+        return self._visit_string_concatenation(operator, 1, 2)
+
+    def visit_string_concatenation1n3(self, operator: StringConcatenation1n3):
+        return self._visit_string_concatenation(operator, 1, 3)
+
+    def visit_string_concatenation2n1(self, operator: StringConcatenation2n1):
+        return self._visit_string_concatenation(operator, 2, 1)
+
+    def visit_string_concatenation2n2(self, operator: StringConcatenation2n2):
+        return self._visit_string_concatenation(operator, 2, 2)
+
+    def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
+        return self._visit_string_concatenation(operator, 2, 3)
 
     def visit_string_length(self, operator: StringLength):
         return {}

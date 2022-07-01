@@ -88,9 +88,9 @@ class TestVariableVisitor(unittest.TestCase):
         tree = BitVectorConstant()
         self.assert_equal_value({}, tree)
         tree = BitVectorVariable()
-        self.assert_equal_value({'a': '(_ BitVec 64)'}, tree)
+        self.assert_equal_value({'a': '(_ BitVec 8)'}, tree)
         tree = BitVectorEquality(BitVectorVariable(), BitVectorVariable())
-        self.assert_equal_value({'a': '(_ BitVec 64)', 'z': '(_ BitVec 64)'}, tree)
+        self.assert_equal_value({'a': '(_ BitVec 8)', 'z': '(_ BitVec 8)'}, tree)
 
     def test_boolean_visitor_inequality(self):
         tree_1 = BooleanVariable()
@@ -161,7 +161,7 @@ class TestVariableVisitor(unittest.TestCase):
     def test_string_visitor_hard(self):
         tree = StringEquality(
             StringVariable(),
-            StringConcatenation(
+            StringConcatenation1n2(
                 StringReplacement(
                     StringVariable(),
                     StringConstant(),
@@ -192,8 +192,8 @@ class TestVariableVisitor(unittest.TestCase):
                         BitVectorVariable(),
                         BitVectorConstant()
                     ))))
-        expected = {'a': '(_ BitVec 64)', 'b': '(_ BitVec 32)',
-                    'c': '(_ BitVec 20)', 'z': '(_ BitVec 53)'}
+        expected = {'a': '(_ BitVec 32)', 'b': '(_ BitVec 32)',
+                    'c': '(_ BitVec 1)', 'z': '(_ BitVec 36)'}
         self.assert_equal_value(expected, tree)
 
 
