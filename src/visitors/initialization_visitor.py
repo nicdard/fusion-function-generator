@@ -301,6 +301,7 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         self._size[operator.operator_1] = operator.size
         self._size[operator.operator_2] = operator.size
         self._visit_operator(operator, 2)
+        self._reset()
 
     def _visit_operator(self, operator, arity):
         for i in range(arity):
