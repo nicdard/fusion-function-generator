@@ -6,12 +6,13 @@
 name: Publish Docker image
 
 on:
-  issue_comment:
-    types: [created]
+  push:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   push_to_registry:
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '!!!image') }}
     name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
     steps:
