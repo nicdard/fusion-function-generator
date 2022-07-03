@@ -1,6 +1,7 @@
 [submodule "semantic_fusion_seeds"]
 	path = semantic_fusion_seeds
-	url = https://github.com/testsmt/semantic-fusion-seeds
+	url = https://github.com/nicdard/semantic-fusion-seeds
+	branch = fix/missclassified-seeds
 [submodule "yinyang"]
 	path = yinyang
 	url = https://github.com/nicdard/yinyang
