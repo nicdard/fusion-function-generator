@@ -68,7 +68,13 @@ To run them, simply type:
 
 > python3 -m unittest discover -v
 
+## Try new features
+
+A [Dockerfile](./Dockerfile) is provided to try out new features of the project with all the dependencies required compiled in debug mode.
+
 ## Benchmarking
+
+This guide can be used to reproduce the experiments as reported in this [report](./docs/AST_Final_Report.pdf).
 
 A Docker image `ffg` with the latest version of cvc5 and z3 instrumented with gcov is available by building the provided Dockerfile:
 
