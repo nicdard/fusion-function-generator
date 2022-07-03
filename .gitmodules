@@ -1,6 +1,7 @@
 [submodule "semantic_fusion_seeds"]
 	path = semantic_fusion_seeds
-	url = https://github.com/testsmt/semantic-fusion-seeds.git
+	url = https://github.com/testsmt/semantic-fusion-seeds
 [submodule "yinyang"]
 	path = yinyang
 	url = https://github.com/nicdard/yinyang
+	branch = dev
