@@ -19,28 +19,26 @@ This will run with default parameters. For a complete list of the options please
 You can customize the number fusion functions that are generated and the number of operators that appear in each formula.
 By default, the functions are saved in `out/fusion_functions.txt`.
 
-## Setup and use yinyang
+## Setup and using yinyang
 
 Here you can find a complete overview of [yinyang usage](https://yinyang.readthedocs.io/en/latest/fusion.html#usage).
 
-Follow the following instruction to set up a basic testing environment.
+Follow these instructions to set up a basic testing environment.
 
-1. Download latest version of at least one SMT Solver compatible with SMT-LIB format ([Z3](https://github.com/Z3Prover/z3/releases), [CVC5](https://github.com/cvc5/cvc5/releases), ...)
-2. Clone the pre-categorized [seeds repository](https://github.com/testsmt/semantic-fusion-seeds)
-3. Either install or clone [yinyang](https://yinyang.readthedocs.io/en/latest/installation.html)
-4. Run this generator to obtain the **fusion_functions.txt** file
-5. Run yinyang using the generated functions and the pre-categorized seeds
+1. Download the latest version of at least one SMT solver compatible with SMT-LIB format ([Z3](https://github.com/Z3Prover/z3/releases), [CVC5](https://github.com/cvc5/cvc5/releases), ...)
+2. Initialize the yinyang and fusion seed submodules
+3. Run this generator to obtain the **fusion_functions.txt** file
+4. Run yinyang using the generated functions and the pre-categorized seeds
 
-Example command (for sat oracle, quantifier free linear integer algebra):
+Example command (for sat oracle, quantifier free linear integer algebra, Z3):
 
 ```bash
-python3.10 [path-to-yinyang-folder]/bin/yinyang "z3" \
-  -o sat \
-  [path-to-semantic-fusion-seeds-folder]/QF_LIA/sat/ \
+python3 yinyang/bin/yinyang "z3" \
+  -o sat semantic_fusion_seeds/QF_LIA/sat/ \
   -s [path-to-tmp-folder] \
   -b [path-to-bugs-folder] \ # This folder will contain the bugs that are found during yinyang execution 
   -l [path-to-log-folder] \
-  -c [path-to-fusion-function-generator]/out/fusion_functions.txt 
+  -c out/fusion_functions.txt 
 ```
 
 
