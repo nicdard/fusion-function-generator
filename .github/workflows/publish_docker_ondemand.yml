@@ -3,16 +3,15 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Publish Docker image
+name: Publish Docker image on Demand
 
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  push_to_registry:
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '!!!image') }}
-    name: Push Docker image to GitHub Packages
+  handle-request:
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '!!!image')
     runs-on: ubuntu-latest
     steps:
       - name: Acknowledge request
