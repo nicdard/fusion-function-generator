@@ -5,28 +5,12 @@
 
 name: Publish Docker image
 
-on:
-  issue_comment:
-    types: [created]
+on: workflow_dispatch
 
 jobs:
   push_to_registry:
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '!!!image')
-    name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
     steps:
-      - name: Acknowledge request
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: >
-              github.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: 'Building Docker image...'
-              })
-
       - name: Check out the repo
         uses: actions/checkout@v2
       
@@ -44,15 +28,3 @@ jobs:
           push: true
           tags: |
             docker.pkg.github.com/${{ github.repository }}/ffg:latest
-
-      name: Comment phase report
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: >
-              github.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: "The image is available at: " + "ghrc.io/" + context.repo.owner + "/" + context.repo.repo + "/ffg:latest" + "."
-              })
