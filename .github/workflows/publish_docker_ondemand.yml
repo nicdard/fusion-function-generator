@@ -11,7 +11,7 @@ on:
 
 jobs:
   push_to_registry:
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '!!!image')
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '!!!image') }}
     name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
     steps:
@@ -54,5 +54,5 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: "The image is available at: " + "ghrc.io/" + context.repo.owner + "/" + context.repo.repo + "/ffg:latest" + "."
+                body: "The image is available at: " + "ghrc.io/" + context.repo.owner + "/" + context.repo.repo + "/ffg:latest"
               })
