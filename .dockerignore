@@ -1,0 +1,9 @@
+# Ignore everything
+*
+# Include src
+!/src
+!/scripts
+!main.py
+!README.md
+!.dockeignore
+!.gitignore
