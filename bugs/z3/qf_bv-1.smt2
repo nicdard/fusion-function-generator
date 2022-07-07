@@ -17,3 +17,10 @@
 ) 
 (assert (bvult (_ bv1 32) (bvneg (bvadd d d (_ bv3 32) ((_ zero_extend 24) b)))))
 (check-sat)
+
+; $ z3
+; ASSERTION VIOLATION
+; File: ../src/sat/sat_simplifier.cpp
+; Line: 1815
+; c2.contains(~l)
+; (C)ontinue, (A)bort, (S)top, (T)hrow exception, Invoke (G)DB

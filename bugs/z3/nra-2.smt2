@@ -20,4 +20,6 @@
 )
 (assert (= 0 (/ b c 0)))
 (check-sat)
+
+; $ z3
 ; sat, expected unsat

@@ -22,4 +22,6 @@
 (assert (= 0 0))
 ; also triggered by (= 1 1) and (= 2 2), not by (= 3 3)
 (check-sat)
+
+; $ z3
 ; sat, expected unsat

@@ -1,6 +1,3 @@
-; Commit: 40fe472e9555ee5a67b64f70c71577c9a2941bd7
-; OS: Ubuntu 20.04
-
 (declare-fun a () Real)
 (declare-fun b () Real)
 (assert
@@ -30,7 +27,7 @@
 )
 (check-sat)
 
-
+; $ z3
 ; AddressSanitizer:DEADLYSIGNAL
 ; =================================================================
 ; ==18570==ERROR: AddressSanitizer: SEGV on unknown address 0x6270000e39e8 (pc 0x55750349a8b3 bp 0x6270000e39e8 sp 0x7ffc57102c60 T0)
