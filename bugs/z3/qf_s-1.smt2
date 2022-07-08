@@ -58,8 +58,7 @@
                 (re.* re.allchar)))))))))
 (check-sat)
 
-; When executed with z3 smt.string_solver=z3str3 
-; 
+; $ z3 smt.string_solver=z3str3
 ; sat
 ; ast_manager LEAKED: 24
 ; Leaked: Char[84]
