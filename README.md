@@ -72,6 +72,10 @@ To run them, simply type:
 
 A [Dockerfile](./Dockerfile) is provided to try out new features of the project with all the dependencies required compiled in debug mode.
 
+The script [run](scripts/run.sh) can be used to start yinyang with some generated functions in order to find bugs.
+The script starts also a slack notifier job which sends updates automatically to a slack channel.
+To this end, environment variables `SLACK_TOKEN` and `SLACK_CHANNEL_ID` should be passed to the container when starting it.
+
 ## Benchmarking
 
 This guide can be used to reproduce the experiments as reported in this [report](./docs/AST_Final_Report.pdf).
