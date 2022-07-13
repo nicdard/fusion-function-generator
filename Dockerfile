@@ -7,6 +7,7 @@ RUN apt-get update && \
     clang \
     cmake \
     creduce \
+    cron \
     curl \
     doxygen \
     default-jdk \

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Start all benchmarks.
 BENCHMARKS="BV LIA LRA NRA QF_BV QF_BVFP QF_ABV QF_ABVFP QF_LIA QF_LRA QF_NRA QF_SLIA QF_S"
 ORACLES="sat unsat"
@@ -13,3 +15,6 @@ for size in 10 25 50;
     done
   done
 done
+
+# Create and start the slack notifier cron job.
+crontab -l | { cat; echo "5 * * * * /app/scripts/slack-notify.py /app/bugs"; } | crontab -
