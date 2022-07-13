@@ -23,7 +23,7 @@ RUN apt-get update && \
     python-is-python3 \
     sudo
 
-RUN pip3 install toml ddsmt antlr4-python3-runtime==4.9.2 gcovr
+RUN pip3 install toml ddsmt antlr4-python3-runtime==4.9.2 gcovr slack_sdk
 
 WORKDIR /app/
 
