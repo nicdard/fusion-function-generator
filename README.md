@@ -34,7 +34,7 @@ Example command (for sat oracle, quantifier free linear integer algebra, Z3):
 
 ```bash
 python3 yinyang/bin/yinyang "z3" \
-  -o sat semantic_fusion_seeds/QF_LIA/sat/ \
+  -o sat semantic-fusion-seeds/QF_LIA/sat/ \
   -s [path-to-tmp-folder] \
   -b [path-to-bugs-folder] \ # This folder will contain the bugs that are found during yinyang execution 
   -l [path-to-log-folder] \

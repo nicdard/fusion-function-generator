@@ -1,8 +1,8 @@
-[submodule "semantic_fusion_seeds"]
-	path = semantic_fusion_seeds
-	url = https://github.com/nicdard/semantic-fusion-seeds
-	branch = fix/missclassified-seeds
 [submodule "yinyang"]
 	path = yinyang
-	url = https://github.com/nicdard/yinyang
+	url = https://github.com/nicdard/yinyang.git
 	branch = dev
+[submodule "semantic-fusion-seeds"]
+	path = semantic-fusion-seeds
+	url = https://github.com/nicdard/semantic-fusion-seeds.git
+    branch = fix/missclassified-seeds
