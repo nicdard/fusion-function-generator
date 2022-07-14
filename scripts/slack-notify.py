@@ -14,13 +14,14 @@ def get_bug_list(directory):
         root, ext = os.path.splitext(file)
         root = '-'.join(root.split('-')[:-1]) # remove random hash
 
-        if ext not in ['.smt2', '.output']:
+        try:
+            idx = ['.smt2', '.output'].index(ext)
+        except ValueError:
             continue
 
         if root not in files:
             files[root] = [None, None]
 
-        idx = 0 if ext == '.smt2' else 1
         files[root][idx] = os.path.join(directory, file)
 
     return [tuple(files[root]) for root in files.keys()]
@@ -59,11 +60,16 @@ def notify(client, in_file, out_file):
         return False
     
     cmd, stdout, stderr = parse_output_file(out_file)
-    message = 'cmd:' + '```' + cmd + ' ' +  os.path.basename(in_file) + '```' + '\n'
+    cmd += ' ' + os.path.basename(in_file)
+
+    def block_format(content):
+        return '```' + content + '```'
+
+    message = 'cmd:' + '\n' + block_format(cmd)
     if stdout:
-        message += 'stdout:' + '\n' + '```' + stdout + '```'
+        message += '\n' + 'stdout:' + '\n' + block_format(stdout)
     if stderr:
-        message += 'stderr:' + '\n' + '```' + stderr + '```' + '\n'
+        message += '\n' + 'stderr:' + '\n' + block_format(stderr)
 
     try:
         result = client.files_upload(
@@ -80,8 +86,8 @@ def notify(client, in_file, out_file):
 
 
 def main():
-    client = WebClient(token=os.getenv('SLACK_TOKEN'))
     bugs = get_bug_list(sys.argv[1])
+    client = WebClient(token=os.getenv('SLACK_TOKEN'))
 
     for in_file, out_file in bugs:
         if notify(client, in_file, out_file):
