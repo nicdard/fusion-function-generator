@@ -7,4 +7,5 @@
 | [QF_NRA 1](z3/qf_nra-1.smt2) | QF_NRA | Segfault            | [#6044](https://github.com/Z3Prover/z3/issues/6044)                         | 20/05/22 |
 | [QF_S 1](z3/qf_s-1.smt2)     | QF_S   | Memory Leak         | [#6076](https://github.com/Z3Prover/z3/issues/6076)                         | 04/06/22 |
 | [QF_BV 1](z3/qf_bv-1.smt2)   | QF_BV  | Assertion Violation | [#6143](https://github.com/Z3Prover/z3/issues/6143)                         | 07/07/22 |
+| [QF_S 2](z3/qf_s-2.smt2)     | QF_S   | Soundness           | [#6159](https://github.com/Z3Prover/z3/issues/6159)                         | 14/07/22 |
 
