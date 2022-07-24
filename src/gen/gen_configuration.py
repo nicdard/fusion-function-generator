@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 
-import random
 import importlib
 from typing import Dict, List
 
@@ -153,15 +152,16 @@ def get_operator_types(theory: str) -> List[str]:
 
 
 def get_arities(theory: str) -> List[int]:
-    arities = []
+    arities = set()
     for op in main_operators[theory].keys():
-        arities.append(len(get_operator_parameters(theory, op)))
-    return arities
+        arities.add(len(get_operator_parameters(theory, op)))
+    return list(arities)
 
 
 def get_operator_parameters(theory: str, operator: str) -> List[str]:
-    params = theory_declarations[theory][operator]
-    return params
+    if operator in leaf_operators[theory].values():
+        return []
+    return theory_declarations[theory][operator]
 
 
 def get_constant(theory: str) -> str:
@@ -180,19 +180,15 @@ def get_root(theory: str) -> str:
     return root_operators[theory]
 
 
-def get_eligible_operator(theory: str, arity: int) -> str:
-    if theory is None:
-        theory = random.choice(get_theories())
-
-    theory = main_operators[theory]
+def get_eligible_operators(theory: str, min_arity: int, max_arity: int) -> List[str]:
     operator_choices = []
 
-    for operator in theory.keys():
-        n = len([p for p in theory[operator] if "Operator" in p])
-        if n == arity:
+    for operator in main_operators[theory].keys():
+        n = len(main_operators[theory][operator])
+        if min_arity <= n <= max_arity:
             operator_choices.append(operator)
 
-    return random.choice(operator_choices)
+    return operator_choices
 
 
 def get_theory_name(theory: str) -> str:
