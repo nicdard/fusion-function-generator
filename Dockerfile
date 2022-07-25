@@ -33,7 +33,6 @@ RUN git clone https://github.com/testsmt/yinyang.git
 RUN git clone https://github.com/testsmt/semantic-fusion-seeds.git
 
 # Clone z3 on changes to the master branch
-ADD https://api.github.com/repos/Z3Prover/z3/compare/master...HEAD /dev/null
 RUN git clone https://github.com/Z3Prover/z3
 RUN cd z3 && \
     CXXFLAGS="-fprofile-arcs -ftest-coverage" CFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS="-fprofile-arcs -ftest-coverage" ./configure --debug && \
@@ -42,7 +41,6 @@ RUN cd z3 && \
     make install
 
 # Clone cvc5 on changes to the master branch
-ADD https://api.github.com/repos/cvc5/cvc5/compare/master...HEAD /dev/null
 RUN git clone https://github.com/cvc5/cvc5
 RUN cd cvc5 && \
     CXXFLAGS="-fprofile-arcs -ftest-coverage" CFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS="-fprofile-arcs -ftest-coverage" ./configure.sh  debug --coverage --auto-download --poly --cryptominisat --kissat && \
