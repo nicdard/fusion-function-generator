@@ -83,6 +83,9 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_real_division(self, operator: RealDivision):
         return f"({operator.operator_1.accept(self)} / {operator.operator_2.accept(self)})"
 
+    def visit_integer_to_real(self, operator: IntegerToReal):
+        return f"real({operator.operator_1.accept(self)})"
+
     def visit_real_constant(self, operator: RealConstant):
         return operator.name
 
@@ -126,6 +129,9 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_substring(self, operator: Substring):
         return f"{operator.operator_1.accept(self)}" \
                f"[{operator.operator_2.accept(self)}, {operator.operator_3.accept(self)}]"
+
+    def visit_real_to_integer(self, operator: RealToInteger):
+        return f"int({operator.operator_1.accept(self)})"
 
     def visit_string_replacement(self, operator: StringReplacement):
         return f"{operator.operator_1.accept(self)}.replace" \

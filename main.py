@@ -56,10 +56,10 @@ def main(args):
     if not file_name.endswith('.txt'):
         file_name += '.txt'
 
-    operator_types = gen_configuration.get_theories()
     if args.theories:
-        operator_types = [gen_configuration.option_to_operator_type[option]
-                          for option in args.theories]
+        gen_configuration.set_available_theories(args.theories)
+
+    operator_types = gen_configuration.get_theories()
 
     if args.verbose:
         print(f"Using theories: {operator_types}")

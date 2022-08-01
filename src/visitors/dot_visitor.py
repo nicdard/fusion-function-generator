@@ -87,6 +87,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
     def visit_real_division(self, operator: RealDivision):
         return self._visit_operator("/", operator, 2)
 
+    def visit_integer_to_real(self, operator: IntegerToReal):
+        return self._visit_operator("to_real", operator, 1)
+
     def visit_real_constant(self, operator: RealConstant):
         return self._visit_constant(operator)
 
@@ -126,6 +129,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
 
     def visit_string_indexof(self, operator: StringIndexof):
         return self._visit_operator("str.indexof", operator, 3)
+
+    def visit_real_to_integer(self, operator: RealToInteger):
+        return self._visit_operator("to_int", operator, 1)
 
     def visit_substring(self, operator: Substring):
         return self._visit_operator("str.substr", operator, 3)

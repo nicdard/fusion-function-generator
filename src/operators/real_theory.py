@@ -25,7 +25,7 @@
 # Look at the README to learn more.
 
 from abc import ABC, abstractmethod
-from src.operators.generic import RealOperator
+from src.operators.generic import IntegerOperator, RealOperator
 
 
 class RealAddition(RealOperator):
@@ -53,6 +53,14 @@ class RealMultiplication(RealOperator):
 
     def accept(self, visitor: 'RealVisitor'):
         return visitor.visit_real_multiplication(self)
+
+
+class IntegerToReal(RealOperator):
+    def __init__(self, input_1: IntegerOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'RealVisitor'):
+        return visitor.visit_integer_to_real(self)
 
 
 class RealDivision(RealOperator):
@@ -108,6 +116,10 @@ class RealVisitor(ABC):
 
     @abstractmethod
     def visit_real_multiplication(self, operator: RealMultiplication):
+        pass
+
+    @abstractmethod
+    def visit_integer_to_real(self, operator: IntegerToReal):
         pass
 
     @abstractmethod

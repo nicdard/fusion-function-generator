@@ -148,6 +148,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
 
+    def visit_integer_to_real(self, operator: IntegerToReal):
+        output = self.output[operator]
+        self.output[operator.operator_1] = RealToInteger(output)
+        return operator.operator_1.accept(self)
+
     def visit_real_constant(self, operator: RealConstant):
         return {}
 
@@ -219,6 +224,9 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         return {}
 
     def visit_string_indexof(self, operator: StringIndexof):
+        return {}
+
+    def visit_real_to_integer(self, operator: RealToInteger):
         return {}
 
     def visit_substring(self, operator: Substring):

@@ -90,6 +90,36 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
     def generate_subtree(op_type, num_internal, num_leaf):
         available_arities = get_arities(op_type)
 
+        def get_closest_feasible_num_internal():
+            new_num_internal = 0
+            target = new_num_internal + num_leaf - 1
+
+            lowest_dev = float('inf')
+            best_num_internal = 0
+            possible_sums = {0}
+
+            while True:
+                dev = abs(new_num_internal - num_internal)
+                if dev <= lowest_dev:
+                    if target in possible_sums:
+                        lowest_dev = dev
+                        best_num_internal = new_num_internal
+                elif new_num_internal >= num_internal:
+                    break
+
+                new_sums = set()
+                for prev_sum in possible_sums:
+                    for arity in available_arities:
+                        new_sums.add(prev_sum + arity)
+
+                possible_sums = new_sums
+                new_num_internal += 1
+                target = new_num_internal + num_leaf - 1
+
+            return best_num_internal
+
+        num_internal = get_closest_feasible_num_internal()
+
         if num_internal >= 1:
             max_sub_leaf = (num_internal - 1) * (max(available_arities) - 1) + 1
             min_arity = num_leaf - max_sub_leaf + 1
@@ -98,14 +128,11 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
             op_choices = get_eligible_operators(op_type, min_arity, max_arity)
             op_name = random.choice(op_choices)
         else:
-            assert num_internal == 0
-            assert num_leaf == 1
             op_func = get_variable if is_var() else get_constant
-            op_name = op_func(theory)
+            op_name = op_func(op_type)
 
-        parameters = get_operator_parameters(theory, op_name)
+        parameters = get_operator_parameters(op_type, op_name)
         op_arity = len(parameters)
-        assert num_leaf >= op_arity
 
         children = []
         rem_internal = num_internal - 1  # not sure if max is necessary here
@@ -121,8 +148,9 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
                 def get_bound(num_leaves, arity):
                     return (num_leaves - 1) / (arity - 1) if arity > 1 else 1e6
 
-                min_op_arity = min(available_arities)
-                max_op_arity = max(available_arities)
+                child_available_arities = get_arities(input_type)
+                min_op_arity = min(child_available_arities)
+                max_op_arity = max(child_available_arities)
 
                 min_internal_to_cover = math.ceil(get_bound(rem_leaf, max_op_arity))
                 child_internal_high = math.floor(get_bound(child_leaf, min_op_arity))
@@ -139,7 +167,7 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
             child = generate_subtree(input_type, child_internal, child_leaf)
             children.append(child)
 
-        return get_operator_class(theory, op_name)(*children)
+        return get_operator_class(op_type, op_name)(*children)
 
     operator_tree = generate_subtree(theory, gen_num_internal, gen_num_leaf)
     output_var = get_operator_class(theory, get_variable(theory))()

@@ -83,6 +83,9 @@ class VariableVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
     def visit_real_division(self, operator: RealDivision):
         return self._visit_operator(operator, 2)
 
+    def visit_integer_to_real(self, operator: IntegerToReal):
+        return self._visit_operator(operator, 1)
+
     def visit_real_variable(self, operator: RealVariable):
         return {operator.name: "Real"}
 
@@ -121,6 +124,9 @@ class VariableVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
 
     def visit_string_indexof(self, operator: StringIndexof):
         return self._visit_operator(operator, 3)
+
+    def visit_real_to_integer(self, operator: RealToInteger):
+        return self._visit_operator(operator, 1)
 
     def visit_substring(self, operator: Substring):
         return self._visit_operator(operator, 3)

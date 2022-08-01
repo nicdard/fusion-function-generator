@@ -25,7 +25,7 @@
 # Look at the README to learn more.
 
 from abc import ABC, abstractmethod
-from src.operators.generic import IntegerOperator, StringOperator
+from src.operators.generic import IntegerOperator, RealOperator, StringOperator
 
 
 class IntegerAddition(IntegerOperator):
@@ -80,6 +80,14 @@ class StringIndexof(IntegerOperator):
 
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visit_string_indexof(self)
+
+
+class RealToInteger(IntegerOperator):
+    def __init__(self, input_1: RealOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_real_to_integer(self)
 
 
 class IntegerVariable(IntegerOperator):
@@ -138,6 +146,10 @@ class IntegerVisitor(ABC):
 
     @abstractmethod
     def visit_string_indexof(self, operator: StringIndexof):
+        pass
+
+    @abstractmethod
+    def visit_real_to_integer(self, operator: RealToInteger):
         pass
 
     @abstractmethod

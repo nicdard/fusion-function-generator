@@ -83,6 +83,9 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_real_division(self, operator: RealDivision):
         return f"(/ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
+    def visit_integer_to_real(self, operator: IntegerToReal):
+        return f"(to_real {operator.operator_1.accept(self)})"
+
     def visit_real_constant(self, operator: RealConstant):
         return operator.name
 
@@ -122,6 +125,9 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_string_indexof(self, operator: StringIndexof):
         return f"(str.indexof {operator.operator_1.accept(self)} " \
                f"{operator.operator_2.accept(self)} {operator.operator_3.accept(self)})"
+
+    def visit_real_to_integer(self, operator: RealToInteger):
+        return f"(to_int {operator.operator_1.accept(self)})"
 
     def visit_substring(self, operator: Substring):
         return f"(str.substr {operator.operator_1.accept(self)} " \
