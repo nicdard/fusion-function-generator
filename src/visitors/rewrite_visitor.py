@@ -59,6 +59,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         inverse_dict = operator.operator_2.accept(self)
         return [BooleanEquality(var, operator) for var, operator in inverse_dict.items()]
 
+    def visit_integer_negation(self, operator: IntegerNegation):
+        output = self.output[operator]
+        self.output[operator.operator_1] = IntegerNegation(output)
+        return operator.operator_1.accept(self)
+
     def visit_integer_addition(self, operator: IntegerAddition):
         output = self.output[operator]
         self.output[operator.operator_1] = IntegerSubtraction(
@@ -107,6 +112,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         # Prepare the visitor to be reused
         self.output = {}
         return [IntegerEquality(var, operator) for var, operator in inverse_dict.items()]
+
+    def visit_real_negation(self, operator: RealNegation):
+        output = self.output[operator]
+        self.output[operator.operator_1] = RealNegation(output)
+        return operator.operator_1.accept(self)
 
     def visit_real_addition(self, operator: RealAddition):
         output = self.output[operator]

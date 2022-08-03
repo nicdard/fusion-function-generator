@@ -28,6 +28,14 @@ from abc import ABC, abstractmethod
 from src.operators.generic import IntegerOperator, RealOperator, StringOperator
 
 
+class IntegerNegation(IntegerOperator):
+    def __init__(self, input_1: IntegerOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_integer_negation(self)
+
+
 class IntegerAddition(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
@@ -124,6 +132,10 @@ class IntegerEquality(IntegerOperator):
 
 
 class IntegerVisitor(ABC):
+    @abstractmethod
+    def visit_integer_negation(self, operator: IntegerNegation):
+        pass
+
     @abstractmethod
     def visit_integer_addition(self, operator: IntegerAddition):
         pass

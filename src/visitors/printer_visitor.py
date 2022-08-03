@@ -47,6 +47,9 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_boolean_equality(self, operator: BooleanEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
+    def visit_integer_negation(self, operator: IntegerNegation):
+        return f"(- {operator.operator_1.accept(self)})"
+
     def visit_integer_addition(self, operator: IntegerAddition):
         return f"(+ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
@@ -70,6 +73,9 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
 
     def visit_integer_equality(self, operator: IntegerEquality):
         return f"(= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+
+    def visit_real_negation(self, operator: RealNegation):
+        return f"(- {operator.operator_1.accept(self)})"
 
     def visit_real_addition(self, operator: RealAddition):
         return f"(+ {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"

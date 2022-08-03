@@ -28,6 +28,14 @@ from abc import ABC, abstractmethod
 from src.operators.generic import IntegerOperator, RealOperator
 
 
+class RealNegation(RealOperator):
+    def __init__(self, input_1: RealOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'RealVisitor'):
+        return visitor.visit_real_negation(self)
+
+
 class RealAddition(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
@@ -106,6 +114,10 @@ class RealEquality(RealOperator):
 
 
 class RealVisitor(ABC):
+    @abstractmethod
+    def visit_real_negation(self, operator: RealNegation):
+        pass
+
     @abstractmethod
     def visit_real_addition(self, operator: RealAddition):
         pass

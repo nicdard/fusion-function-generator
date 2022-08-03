@@ -67,6 +67,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         operator.operator_2.accept(self)
         self._reset()
 
+    def visit_integer_negation(self, operator: IntegerNegation):
+        self._visit_operator(operator, 1)
+
     def visit_integer_addition(self, operator: IntegerAddition):
         self._visit_operator(operator, 2)
 
@@ -102,6 +105,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
 
         operator.operator_2.accept(self)
         self._reset()
+
+    def visit_real_negation(self, operator: RealNegation):
+        self._visit_operator(operator, 1)
 
     def visit_real_addition(self, operator: RealAddition):
         self._visit_operator(operator, 2)

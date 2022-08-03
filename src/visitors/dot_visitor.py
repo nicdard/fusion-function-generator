@@ -50,6 +50,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
     def visit_boolean_equality(self, operator: BooleanEquality):
         return self._visit_root("=", operator)
 
+    def visit_integer_negation(self, operator: IntegerNegation):
+        return self._visit_operator("-", operator, 1)
+
     def visit_integer_addition(self, operator: IntegerAddition):
         return self._visit_operator("+", operator, 2)
 
@@ -74,6 +77,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
 
     def visit_integer_equality(self, operator: IntegerEquality):
         return self._visit_root("=", operator)
+
+    def visit_real_negation(self, operator: RealNegation):
+        return self._visit_operator("-", operator, 1)
 
     def visit_real_addition(self, operator: RealAddition):
         return self._visit_operator("+", operator, 2)

@@ -34,11 +34,13 @@ main_operators: Dict[str, Dict[str, List[str]]] = {
         "BooleanXor": ["BooleanOperator", "BooleanOperator"],
     },
     "IntegerOperator": {
+        "IntegerNegation": ["IntegerOperator"],
         "IntegerAddition": ["IntegerOperator", "IntegerOperator"],
         "IntegerSubtraction": ["IntegerOperator", "IntegerOperator"],
         "IntegerMultiplication": ["IntegerOperator", "IntegerOperator"],
     },
     "RealOperator": {
+        "RealNegation": ["RealOperator"],
         "RealAddition": ["RealOperator", "RealOperator"],
         "RealSubtraction": ["RealOperator", "RealOperator"],
         "RealMultiplication": ["RealOperator", "RealOperator"],
