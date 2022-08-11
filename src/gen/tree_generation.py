@@ -25,7 +25,7 @@ import math
 import random
 import re
 
-from typing import List, Union
+from typing import List, Union, Tuple, Any
 from src.operators.generic import Operator
 from src.gen.gen_configuration import (
     get_constant,
@@ -41,7 +41,7 @@ from src.visitors.initialization_visitor import InitializationVisitor
 constant_name_pattern = re.compile(r"^c\d+$")
 
 
-def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 2, out_variable: str = 'z') -> Operator:
+def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], out_variable: str) -> tuple[Any, int]:
     if isinstance(in_variables, int):
         in_variables = [f'x{i+1}' for i in range(in_variables)]
     else:
@@ -63,7 +63,8 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
         high = math.floor(get_bound(max_op_arity))
         return low, high
 
-    gen_size = size - 2  # subtract root and output var from size
+    tree_size = 2  # root and output var
+    gen_size = size - tree_size
     gen_num_var = len(in_variables)
     min_leaf, max_leaf = get_leaf_bounds(theory, gen_size)
 
@@ -167,6 +168,9 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
             child = generate_subtree(input_type, child_internal, child_leaf)
             children.append(child)
 
+        nonlocal tree_size
+        tree_size += 1
+
         return get_operator_class(op_type, op_name)(*children)
 
     operator_tree = generate_subtree(theory, gen_num_internal, gen_num_leaf)
@@ -175,4 +179,4 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 
     tree = get_operator_class(theory, get_root(theory))(output_var, operator_tree)
     tree.accept(InitializationVisitor(in_variables, out_variable))
 
-    return tree
+    return tree, tree_size
