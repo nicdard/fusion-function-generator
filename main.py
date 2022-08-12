@@ -56,10 +56,10 @@ def main(args):
     if not file_name.endswith('.txt'):
         file_name += '.txt'
 
-    operator_types = gen_configuration.get_theories()
     if args.theories:
-        operator_types = [gen_configuration.option_to_operator_type[option]
-                          for option in args.theories]
+        gen_configuration.set_available_theories(args.theories)
+
+    operator_types = gen_configuration.get_theories()
 
     if args.verbose:
         print(f"Using theories: {operator_types}")
@@ -71,10 +71,10 @@ def main(args):
     trees = []
     for i in range(args.num_functions):
         root_type = random.choice(operator_types)
-        tree = generate_tree(root_type, args.size, ['x', 'y'], 'z')
+        tree, size = generate_tree(root_type, args.size, ['x', 'y'], 'z')
         trees.append(tree)
         if args.verbose:
-            print(f"{i + 1}. {tree.accept(infix_printer)}")
+            print(f"{i + 1}. {size} nodes. {tree.accept(infix_printer)}")
     yinyang_emitter.emit(trees, os.path.join(output_dir, file_name), args)
     if args.dot:
         dot_emitter.emit(trees, output_dir)

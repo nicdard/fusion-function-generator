@@ -59,6 +59,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         inverse_dict = operator.operator_2.accept(self)
         return [BooleanEquality(var, operator) for var, operator in inverse_dict.items()]
 
+    def visit_integer_negation(self, operator: IntegerNegation):
+        output = self.output[operator]
+        self.output[operator.operator_1] = IntegerNegation(output)
+        return operator.operator_1.accept(self)
+
     def visit_integer_addition(self, operator: IntegerAddition):
         output = self.output[operator]
         self.output[operator.operator_1] = IntegerSubtraction(
@@ -108,6 +113,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         self.output = {}
         return [IntegerEquality(var, operator) for var, operator in inverse_dict.items()]
 
+    def visit_real_negation(self, operator: RealNegation):
+        output = self.output[operator]
+        self.output[operator.operator_1] = RealNegation(output)
+        return operator.operator_1.accept(self)
+
     def visit_real_addition(self, operator: RealAddition):
         output = self.output[operator]
         self.output[operator.operator_1] = RealSubtraction(
@@ -147,6 +157,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
+
+    def visit_integer_to_real(self, operator: IntegerToReal):
+        output = self.output[operator]
+        self.output[operator.operator_1] = RealToInteger(output)
+        return operator.operator_1.accept(self)
 
     def visit_real_constant(self, operator: RealConstant):
         return {}
@@ -219,6 +234,9 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         return {}
 
     def visit_string_indexof(self, operator: StringIndexof):
+        return {}
+
+    def visit_real_to_integer(self, operator: RealToInteger):
         return {}
 
     def visit_substring(self, operator: Substring):

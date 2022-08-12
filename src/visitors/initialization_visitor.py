@@ -67,6 +67,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         operator.operator_2.accept(self)
         self._reset()
 
+    def visit_integer_negation(self, operator: IntegerNegation):
+        self._visit_operator(operator, 1)
+
     def visit_integer_addition(self, operator: IntegerAddition):
         self._visit_operator(operator, 2)
 
@@ -103,6 +106,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         operator.operator_2.accept(self)
         self._reset()
 
+    def visit_real_negation(self, operator: RealNegation):
+        self._visit_operator(operator, 1)
+
     def visit_real_addition(self, operator: RealAddition):
         self._visit_operator(operator, 2)
 
@@ -114,6 +120,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
 
     def visit_real_division(self, operator: RealDivision):
         self._visit_operator(operator, 2)
+
+    def visit_integer_to_real(self, operator: IntegerToReal):
+        self._visit_operator(operator, 1)
 
     def visit_real_variable(self, operator: RealVariable):
         self._visit_variable(operator)
@@ -134,28 +143,31 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         self._reset()
 
     def _visit_string_concatenation(self, operator: StringOperator):
-        return self._visit_operator(operator, 2)
+        self._visit_operator(operator, 2)
 
     def visit_string_concatenation1n1(self, operator: StringConcatenation1n1):
-        return self._visit_string_concatenation(operator)
+        self._visit_string_concatenation(operator)
 
     def visit_string_concatenation1n2(self, operator: StringConcatenation1n2):
-        return self._visit_string_concatenation(operator)
+        self._visit_string_concatenation(operator)
 
     def visit_string_concatenation1n3(self, operator: StringConcatenation1n3):
-        return self._visit_string_concatenation(operator)
+        self._visit_string_concatenation(operator)
 
     def visit_string_concatenation2n1(self, operator: StringConcatenation2n1):
-        return self._visit_string_concatenation(operator)
+        self._visit_string_concatenation(operator)
 
     def visit_string_concatenation2n2(self, operator: StringConcatenation2n2):
-        return self._visit_string_concatenation(operator)
+        self._visit_string_concatenation(operator)
 
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
-        return self._visit_string_concatenation(operator)
+        self._visit_string_concatenation(operator)
 
     def visit_string_replacement(self, operator: StringReplacement):
         self._visit_operator(operator, 3)
+
+    def visit_real_to_integer(self, operator: RealToInteger):
+        self._visit_operator(operator, 1)
 
     def visit_substring(self, operator: Substring):
         self._visit_operator(operator, 3)

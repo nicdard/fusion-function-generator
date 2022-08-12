@@ -21,15 +21,16 @@
 # SOFTWARE.
 
 
+import math
 import random
 import re
 
-from typing import List, Union
+from typing import List, Union, Tuple, Any
 from src.operators.generic import Operator
 from src.gen.gen_configuration import (
     get_constant,
     get_variable,
-    get_eligible_operator,
+    get_eligible_operators,
     get_root,
     get_operator_class,
     get_arities,
@@ -40,123 +41,142 @@ from src.visitors.initialization_visitor import InitializationVisitor
 constant_name_pattern = re.compile(r"^c\d+$")
 
 
-# Ordered Tree Encoding:
-# an n-tuple for a tree of n nodes:
-#   t = (t1, t2, ..., ti,..., tn)
-# ti is the i-th node of the tree t.
-# A parent node implies ti > 0, while a leaf node implies ti = 0.
-# The nodes are visited in preorder (depth-first left to right) to determine the order of the tree.
-# The last node of the tree is thus tn, so tn = 0
-# and ti is in [0, n - 1].
-# Note: we use a list for simplicity/efficiency.
-def _generate_arity_tree(size: int, arities: List[int], min_leaves: int):
-    """
-    Generates a list of integers representing a tree containing n
-    nodes. The first node is already set to root.
-    """
-    tree = []
-    rem_leaves = min_leaves
-    min_op_arity = min(arities)
-
-    while len(tree) < size:
-        max_arity = size - sum(tree) - 1
-
-        if 0 < max_arity < min_op_arity:
-            discrepancy = min_op_arity - max_arity
-            print(
-                f"Cannot match tree size {size} exactly, increasing to {size + discrepancy}...")
-            size += discrepancy
-            max_arity += discrepancy
-
-        rem_operators = size - len(tree) - rem_leaves
-        max_sub_leaves = (rem_operators - 1) * (max(arities) - 1) + 1
-        min_arity = rem_leaves - (sum(tree) - len(tree)) - max_sub_leaves + 1
-
-        branching_choices = [
-            n for n in arities if (min_arity <= n <= max_arity)]
-
-        if not (sum(tree) == len(tree) and max_arity > 0):
-            branching_choices.extend([0, 0])  # two different leaf operators
-
-        arity = random.choice(branching_choices)
-        tree.append(arity)
-
-        if arity == 0:
-            rem_leaves -= 1
-
-    return tree
-
-
-def _generate_operator_tree(theory, arity_tree, num_variables) -> Operator:
-    num_leaves = len([n for n in arity_tree if n == 0])
-    num_constants = num_leaves - num_variables
-
-    if num_leaves < num_variables:
-        raise ValueError(
-            "Not enough leaves to accommodate requested number of variables.")
-
-    leaves = [False] * num_constants + [True] * num_variables
-    random.shuffle(leaves)
-
-    def recursive_generation(idx, operator_type):
-        n = arity_tree[idx]
-        idx += 1
-        params = []
-
-        if n == 0:
-            nonlocal num_leaves
-            num_leaves -= 1
-            is_variable = leaves[num_leaves]
-
-            if is_variable:
-                op_name = get_variable(operator_type)
-            else:
-                op_name = get_constant(operator_type)
-        else:
-            op_name = get_eligible_operator(operator_type, n)
-
-            for input_type in get_operator_parameters(operator_type, op_name):
-                param, idx = recursive_generation(idx, input_type)
-                params.append(param)
-
-        return get_operator_class(operator_type, op_name)(*params), idx
-
-    operator_tree, _ = recursive_generation(0, theory)
-    root_name = get_root(theory)
-
-    output_var = get_operator_class(theory, get_variable(theory))()
-    root = get_operator_class(theory, root_name)(output_var, operator_tree)
-
-    return root
-
-
-def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]] = 2, out_variable: str = 'z') -> Operator:
+def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], out_variable: str) -> tuple[Any, int]:
     if isinstance(in_variables, int):
         in_variables = [f'x{i+1}' for i in range(in_variables)]
     else:
         # Check that names do not clash with constant generated names.
         for v in in_variables:
-            if constant_name_pattern.match(v) is not None:
-                ValueError(
-                    "The list of variables should not contain a name matching the constant name pattern: c[0-9]")
+            if constant_name_pattern.match(v):
+                ValueError("The list of variables should not "
+                           "contain a name matching the constant name pattern: c[0-9]")
 
-    num_variables = len(in_variables)
-    arities = get_arities(theory)
+    def get_leaf_bounds(tree_type, tree_size):
+        available_arities = get_arities(tree_type)
+        min_op_arity = min(available_arities)
+        max_op_arity = max(available_arities)
 
-    if (size - num_variables) * (max(arities) - 1) + 1 < num_variables:
-        raise ValueError("Tree size too small to accommodate all variables")
+        def get_bound(arity):
+            return (tree_size * (arity - 1) + 1) / arity
 
-    tree = _generate_arity_tree(size, arities, num_variables)
-    tree = _generate_operator_tree(theory, tree, num_variables)
+        low = math.ceil(get_bound(min_op_arity))
+        high = math.floor(get_bound(max_op_arity))
+        return low, high
 
-    init_visitor = InitializationVisitor(in_variables, out_variable)
-    tree.accept(init_visitor)
-    return tree
+    tree_size = 2  # root and output var
+    gen_size = size - tree_size
+    gen_num_var = len(in_variables)
+    min_leaf, max_leaf = get_leaf_bounds(theory, gen_size)
 
+    if min_leaf > max_leaf:
+        gen_size += 1  # maybe print a message here
+        min_leaf, max_leaf = get_leaf_bounds(theory, gen_size)
 
-def validate(tree: List[int]) -> bool:
-    """
-    Returns true if a tree of n nodes respect the property:
-        sum from i to n of ti = n - 1 
-    """
-    return sum(tree) == len(tree) - 1 and tree[len(tree) - 1] == 0
+    if max_leaf < gen_num_var:
+        raise ValueError(f"Tree of size {size} cannot accommodate {gen_num_var} variables")
+
+    gen_num_leaf = random.randint(max(gen_num_var, min_leaf), max_leaf)
+    gen_num_internal = gen_size - gen_num_leaf
+    gen_num_const = gen_num_leaf - gen_num_var
+
+    leaf_idx = 0
+    leaf_type = [False] * gen_num_const + [True] * gen_num_var
+    random.shuffle(leaf_type)
+
+    def is_var():
+        nonlocal leaf_idx
+        leaf_idx += 1
+        return leaf_type[leaf_idx-1]
+
+    def generate_subtree(op_type, num_internal, num_leaf):
+        available_arities = get_arities(op_type)
+
+        def get_closest_feasible_num_internal():
+            new_num_internal = 0
+            target = new_num_internal + num_leaf - 1
+
+            lowest_dev = float('inf')
+            best_num_internal = 0
+            possible_sums = {0}
+
+            while True:
+                dev = abs(new_num_internal - num_internal)
+                if dev <= lowest_dev:
+                    if target in possible_sums:
+                        lowest_dev = dev
+                        best_num_internal = new_num_internal
+                elif new_num_internal >= num_internal:
+                    break
+
+                new_sums = set()
+                for prev_sum in possible_sums:
+                    for arity in available_arities:
+                        new_sums.add(prev_sum + arity)
+
+                possible_sums = new_sums
+                new_num_internal += 1
+                target = new_num_internal + num_leaf - 1
+
+            return best_num_internal
+
+        num_internal = get_closest_feasible_num_internal()
+
+        if num_internal >= 1:
+            max_sub_leaf = (num_internal - 1) * (max(available_arities) - 1) + 1
+            min_arity = num_leaf - max_sub_leaf + 1
+            min_sub_leaf = (num_internal - 1) * (min(available_arities) - 1) + 1
+            max_arity = num_leaf - min_sub_leaf + 1
+            op_choices = get_eligible_operators(op_type, min_arity, max_arity)
+            op_name = random.choice(op_choices)
+        else:
+            op_func = get_variable if is_var() else get_constant
+            op_name = op_func(op_type)
+
+        parameters = get_operator_parameters(op_type, op_name)
+        op_arity = len(parameters)
+
+        children = []
+        rem_internal = num_internal - 1  # not sure if max is necessary here
+        rem_leaf = num_leaf
+
+        for idx, input_type in enumerate(parameters):
+            if idx < op_arity - 1:
+                # guarantee at least one leaf per subtree
+                rem_children = op_arity - (idx + 1)
+                child_leaf = random.randint(1, rem_leaf - rem_children)
+                rem_leaf -= child_leaf
+
+                def get_bound(num_leaves, arity):
+                    return (num_leaves - 1) / (arity - 1) if arity > 1 else 1e6
+
+                child_available_arities = get_arities(input_type)
+                min_op_arity = min(child_available_arities)
+                max_op_arity = max(child_available_arities)
+
+                min_internal_to_cover = math.ceil(get_bound(rem_leaf, max_op_arity))
+                child_internal_high = math.floor(get_bound(child_leaf, min_op_arity))
+                child_internal_high = min(child_internal_high, rem_internal - min_internal_to_cover)
+
+                child_internal_low = math.ceil(get_bound(child_leaf, max_op_arity))
+                child_internal_low = min(child_internal_low, child_internal_high)
+                child_internal = random.randint(child_internal_low, child_internal_high)
+                rem_internal -= child_internal
+            else:
+                child_internal = rem_internal
+                child_leaf = rem_leaf
+
+            child = generate_subtree(input_type, child_internal, child_leaf)
+            children.append(child)
+
+        nonlocal tree_size
+        tree_size += 1
+
+        return get_operator_class(op_type, op_name)(*children)
+
+    operator_tree = generate_subtree(theory, gen_num_internal, gen_num_leaf)
+    output_var = get_operator_class(theory, get_variable(theory))()
+
+    tree = get_operator_class(theory, get_root(theory))(output_var, operator_tree)
+    tree.accept(InitializationVisitor(in_variables, out_variable))
+
+    return tree, tree_size

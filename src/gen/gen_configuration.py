@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 
-import random
 import importlib
 from typing import Dict, List
 
@@ -35,14 +34,17 @@ main_operators: Dict[str, Dict[str, List[str]]] = {
         "BooleanXor": ["BooleanOperator", "BooleanOperator"],
     },
     "IntegerOperator": {
+        "IntegerNegation": ["IntegerOperator"],
         "IntegerAddition": ["IntegerOperator", "IntegerOperator"],
         "IntegerSubtraction": ["IntegerOperator", "IntegerOperator"],
         "IntegerMultiplication": ["IntegerOperator", "IntegerOperator"],
     },
     "RealOperator": {
+        "RealNegation": ["RealOperator"],
         "RealAddition": ["RealOperator", "RealOperator"],
         "RealSubtraction": ["RealOperator", "RealOperator"],
         "RealMultiplication": ["RealOperator", "RealOperator"],
+        "IntegerToReal": ["IntegerOperator"],
     },
     "StringOperator": {
         "StringConcatenation1n1": ["StringOperator", "StringOperator"],
@@ -68,6 +70,7 @@ fringe_operators: Dict[str, Dict[str, List[str]]] = {
         "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
         "StringLength": ["StringOperator"],
         "StringIndexof": ["StringOperator", "StringOperator", "IntegerOperator"],
+        "RealToInteger": ["RealOperator"],
     },
     "RealOperator": {
         "RealDivision": ["RealOperator", "RealOperator"],
@@ -122,7 +125,7 @@ root_operators: Dict[str, str] = {
 }
 
 # A map from command line options to the internal representation.
-option_to_operator_type: Dict[str, str] = {
+_option_to_operator_type: Dict[str, str] = {
     "bool": "BooleanOperator",
     "int": "IntegerOperator",
     "real": "RealOperator",
@@ -130,9 +133,16 @@ option_to_operator_type: Dict[str, str] = {
     "bitvector": "BitVectorOperator",
 }
 
+_available_theories: List[str] = list(theory_declarations.keys())
+
+
+def set_available_theories(theories) -> None:
+    global _available_theories
+    _available_theories = [_option_to_operator_type[opt] for opt in theories]
+
 
 def get_theories() -> List[str]:
-    return list(theory_declarations.keys())
+    return _available_theories
 
 
 def get_operators(theory: str) -> List[str]:
@@ -153,15 +163,18 @@ def get_operator_types(theory: str) -> List[str]:
 
 
 def get_arities(theory: str) -> List[int]:
-    arities = []
+    arities = set()
     for op in main_operators[theory].keys():
-        arities.append(len(get_operator_parameters(theory, op)))
-    return arities
+        params = get_operator_parameters(theory, op)
+        if set(params).issubset(_available_theories):
+            arities.add(len(params))
+    return list(arities)
 
 
 def get_operator_parameters(theory: str, operator: str) -> List[str]:
-    params = theory_declarations[theory][operator]
-    return params
+    if operator in leaf_operators[theory].values():
+        return []
+    return theory_declarations[theory][operator]
 
 
 def get_constant(theory: str) -> str:
@@ -180,19 +193,16 @@ def get_root(theory: str) -> str:
     return root_operators[theory]
 
 
-def get_eligible_operator(theory: str, arity: int) -> str:
-    if theory is None:
-        theory = random.choice(get_theories())
-
-    theory = main_operators[theory]
+def get_eligible_operators(theory: str, min_arity: int, max_arity: int) -> List[str]:
     operator_choices = []
 
-    for operator in theory.keys():
-        n = len([p for p in theory[operator] if "Operator" in p])
-        if n == arity:
-            operator_choices.append(operator)
+    for operator in main_operators[theory].keys():
+        params = get_operator_parameters(theory, operator)
+        if min_arity <= len(params) <= max_arity:
+            if set(params).issubset(_available_theories):
+                operator_choices.append(operator)
 
-    return random.choice(operator_choices)
+    return operator_choices
 
 
 def get_theory_name(theory: str) -> str:
