@@ -25,7 +25,7 @@
 # Look at the README to learn more.
 
 from abc import ABC, abstractmethod
-from src.operators.generic import BitVectorOperator, IntegerOperator
+from ffg.operators.generic import BitVectorOperator, IntegerOperator
 
 
 class BitVectorNot(BitVectorOperator):

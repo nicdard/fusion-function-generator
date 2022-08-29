@@ -23,14 +23,14 @@
 
 import unittest
 
-from src.operators.boolean_theory import *
-from src.operators.integer_theory import *
-from src.operators.real_theory import *
-from src.operators.string_theory import *
-from src.operators.bitvector_theory import *
+from ffg.operators.boolean_theory import *
+from ffg.operators.integer_theory import *
+from ffg.operators.real_theory import *
+from ffg.operators.string_theory import *
+from ffg.operators.bitvector_theory import *
 
-from src.visitors.initialization_visitor import InitializationVisitor
-from src.visitors.variable_visitor import VariableVisitor
+from ffg.visitors.initialization_visitor import InitializationVisitor
+from ffg.visitors.variable_visitor import VariableVisitor
 
 
 class TestVariableVisitor(unittest.TestCase):
@@ -50,7 +50,8 @@ class TestVariableVisitor(unittest.TestCase):
         tree_1.accept(init_visitor)
         tree_2.accept(init_visitor)
         const_visitor = VariableVisitor()
-        self.assertNotEqual(tree_1.accept(const_visitor), tree_2.accept(const_visitor))
+        self.assertNotEqual(tree_1.accept(const_visitor),
+                            tree_2.accept(const_visitor))
 
     def test_boolean_visitor_easy(self):
         tree = BooleanConstant()
@@ -90,7 +91,8 @@ class TestVariableVisitor(unittest.TestCase):
         tree = BitVectorVariable()
         self.assert_equal_value({'a': '(_ BitVec 8)'}, tree)
         tree = BitVectorEquality(BitVectorVariable(), BitVectorVariable())
-        self.assert_equal_value({'a': '(_ BitVec 8)', 'z': '(_ BitVec 8)'}, tree)
+        self.assert_equal_value(
+            {'a': '(_ BitVec 8)', 'z': '(_ BitVec 8)'}, tree)
 
     def test_boolean_visitor_inequality(self):
         tree_1 = BooleanVariable()

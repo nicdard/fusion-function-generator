@@ -23,13 +23,13 @@
 
 import unittest
 
-from src.operators.boolean_theory import *
-from src.operators.integer_theory import *
-from src.operators.real_theory import *
-from src.operators.string_theory import *
-from src.operators.bitvector_theory import *
+from ffg.operators.boolean_theory import *
+from ffg.operators.integer_theory import *
+from ffg.operators.real_theory import *
+from ffg.operators.string_theory import *
+from ffg.operators.bitvector_theory import *
 
-from src.visitors.printer_visitor import PrinterVisitor
+from ffg.visitors.printer_visitor import PrinterVisitor
 
 
 def init_named(op_class, name):
@@ -40,23 +40,28 @@ def init_named(op_class, name):
 
 class TestSymbolicPrinterVisitor(unittest.TestCase):
     def test_boolean_visitor_easy(self):
-        tree = BooleanEquality(init_named(BooleanConstant, 'c0'), init_named(BooleanConstant, 'c1'))
+        tree = BooleanEquality(init_named(
+            BooleanConstant, 'c0'), init_named(BooleanConstant, 'c1'))
         self.assertEqual("(= c0 c1)", tree.accept(PrinterVisitor()))
 
     def test_integer_visitor_easy(self):
-        tree = IntegerEquality(init_named(IntegerConstant, 'c0'), init_named(IntegerConstant, 'c1'))
+        tree = IntegerEquality(init_named(
+            IntegerConstant, 'c0'), init_named(IntegerConstant, 'c1'))
         self.assertEqual("(= c0 c1)", tree.accept(PrinterVisitor()))
 
     def test_real_visitor_easy(self):
-        tree = RealEquality(init_named(RealConstant, 'c0'), init_named(RealConstant, 'c1'))
+        tree = RealEquality(init_named(RealConstant, 'c0'),
+                            init_named(RealConstant, 'c1'))
         self.assertEqual("(= c0 c1)", tree.accept(PrinterVisitor()))
 
     def test_string_visitor_easy(self):
-        tree = StringEquality(init_named(StringConstant, 'c0'), init_named(StringConstant, 'c1'))
+        tree = StringEquality(init_named(StringConstant, 'c0'),
+                              init_named(StringConstant, 'c1'))
         self.assertEqual("(= c0 c1)", tree.accept(PrinterVisitor()))
 
     def test_bitvector_visitor_easy(self):
-        tree = BitVectorEquality(init_named(BitVectorConstant, 'c0'), init_named(BitVectorConstant, 'c1'))
+        tree = BitVectorEquality(init_named(
+            BitVectorConstant, 'c0'), init_named(BitVectorConstant, 'c1'))
         self.assertEqual("(= c0 c1)", tree.accept(PrinterVisitor()))
 
     def test_boolean_visitor_hard(self):
@@ -137,35 +142,46 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
                         init_named(BitVectorConstant, 'c2')
                     ))))
         symbolic_repr = tree.accept(PrinterVisitor())
-        self.assertEqual("(= x (concat ((_ extract 3 0) c0) (bvxor c1 (concat y c2))))", symbolic_repr)
+        self.assertEqual(
+            "(= x (concat ((_ extract 3 0) c0) (bvxor c1 (concat y c2))))", symbolic_repr)
 
     def test_boolean_visitor_inequality(self):
-        tree_1 = BooleanEquality(init_named(BooleanConstant, 'c0'), init_named(BooleanConstant, 'c1'))
-        tree_2 = BooleanEquality(init_named(BooleanVariable, 'x'), init_named(BooleanVariable, 'y'))
+        tree_1 = BooleanEquality(init_named(
+            BooleanConstant, 'c0'), init_named(BooleanConstant, 'c1'))
+        tree_2 = BooleanEquality(init_named(
+            BooleanVariable, 'x'), init_named(BooleanVariable, 'y'))
         visitor = PrinterVisitor()
         self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 
     def test_integer_visitor_inequality(self):
-        tree_1 = IntegerEquality(init_named(IntegerConstant, 'c0'), init_named(IntegerConstant, 'c1'))
-        tree_2 = IntegerEquality(init_named(IntegerVariable, 'x'), init_named(IntegerVariable, 'y'))
+        tree_1 = IntegerEquality(init_named(
+            IntegerConstant, 'c0'), init_named(IntegerConstant, 'c1'))
+        tree_2 = IntegerEquality(init_named(
+            IntegerVariable, 'x'), init_named(IntegerVariable, 'y'))
         visitor = PrinterVisitor()
         self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 
     def test_real_visitor_inequality(self):
-        tree_1 = RealEquality(init_named(RealConstant, 'c0'), init_named(RealConstant, 'c1'))
-        tree_2 = RealEquality(init_named(RealVariable, 'x'), init_named(RealVariable, 'y'))
+        tree_1 = RealEquality(init_named(RealConstant, 'c0'),
+                              init_named(RealConstant, 'c1'))
+        tree_2 = RealEquality(init_named(RealVariable, 'x'),
+                              init_named(RealVariable, 'y'))
         visitor = PrinterVisitor()
         self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 
     def test_string_visitor_inequality(self):
-        tree_1 = StringEquality(init_named(StringConstant, 'c0'), init_named(StringConstant, 'c1'))
-        tree_2 = StringEquality(init_named(StringVariable, 'x'), init_named(StringVariable, 'y'))
+        tree_1 = StringEquality(init_named(
+            StringConstant, 'c0'), init_named(StringConstant, 'c1'))
+        tree_2 = StringEquality(init_named(
+            StringVariable, 'x'), init_named(StringVariable, 'y'))
         visitor = PrinterVisitor()
         self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 
     def test_bitvector_visitor_inequality(self):
-        tree_1 = BitVectorEquality(init_named(BitVectorConstant, 'c0'), init_named(BitVectorConstant, 'c1'))
-        tree_2 = BitVectorEquality(init_named(BitVectorVariable, 'x'), init_named(BitVectorVariable, 'y'))
+        tree_1 = BitVectorEquality(init_named(
+            BitVectorConstant, 'c0'), init_named(BitVectorConstant, 'c1'))
+        tree_2 = BitVectorEquality(init_named(
+            BitVectorVariable, 'x'), init_named(BitVectorVariable, 'y'))
         visitor = PrinterVisitor()
         self.assertNotEqual(tree_1.accept(visitor), tree_2.accept(visitor))
 

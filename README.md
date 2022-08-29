@@ -6,7 +6,7 @@ Automatic generation of [Fusion Functions](https://yinyang.readthedocs.io/en/lat
 used by 
 [yinyang](https://yinyang.readthedocs.io/en/latest/index.html) fuzzer for [Semantic Fusion](https://yinyang.readthedocs.io/en/latest/fusion.html).
 
-## Running
+## CLI
 
 `main.py` is the main entry point to run the tool as a standalone program. Simply type the following command in the shell:
 
@@ -18,6 +18,14 @@ This will run with default parameters. For a complete list of the options please
 
 You can customize the number fusion functions that are generated and the number of operators that appear in each formula.
 By default, the functions are saved in `out/fusion_functions.txt`.
+
+## Build the library
+The project is configured to build the pip package `ffg`.
+We use wheel, just run:
+> python3 setup.py bdist_wheel
+
+Use the following command to install the package locally (add `-e` to enable hot reloading):
+> python3 -m pip3 install .
 
 ## Setup and using yinyang
 
@@ -44,16 +52,16 @@ python3 yinyang/bin/yinyang "z3" \
 
 ## Adding a new theory
 
-The [generator.py](src/gen/generator.py) script is used to generate all the code under [src/operators](src/operators).
+The [generator.py](ffg/gen/generator.py) script is used to generate all the code under [ffg/operators](ffg/operators).
 To re-generate everything, type:
 
-> python3 src/gen/generator.py operators
+> python3 ffg/gen/generator.py operators
 
-This script can be used also to create a stub implementation of a new visitor in [src/visitors](src/visitors):
+This script can be used also to create a stub implementation of a new visitor in [ffg/visitors](ffg/visitors):
 
-> python3 src/gen/generator.py stub your-visitor-name-here
+> python3 ffg/gen/generator.py stub your-visitor-name-here
 
-To add a new theory, it is enough to modify the [gen_configuration.py](src/gen/gen_configuration.py). 
+To add a new theory, it is enough to modify the [gen_configuration.py](ffg/gen/gen_configuration.py). 
 Add the new theory description by following the guideline and examples already there.
 
 Afterwards, you will need to re-generate the gen folder and (if needed) update the visitors.

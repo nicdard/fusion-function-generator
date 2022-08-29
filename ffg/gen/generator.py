@@ -133,7 +133,7 @@ def define_ast(base_name: pathlib.Path, license_text: str):
             license_text,
             WARNING_MESSAGE,
             "from abc import ABC, abstractmethod",
-            f"from src.operators.generic import {', '.join(operator_types)}",
+            f"from ffg.operators.generic import {', '.join(operator_types)}",
             "\n",
         ]
 
@@ -226,7 +226,8 @@ def define_visitor(output_dir: pathlib.Path, name: str, license_text: str):
     for theory in get_theories():
         visitor_name = f"{get_theory_name(theory)}Visitor"
         super_classes.append(f"{visitor_name}")
-        content.append(f"from src.operators.{get_module_name(theory)} import *")
+        content.append(
+            f"from ffg.operators.{get_module_name(theory)} import *")
 
     content.extend([
         "\n",
@@ -240,6 +241,15 @@ def define_visitor(output_dir: pathlib.Path, name: str, license_text: str):
             content.append(f"")
     with open(path, 'w+', encoding='utf-8') as f:
         f.write("\n".join(content))
+
+
+def define_init(output_dir: pathlib.Path, license_text: str):
+    """
+    Output an __init__.py in output_dir to include the operators in the library.
+    """
+    path = output_dir.joinpath("__init__.py")
+    with open(path, 'w+', encoding='utf-8') as f:
+        f.write("\n".join([license_text, WARNING_MESSAGE]))
 
 
 def main():
@@ -264,7 +274,8 @@ def main():
     # Ensure that the 'operators' folder exists.
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
 
-    print("Generate src/operators directory:")
+    print("Generate ffg/operators directory:")
+    define_init(output_dir, license_text)
     define_generic(output_dir, license_text)
     define_ast(output_dir, license_text)
 

@@ -1,14 +1,15 @@
 import unittest
 import tempfile
 
-from src.emitter import yinyang_emitter
-from src.operators.boolean_theory import *
-from src.visitors.initialization_visitor import InitializationVisitor
+from ffg.emitter import yinyang_emitter
+from ffg.operators.boolean_theory import *
+from ffg.visitors.initialization_visitor import InitializationVisitor
 
 
 class TestYinYangEmitter(unittest.TestCase):
     def test_function_emission_easy(self):
-        tree = BooleanEquality(BooleanVariable(), BooleanXor(BooleanVariable(), BooleanVariable()))
+        tree = BooleanEquality(BooleanVariable(), BooleanXor(
+            BooleanVariable(), BooleanVariable()))
         tree.accept(InitializationVisitor(['x', 'y'], 'z'))
 
         with tempfile.TemporaryFile('r+') as file:

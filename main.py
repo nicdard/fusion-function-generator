@@ -25,10 +25,10 @@ import os
 import random
 import argparse
 
-from src.gen import gen_configuration
-from src.emitter import yinyang_emitter, dot_emitter
-from src.gen.tree_generation import generate_tree
-from src.visitors.infix_printer_visitor import InfixPrinterVisitor
+from ffg.gen import gen_configuration
+from ffg.emitter import yinyang_emitter, dot_emitter
+from ffg.gen.tree_generation import generate_tree
+from ffg.visitors.infix_printer_visitor import InfixPrinterVisitor
 
 
 def parse_args():

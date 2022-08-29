@@ -24,11 +24,11 @@
 import random
 from typing import List
 
-from src.operators.boolean_theory import *
-from src.operators.integer_theory import *
-from src.operators.real_theory import *
-from src.operators.string_theory import *
-from src.operators.bitvector_theory import *
+from ffg.operators.boolean_theory import *
+from ffg.operators.integer_theory import *
+from ffg.operators.real_theory import *
+from ffg.operators.string_theory import *
+from ffg.operators.bitvector_theory import *
 
 
 class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, BitVectorVisitor):
@@ -218,7 +218,8 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
             self._visit_operator(operator, 2)
         else:
             self._visit_operator(operator, 2)
-            operator.size = max([operator.operator_1.size, operator.operator_2.size])
+            operator.size = max(
+                [operator.operator_1.size, operator.operator_2.size])
             self._is_var[operator] = self._is_var[operator.operator_1] and self._is_var[operator.operator_2]
 
     def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
@@ -251,7 +252,8 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
                 operator.size += excess
                 operator.operator_3.value += excess
 
-            self._size[operator.operator_1] = max(operator.operator_1.size, output_size)
+            self._size[operator.operator_1] = max(
+                operator.operator_1.size, output_size)
             self._visit_operator(operator, 3)
         else:
             self._visit_operator(operator, 3)
@@ -307,7 +309,8 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         else:
             operator.operator_1.accept(self)
 
-        operator.size = max([operator.operator_1.size, operator.operator_2.size])
+        operator.size = max(
+            [operator.operator_1.size, operator.operator_2.size])
 
         # propagate size through tree
         self._size[operator.operator_1] = operator.size
