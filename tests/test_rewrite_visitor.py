@@ -25,15 +25,15 @@ import unittest
 
 from typing import List
 
-from src.operators.generic import Operator
-from src.operators.boolean_theory import *
-from src.operators.integer_theory import *
-from src.operators.real_theory import *
-from src.operators.string_theory import *
-from src.operators.bitvector_theory import *
+from ffg.operators.generic import Operator
+from ffg.operators.boolean_theory import *
+from ffg.operators.integer_theory import *
+from ffg.operators.real_theory import *
+from ffg.operators.string_theory import *
+from ffg.operators.bitvector_theory import *
 
-from src.visitors.rewrite_visitor import RewriteVisitor
-from src.visitors.printer_visitor import PrinterVisitor
+from ffg.visitors.rewrite_visitor import RewriteVisitor
+from ffg.visitors.printer_visitor import PrinterVisitor
 
 
 def init_named(op_class, name):
@@ -63,38 +63,48 @@ class TestRewriteVisitor(unittest.TestCase):
             visitor) for expected in expected_list])
 
     def test_boolean_visitor_easy(self):
-        tree = BooleanEquality(init_named(BooleanVariable, 'x'), init_named(BooleanVariable, 'y'))
+        tree = BooleanEquality(init_named(
+            BooleanVariable, 'x'), init_named(BooleanVariable, 'y'))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(1, len(inverses))
-        expected = BooleanEquality(init_named(BooleanVariable, 'y'), init_named(BooleanVariable, 'x'))
+        expected = BooleanEquality(init_named(
+            BooleanVariable, 'y'), init_named(BooleanVariable, 'x'))
         self.assert_equal_trees(expected, inverses[0])
 
     def test_integer_visitor_easy(self):
-        tree = IntegerEquality(init_named(IntegerVariable, 'x'), init_named(IntegerVariable, 'y'))
+        tree = IntegerEquality(init_named(
+            IntegerVariable, 'x'), init_named(IntegerVariable, 'y'))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(1, len(inverses))
-        expected = IntegerEquality(init_named(IntegerVariable, 'y'), init_named(IntegerVariable, 'x'))
+        expected = IntegerEquality(init_named(
+            IntegerVariable, 'y'), init_named(IntegerVariable, 'x'))
         self.assert_equal_trees(expected, inverses[0])
 
     def test_real_visitor_easy(self):
-        tree = RealEquality(init_named(RealVariable, 'x'), init_named(RealVariable, 'y'))
+        tree = RealEquality(init_named(RealVariable, 'x'),
+                            init_named(RealVariable, 'y'))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(1, len(inverses))
-        expected = RealEquality(init_named(RealVariable, 'y'), init_named(RealVariable, 'x'))
+        expected = RealEquality(init_named(
+            RealVariable, 'y'), init_named(RealVariable, 'x'))
         self.assert_equal_trees(expected, inverses[0])
 
     def test_string_visitor_easy(self):
-        tree = StringEquality(init_named(StringVariable, 'x'), init_named(StringVariable, 'y'))
+        tree = StringEquality(init_named(StringVariable, 'x'),
+                              init_named(StringVariable, 'y'))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(1, len(inverses))
-        expected = StringEquality(init_named(StringVariable, 'y'), init_named(StringVariable, 'x'))
+        expected = StringEquality(init_named(
+            StringVariable, 'y'), init_named(StringVariable, 'x'))
         self.assert_equal_trees(expected, inverses[0])
 
     def test_bitvector_visitor_easy(self):
-        tree = BitVectorEquality(init_bv(BitVectorVariable, 'x', 8), init_bv(BitVectorVariable, 'y', 8))
+        tree = BitVectorEquality(
+            init_bv(BitVectorVariable, 'x', 8), init_bv(BitVectorVariable, 'y', 8))
         inverses = tree.accept(RewriteVisitor())
         self.assertEqual(1, len(inverses))
-        expected = BitVectorEquality(init_bv(BitVectorVariable, 'y', 8), init_bv(BitVectorVariable, 'x', 8))
+        expected = BitVectorEquality(
+            init_bv(BitVectorVariable, 'y', 8), init_bv(BitVectorVariable, 'x', 8))
         self.assert_equal_trees(expected, inverses[0])
 
     def test_boolean_visitor_inequality(self):
@@ -105,7 +115,8 @@ class TestRewriteVisitor(unittest.TestCase):
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
-        tree_2 = BooleanEquality(init_named(BooleanVariable, 'x'), BooleanNot(init_named(BooleanVariable, 'y')))
+        tree_2 = BooleanEquality(init_named(BooleanVariable, 'x'), BooleanNot(
+            init_named(BooleanVariable, 'y')))
         inverses_2 = tree_2.accept(visitor)
         self.assertEqual(1, len(inverses_2))
 
@@ -114,7 +125,8 @@ class TestRewriteVisitor(unittest.TestCase):
     def test_integer_visitor_inequality(self):
         visitor = RewriteVisitor()
 
-        tree_1 = IntegerEquality(init_named(IntegerVariable, 'x'), init_named(IntegerVariable, 'y'))
+        tree_1 = IntegerEquality(init_named(
+            IntegerVariable, 'x'), init_named(IntegerVariable, 'y'))
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
@@ -128,7 +140,8 @@ class TestRewriteVisitor(unittest.TestCase):
     def test_real_visitor_inequality(self):
         visitor = RewriteVisitor()
 
-        tree_1 = RealEquality(init_named(RealVariable, 'x'), init_named(RealVariable, 'y'))
+        tree_1 = RealEquality(init_named(RealVariable, 'x'),
+                              init_named(RealVariable, 'y'))
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
@@ -142,7 +155,8 @@ class TestRewriteVisitor(unittest.TestCase):
     def test_string_visitor_inequality(self):
         visitor = RewriteVisitor()
 
-        tree_1 = StringEquality(init_named(StringVariable, 'x'), init_named(StringVariable, 'y'))
+        tree_1 = StringEquality(init_named(
+            StringVariable, 'x'), init_named(StringVariable, 'y'))
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 
@@ -156,7 +170,8 @@ class TestRewriteVisitor(unittest.TestCase):
     def test_bitvector_visitor_inequality(self):
         visitor = RewriteVisitor()
 
-        tree_1 = BitVectorEquality(init_bv(BitVectorVariable, 'x', 8), init_bv(BitVectorVariable, 'y', 8))
+        tree_1 = BitVectorEquality(
+            init_bv(BitVectorVariable, 'x', 8), init_bv(BitVectorVariable, 'y', 8))
         inverses_1 = tree_1.accept(visitor)
         self.assertEqual(1, len(inverses_1))
 

@@ -22,11 +22,11 @@
 
 
 from typing import List
-from src.operators.generic import Operator
-from src.visitors.constant_visitor import ConstantVisitor
-from src.visitors.printer_visitor import PrinterVisitor
-from src.visitors.rewrite_visitor import RewriteVisitor
-from src.visitors.variable_visitor import VariableVisitor
+from ffg.operators.generic import Operator
+from ffg.visitors.constant_visitor import ConstantVisitor
+from ffg.visitors.printer_visitor import PrinterVisitor
+from ffg.visitors.rewrite_visitor import RewriteVisitor
+from ffg.visitors.variable_visitor import VariableVisitor
 
 
 def emit(trees: List[Operator], file_path, args):

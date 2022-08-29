@@ -21,11 +21,11 @@
 # SOFTWARE.
 
 
-from src.operators.boolean_theory import *
-from src.operators.integer_theory import *
-from src.operators.real_theory import *
-from src.operators.string_theory import *
-from src.operators.bitvector_theory import *
+from ffg.operators.boolean_theory import *
+from ffg.operators.integer_theory import *
+from ffg.operators.real_theory import *
+from ffg.operators.string_theory import *
+from ffg.operators.bitvector_theory import *
 
 
 class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, BitVectorVisitor):
@@ -39,8 +39,10 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
 
     def visit_boolean_xor(self, operator: BooleanXor):
         output = self.output[operator]
-        self.output[operator.operator_1] = BooleanXor(operator.operator_2, output)
-        self.output[operator.operator_2] = BooleanXor(operator.operator_1, output)
+        self.output[operator.operator_1] = BooleanXor(
+            operator.operator_2, output)
+        self.output[operator.operator_2] = BooleanXor(
+            operator.operator_1, output)
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
@@ -275,9 +277,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
 
     def visit_bit_vector_xor(self, operator: BitVectorXor):
         output = self.output[operator]
-        self.output[operator.operator_1] = BitVectorXor(operator.operator_2, output)
+        self.output[operator.operator_1] = BitVectorXor(
+            operator.operator_2, output)
         self.output[operator.operator_1].size = output.size
-        self.output[operator.operator_2] = BitVectorXor(operator.operator_1, output)
+        self.output[operator.operator_2] = BitVectorXor(
+            operator.operator_1, output)
         self.output[operator.operator_2].size = output.size
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
 
@@ -287,9 +291,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         index_1 = IntegerLiteral(operator.operator_2.size - 1)
         index_2 = IntegerLiteral(operator.operator_2.size)
         index_3 = IntegerLiteral(output.size - 1)
-        self.output[operator.operator_2] = BitVectorExtraction(output, zero, index_1)
+        self.output[operator.operator_2] = BitVectorExtraction(
+            output, zero, index_1)
         self.output[operator.operator_2].size = operator.operator_2.size
-        self.output[operator.operator_1] = BitVectorExtraction(output, index_2, index_3)
+        self.output[operator.operator_1] = BitVectorExtraction(
+            output, index_2, index_3)
         self.output[operator.operator_1].size = operator.operator_1.size
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
 

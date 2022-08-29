@@ -26,8 +26,8 @@ import random
 import re
 
 from typing import List, Union, Tuple, Any
-from src.operators.generic import Operator
-from src.gen.gen_configuration import (
+from ffg.operators.generic import Operator
+from ffg.gen.gen_configuration import (
     get_constant,
     get_variable,
     get_eligible_operators,
@@ -36,7 +36,7 @@ from src.gen.gen_configuration import (
     get_arities,
     get_operator_parameters
 )
-from src.visitors.initialization_visitor import InitializationVisitor
+from ffg.visitors.initialization_visitor import InitializationVisitor
 
 constant_name_pattern = re.compile(r"^c\d+$")
 
@@ -73,7 +73,8 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], o
         min_leaf, max_leaf = get_leaf_bounds(theory, gen_size)
 
     if max_leaf < gen_num_var:
-        raise ValueError(f"Tree of size {size} cannot accommodate {gen_num_var} variables")
+        raise ValueError(
+            f"Tree of size {size} cannot accommodate {gen_num_var} variables")
 
     gen_num_leaf = random.randint(max(gen_num_var, min_leaf), max_leaf)
     gen_num_internal = gen_size - gen_num_leaf
@@ -122,9 +123,11 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], o
         num_internal = get_closest_feasible_num_internal()
 
         if num_internal >= 1:
-            max_sub_leaf = (num_internal - 1) * (max(available_arities) - 1) + 1
+            max_sub_leaf = (num_internal - 1) * \
+                (max(available_arities) - 1) + 1
             min_arity = num_leaf - max_sub_leaf + 1
-            min_sub_leaf = (num_internal - 1) * (min(available_arities) - 1) + 1
+            min_sub_leaf = (num_internal - 1) * \
+                (min(available_arities) - 1) + 1
             max_arity = num_leaf - min_sub_leaf + 1
             op_choices = get_eligible_operators(op_type, min_arity, max_arity)
             op_name = random.choice(op_choices)
@@ -153,13 +156,19 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], o
                 min_op_arity = min(child_available_arities)
                 max_op_arity = max(child_available_arities)
 
-                min_internal_to_cover = math.ceil(get_bound(rem_leaf, max_op_arity))
-                child_internal_high = math.floor(get_bound(child_leaf, min_op_arity))
-                child_internal_high = min(child_internal_high, rem_internal - min_internal_to_cover)
+                min_internal_to_cover = math.ceil(
+                    get_bound(rem_leaf, max_op_arity))
+                child_internal_high = math.floor(
+                    get_bound(child_leaf, min_op_arity))
+                child_internal_high = min(
+                    child_internal_high, rem_internal - min_internal_to_cover)
 
-                child_internal_low = math.ceil(get_bound(child_leaf, max_op_arity))
-                child_internal_low = min(child_internal_low, child_internal_high)
-                child_internal = random.randint(child_internal_low, child_internal_high)
+                child_internal_low = math.ceil(
+                    get_bound(child_leaf, max_op_arity))
+                child_internal_low = min(
+                    child_internal_low, child_internal_high)
+                child_internal = random.randint(
+                    child_internal_low, child_internal_high)
                 rem_internal -= child_internal
             else:
                 child_internal = rem_internal
@@ -176,7 +185,8 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], o
     operator_tree = generate_subtree(theory, gen_num_internal, gen_num_leaf)
     output_var = get_operator_class(theory, get_variable(theory))()
 
-    tree = get_operator_class(theory, get_root(theory))(output_var, operator_tree)
+    tree = get_operator_class(theory, get_root(theory))(
+        output_var, operator_tree)
     tree.accept(InitializationVisitor(in_variables, out_variable))
 
     return tree, tree_size

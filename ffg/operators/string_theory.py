@@ -25,7 +25,7 @@
 # Look at the README to learn more.
 
 from abc import ABC, abstractmethod
-from src.operators.generic import IntegerOperator, StringOperator
+from ffg.operators.generic import IntegerOperator, StringOperator
 
 
 class StringConcatenation1n1(StringOperator):

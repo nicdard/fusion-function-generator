@@ -25,7 +25,7 @@
 # Look at the README to learn more.
 
 from abc import ABC, abstractmethod
-from src.operators.generic import BooleanOperator
+from ffg.operators.generic import BooleanOperator
 
 
 class BooleanNot(BooleanOperator):

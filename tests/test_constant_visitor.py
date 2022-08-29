@@ -23,14 +23,14 @@
 
 import unittest
 
-from src.operators.boolean_theory import *
-from src.operators.integer_theory import *
-from src.operators.real_theory import *
-from src.operators.string_theory import *
-from src.operators.bitvector_theory import *
+from ffg.operators.boolean_theory import *
+from ffg.operators.integer_theory import *
+from ffg.operators.real_theory import *
+from ffg.operators.string_theory import *
+from ffg.operators.bitvector_theory import *
 
-from src.visitors.initialization_visitor import InitializationVisitor
-from src.visitors.constant_visitor import ConstantVisitor
+from ffg.visitors.initialization_visitor import InitializationVisitor
+from ffg.visitors.constant_visitor import ConstantVisitor
 
 
 class TestConstantVisitor(unittest.TestCase):
@@ -50,7 +50,8 @@ class TestConstantVisitor(unittest.TestCase):
         tree_1.accept(init_visitor)
         tree_2.accept(init_visitor)
         const_visitor = ConstantVisitor()
-        self.assertNotEqual(tree_1.accept(const_visitor), tree_2.accept(const_visitor))
+        self.assertNotEqual(tree_1.accept(const_visitor),
+                            tree_2.accept(const_visitor))
 
     def test_boolean_visitor_easy(self):
         tree = BooleanVariable()
@@ -90,7 +91,8 @@ class TestConstantVisitor(unittest.TestCase):
         tree = BitVectorConstant()
         self.assert_equal_value({'c0': '(_ BitVec 15)'}, tree)
         tree = BitVectorEquality(BitVectorConstant(), BitVectorConstant())
-        self.assert_equal_value({'c0': '(_ BitVec 36)', 'c1': '(_ BitVec 36)'}, tree)
+        self.assert_equal_value(
+            {'c0': '(_ BitVec 36)', 'c1': '(_ BitVec 36)'}, tree)
 
     def test_boolean_visitor_inequality(self):
         tree_1 = BooleanConstant()
@@ -158,7 +160,8 @@ class TestConstantVisitor(unittest.TestCase):
                     RealVariable()
                 ),
                 RealConstant()))
-        self.assert_equal_value({'c0': 'Real', 'c1': 'Real', 'c2': 'Real'}, tree)
+        self.assert_equal_value(
+            {'c0': 'Real', 'c1': 'Real', 'c2': 'Real'}, tree)
 
     def test_string_visitor_hard(self):
         tree = StringEquality(
@@ -176,7 +179,8 @@ class TestConstantVisitor(unittest.TestCase):
                         StringVariable(),
                         IntegerConstant(),
                     ))))
-        expected = {'c0': 'String', 'c1': 'String', 'c2': 'String', 'c3': 'Int'}
+        expected = {'c0': 'String', 'c1': 'String',
+                    'c2': 'String', 'c3': 'Int'}
         self.assert_equal_value(expected, tree)
 
     def test_bitvector_visitor_hard(self):
@@ -193,7 +197,8 @@ class TestConstantVisitor(unittest.TestCase):
                         BitVectorVariable(),
                         BitVectorConstant()
                     ))))
-        expected = {'c0': '(_ BitVec 32)', 'c1': '(_ BitVec 29)', 'c2': '(_ BitVec 21)'}
+        expected = {'c0': '(_ BitVec 32)',
+                    'c1': '(_ BitVec 29)', 'c2': '(_ BitVec 21)'}
         self.assert_equal_value(expected, tree)
 
 

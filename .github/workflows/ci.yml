@@ -18,7 +18,7 @@ jobs:
           python -m unittest discover -v
       - name: Generate operators
         run:
-          python src/gen/generator.py operators
+          python ffg/gen/generator.py operators
       - name: Run unittest on auto generated operators
         run:
           python -m unittest discover -v
