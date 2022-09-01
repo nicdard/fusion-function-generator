@@ -215,5 +215,5 @@ def get_module_name(theory: str) -> str:
 
 def get_operator_class(theory: str, name: str) -> 'Operator.__class__':
     module_name = get_module_name(theory)
-    module = importlib.import_module('src.operators.' + module_name)
+    module = importlib.import_module('ffg.operators.' + module_name)
     return getattr(module, name)

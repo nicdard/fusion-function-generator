@@ -25,7 +25,7 @@ We use wheel, just run:
 > python3 setup.py bdist_wheel
 
 Use the following command to install the package locally (add `-e` to enable hot reloading):
-> python3 -m pip3 install .
+> python3 -m pip install .
 
 ## Setup and using yinyang
 
