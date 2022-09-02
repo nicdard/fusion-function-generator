@@ -43,7 +43,7 @@ def parse_args():
                         default='fusion_functions', help='name of the output file')
     parser.add_argument('--dot', '-d', action='store_true',
                         help='emit formulas and inverses also to dot files')
-    parser.add_argument('--theories', choices=['bool', 'int', 'real', 'string', 'bitvector'], nargs='+',
+    parser.add_argument('--theories', choices=gen_configuration.THEORY_OPTIONS, nargs='+',
                         default=[], help='specify the theories to be used during generation')
     return parser.parse_args()
 
