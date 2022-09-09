@@ -52,7 +52,7 @@ def emit_options(file, args):
     print("", file=file)
 
 
-def emit_function(tree: Operator, file, is_wrapped=True):
+def emit_function(tree: Operator, file, wrap=True):
     """
     Emits a fusion function and its inverses to yinyang's configuration file:
         #begin
@@ -75,7 +75,7 @@ def emit_function(tree: Operator, file, is_wrapped=True):
     variables = tree.accept(VariableVisitor())
     constants = tree.accept(ConstantVisitor())
 
-    if is_wrapped:
+    if wrap:
         # Block begin
         print("#begin", file=file)
 
@@ -94,6 +94,6 @@ def emit_function(tree: Operator, file, is_wrapped=True):
     for inverse_root in tree.accept(rewriter):
         print(f"(assert {inverse_root.accept(printer)})", file=file)
 
-    if is_wrapped:
+    if wrap:
         # Block end
         print("#end\n", file=file)
