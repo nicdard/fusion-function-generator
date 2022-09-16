@@ -14,7 +14,7 @@ help()
 
 if [ ! -z $1 ]; then
   echo "Compute coverage information for $1"
-  gcovr --json-summary-pretty --json-summary --root /app/$1/src --object-directory /app/$1/build/ -o $2/coverage.json
+  gcovr --json-summary-pretty --json-summary --root /app/$1/ffg --object-directory /app/$1/build/ -o $2/coverage.json
   echo "The coverage report can be found here: $2/coverage.json"
 else
   help

@@ -52,7 +52,7 @@ def emit_options(file, args):
     print("", file=file)
 
 
-def emit_function(tree: Operator, file):
+def emit_function(tree: Operator, file, wrap=True):
     """
     Emits a fusion function and its inverses to yinyang's configuration file:
         #begin
@@ -67,7 +67,7 @@ def emit_function(tree: Operator, file):
     For more information on the format please visit:
     https://yinyang.readthedocs.io/en/latest/fusion.html#fusion-functions
 
-    is_symbolic: when traversing constants, emits either the names (true) or the values (false).
+    is_wrapped: emit also #begin and #end lines.
     """
 
     rewriter = RewriteVisitor()
@@ -75,8 +75,9 @@ def emit_function(tree: Operator, file):
     variables = tree.accept(VariableVisitor())
     constants = tree.accept(ConstantVisitor())
 
-    # Block begin
-    print("#begin", file=file)
+    if wrap:
+        # Block begin
+        print("#begin", file=file)
 
     # Variable declarations
     for variable, type in sorted(variables.items()):
@@ -93,5 +94,6 @@ def emit_function(tree: Operator, file):
     for inverse_root in tree.accept(rewriter):
         print(f"(assert {inverse_root.accept(printer)})", file=file)
 
-    # Block end
-    print("#end\n", file=file)
+    if wrap:
+        # Block end
+        print("#end\n", file=file)

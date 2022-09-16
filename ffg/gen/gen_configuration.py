@@ -124,14 +124,25 @@ root_operators: Dict[str, str] = {
     "BitVectorOperator": "BitVectorEquality",
 }
 
+BOOLEAN_OPTION = "bool"
+INT_OPTION = "int"
+REAL_OPTION = "real"
+STRING_OPTION = "string"
+BITVECTOR_OPTION = "bitvector"
+
+
 # A map from command line options to the internal representation.
 _option_to_operator_type: Dict[str, str] = {
-    "bool": "BooleanOperator",
-    "int": "IntegerOperator",
-    "real": "RealOperator",
-    "string": "StringOperator",
-    "bitvector": "BitVectorOperator",
+    BOOLEAN_OPTION: "BooleanOperator",
+    INT_OPTION: "IntegerOperator",
+    REAL_OPTION: "RealOperator",
+    STRING_OPTION: "StringOperator",
+    BITVECTOR_OPTION: "BitVectorOperator",
 }
+
+
+THEORY_OPTIONS = list(_option_to_operator_type.keys())
+
 
 _available_theories: List[str] = list(theory_declarations.keys())
 
@@ -215,5 +226,5 @@ def get_module_name(theory: str) -> str:
 
 def get_operator_class(theory: str, name: str) -> 'Operator.__class__':
     module_name = get_module_name(theory)
-    module = importlib.import_module('src.operators.' + module_name)
+    module = importlib.import_module('ffg.operators.' + module_name)
     return getattr(module, name)

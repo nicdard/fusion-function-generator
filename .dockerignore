@@ -1,7 +1,7 @@
 # Ignore everything
 *
-# Include src
-!/src
+# Include ffg
+!/ffg
 !/scripts
 !main.py
 !README.md
