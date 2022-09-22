@@ -41,7 +41,7 @@ from ffg.visitors.initialization_visitor import InitializationVisitor
 constant_name_pattern = re.compile(r"^c\d+$")
 
 
-def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], out_variable: str) -> tuple[Any, int]:
+def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], out_variable: str) -> Tuple[Any, int]:
     if isinstance(in_variables, int):
         in_variables = [f'x{i+1}' for i in range(in_variables)]
     else:
