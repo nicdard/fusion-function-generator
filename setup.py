@@ -29,7 +29,7 @@ long_description = (this_directory / "ffg/README.md").read_text()
 setup(
     name='ffg',
     packages=find_packages(exclude=['tests']),
-    version='0.1.0',
+    version='0.1.1',
     description='A generator of fusion functions for Semantic Fusion (YinYang).',
     author='Nicola Dardanis, Lucas Weitzendorf',
     license='MIT',
