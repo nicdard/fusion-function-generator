@@ -23,8 +23,11 @@
 
 import random
 from typing import List
+from ffg.gen.gen_configuration import get_operator_class, get_root
+from ffg.gen.gen_configuration import BITVECTOR_OPERATOR, BOOLEAN_OPERATOR, INTEGER_OPERATOR, REAL_OPERATOR, STRING_OPERATOR, get_fringe_operators
 
 from ffg.operators.boolean_theory import *
+from ffg.operators.generic import Operator
 from ffg.operators.integer_theory import *
 from ffg.operators.real_theory import *
 from ffg.operators.string_theory import *
@@ -47,6 +50,72 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         self._visit_operator(operator, 1)
 
     def visit_boolean_xor(self, operator: BooleanXor):
+        self._visit_operator(operator, 2)
+
+    def visit_boolean_ite(self, operator: BooleanIte):
+        self._visit_ite(operator, BOOLEAN_OPERATOR)
+
+    def visit_boolean_or(self, operator: BooleanOr):
+        self._visit_operator(operator, 2)
+
+    def visit_boolean_and(self, operator: BooleanAnd):
+        self._visit_operator(operator, 2)
+
+    def visit_boolean_implies(self, operator: BooleanImplies):
+        self._visit_operator(operator, 2)
+
+    def visit_boolean_distinct(self, operator: BooleanDistinct):
+        self._visit_operator(operator, 2)
+
+    def visit_integer_distinct(self, operator: IntegerDistinct):
+        self._visit_operator(operator, 2)
+
+    def visit_real_distinct(self, operator: RealDistinct):
+        self._visit_operator(operator, 2)
+
+    def visit_string_distinct(self, operator: StringDistinct):
+        self._visit_operator(operator, 2)
+
+    def visit_bit_vector_distinct(self, operator: BitVectorDistinct):
+        self._visit_operator(operator, 2)
+
+    def visit_integer_less(self, operator: IntegerLess):
+        self._visit_operator(operator, 2)
+
+    def visit_integer_less_or_equal(self, operator: IntegerLessOrEqual):
+        self._visit_operator(operator, 2)
+
+    def visit_integer_greater(self, operator: IntegerGreater):
+        self._visit_operator(operator, 2)
+
+    def visit_integer_greater_or_equal(self, operator: IntegerGreaterOrEqual):
+        self._visit_operator(operator, 2)
+
+    def visit_real_less(self, operator: RealLess):
+        self._visit_operator(operator, 2)
+
+    def visit_real_less_or_equal(self, operator: RealLessOrEqual):
+        self._visit_operator(operator, 2)
+
+    def visit_real_greater(self, operator: RealGreater):
+        self._visit_operator(operator, 2)
+
+    def visit_real_greater_or_equal(self, operator: RealGreaterOrEqual):
+        self._visit_operator(operator, 2)
+
+    def visit_string_less(self, operator: StringLess):
+        self._visit_operator(operator, 2)
+
+    def visit_string_less_equal(self, operator: StringLessEqual):
+        self._visit_operator(operator, 2)
+
+    def visit_string_prefix_of(self, operator: StringPrefixOf):
+        self._visit_operator(operator, 2)
+
+    def visit_string_suffix_of(self, operator: StringSuffixOf):
+        self._visit_operator(operator, 2)
+
+    def visit_string_contains(self, operator: StringContains):
         self._visit_operator(operator, 2)
 
     def visit_boolean_variable(self, operator: BooleanVariable):
@@ -81,6 +150,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
 
     def visit_integer_division(self, operator: IntegerDivision):
         self._visit_operator(operator, 2)
+
+    def visit_integer_ite(self, operator: IntegerIte):
+        self._visit_ite(operator, INTEGER_OPERATOR)
 
     def visit_string_length(self, operator: StringLength):
         self._visit_operator(operator, 1)
@@ -120,6 +192,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
 
     def visit_real_division(self, operator: RealDivision):
         self._visit_operator(operator, 2)
+
+    def visit_real_ite(self, operator: RealIte):
+        self._visit_ite(operator, REAL_OPERATOR)
 
     def visit_integer_to_real(self, operator: IntegerToReal):
         self._visit_operator(operator, 1)
@@ -162,6 +237,9 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
 
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         self._visit_string_concatenation(operator)
+
+    def visit_string_ite(self, operator: StringIte):
+        self._visit_ite(operator, STRING_OPERATOR)
 
     def visit_string_replacement(self, operator: StringReplacement):
         self._visit_operator(operator, 3)
@@ -240,6 +318,18 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         else:
             self._visit_operator(operator, 2)
             operator.size = operator.operator_1.size + operator.operator_2.size
+            self._is_var[operator] = self._is_var[operator.operator_1] and self._is_var[operator.operator_2]
+
+    def visit_bit_vector_ite(self, operator: BitVectorIte):
+        if operator in self._size:
+            operator.size = self._size[operator]
+            self._size[operator.operator_1] = operator.size
+            self._size[operator.operator_2] = operator.size
+            self._visit_ite(operator, BITVECTOR_OPERATOR)
+        else:
+            self._visit_ite(operator, BITVECTOR_OPERATOR)
+            operator.size = max(
+                [operator.operator_1.size, operator.operator_2.size])
             self._is_var[operator] = self._is_var[operator.operator_1] and self._is_var[operator.operator_2]
 
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
@@ -329,3 +419,14 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
     def _visit_constant(self, operator):
         operator.name = f"c{self._const_idx}"
         self._const_idx += 1
+
+    def _visit_ite(self, operator: Operator, param_type):
+        # Set the fringe operator to be used as condition
+        fringe_operators = get_fringe_operators(
+            BOOLEAN_OPERATOR, 2, [param_type])
+        op_name = random.choice(fringe_operators)
+        op = get_operator_class(BOOLEAN_OPERATOR, op_name)(
+            operator.operator_1, operator.operator_2)
+        # fringe_operators.append(get_root(type)) TODO: update rewriter
+        operator.fringe_operator_1 = op
+        self._visit_operator(operator, 2)

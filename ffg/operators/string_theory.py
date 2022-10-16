@@ -82,6 +82,15 @@ class StringConcatenation2n3(StringOperator):
         return visitor.visit_string_concatenation2n3(self)
 
 
+class StringIte(StringOperator):
+    def __init__(self, input_1: StringOperator, input_2: StringOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_ite(self)
+
+
 class StringReplacement(StringOperator):
     def __init__(self, input_1: StringOperator, input_2: StringOperator, input_3: StringOperator):
         self.operator_1 = input_1
@@ -158,6 +167,10 @@ class StringVisitor(ABC):
 
     @abstractmethod
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
+        pass
+
+    @abstractmethod
+    def visit_string_ite(self, operator: StringIte):
         pass
 
     @abstractmethod
