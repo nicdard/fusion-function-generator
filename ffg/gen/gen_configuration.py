@@ -249,9 +249,9 @@ def get_eligible_operators(theory: str, min_arity: int, max_arity: int) -> List[
     return operator_choices
 
 
-def get_fringe_operators(theory: str, arity: int, params_type: List[str] = []) -> List[str]:
+def get_fringe_operators(theory: str, arity: int, params_type: List[str] = None) -> List[str]:
     operator_choices = []
-    if (len(params_type) == 0):
+    if (params_type == None):
         params_type = _available_theories
     for operator in fringe_operators[theory].keys():
         params = get_operator_parameters(theory, operator)
