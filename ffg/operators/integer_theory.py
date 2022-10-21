@@ -63,6 +63,15 @@ class IntegerMultiplication(IntegerOperator):
         return visitor.visit_integer_multiplication(self)
 
 
+class IntegerIte(IntegerOperator):
+    def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_integer_ite(self)
+
+
 class IntegerDivision(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
@@ -146,6 +155,10 @@ class IntegerVisitor(ABC):
 
     @abstractmethod
     def visit_integer_multiplication(self, operator: IntegerMultiplication):
+        pass
+
+    @abstractmethod
+    def visit_integer_ite(self, operator: IntegerIte):
         pass
 
     @abstractmethod

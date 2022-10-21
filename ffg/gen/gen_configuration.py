@@ -24,63 +24,96 @@
 import importlib
 from typing import Dict, List
 
+BOOLEAN_OPERATOR = "BooleanOperator"
+INTEGER_OPERATOR = "IntegerOperator"
+REAL_OPERATOR = "RealOperator"
+STRING_OPERATOR = "StringOperator"
+BITVECTOR_OPERATOR = "BitVectorOperator"
+
 # A map from theories name to theory operation.
 # Each operation specifies either the number of input parameters (having the same theory operator type).
 # or the list of parameters with the names and types of each one.
 # Insert here new theories and their operations!
 main_operators: Dict[str, Dict[str, List[str]]] = {
-    "BooleanOperator": {
-        "BooleanNot": ["BooleanOperator"],
-        "BooleanXor": ["BooleanOperator", "BooleanOperator"],
+    BOOLEAN_OPERATOR: {
+        "BooleanNot": [BOOLEAN_OPERATOR],
+        "BooleanXor": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR],
+        "BooleanIte": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR]
     },
-    "IntegerOperator": {
-        "IntegerNegation": ["IntegerOperator"],
-        "IntegerAddition": ["IntegerOperator", "IntegerOperator"],
-        "IntegerSubtraction": ["IntegerOperator", "IntegerOperator"],
-        "IntegerMultiplication": ["IntegerOperator", "IntegerOperator"],
+    INTEGER_OPERATOR: {
+        "IntegerNegation": [INTEGER_OPERATOR],
+        "IntegerAddition": [INTEGER_OPERATOR, INTEGER_OPERATOR],
+        "IntegerSubtraction": [INTEGER_OPERATOR, INTEGER_OPERATOR],
+        "IntegerMultiplication": [INTEGER_OPERATOR, INTEGER_OPERATOR],
+        "IntegerIte": [INTEGER_OPERATOR, INTEGER_OPERATOR]
     },
-    "RealOperator": {
-        "RealNegation": ["RealOperator"],
-        "RealAddition": ["RealOperator", "RealOperator"],
-        "RealSubtraction": ["RealOperator", "RealOperator"],
-        "RealMultiplication": ["RealOperator", "RealOperator"],
-        "IntegerToReal": ["IntegerOperator"],
+    REAL_OPERATOR: {
+        "RealNegation": [REAL_OPERATOR],
+        "RealAddition": [REAL_OPERATOR, REAL_OPERATOR],
+        "RealSubtraction": [REAL_OPERATOR, REAL_OPERATOR],
+        "RealMultiplication": [REAL_OPERATOR, REAL_OPERATOR],
+        "IntegerToReal": [INTEGER_OPERATOR],
+        "RealIte": [REAL_OPERATOR, REAL_OPERATOR]
     },
-    "StringOperator": {
-        "StringConcatenation1n1": ["StringOperator", "StringOperator"],
-        "StringConcatenation1n2": ["StringOperator", "StringOperator"],
-        "StringConcatenation1n3": ["StringOperator", "StringOperator"],
-        "StringConcatenation2n1": ["StringOperator", "StringOperator"],
-        "StringConcatenation2n2": ["StringOperator", "StringOperator"],
-        "StringConcatenation2n3": ["StringOperator", "StringOperator"],
+    STRING_OPERATOR: {
+        "StringConcatenation1n1": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringConcatenation1n2": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringConcatenation1n3": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringConcatenation2n1": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringConcatenation2n2": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringConcatenation2n3": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringIte": [STRING_OPERATOR, STRING_OPERATOR]
     },
-    "BitVectorOperator": {
-        "BitVectorNot": ["BitVectorOperator"],
-        "BitVectorNegation": ["BitVectorOperator"],
-        "BitVectorXor": ["BitVectorOperator", "BitVectorOperator"],
-        "BitVectorConcatenation": ["BitVectorOperator", "BitVectorOperator"],
+    BITVECTOR_OPERATOR: {
+        "BitVectorNot": [BITVECTOR_OPERATOR],
+        "BitVectorNegation": [BITVECTOR_OPERATOR],
+        "BitVectorXor": [BITVECTOR_OPERATOR, BITVECTOR_OPERATOR],
+        "BitVectorConcatenation": [BITVECTOR_OPERATOR, BITVECTOR_OPERATOR],
+        "BitVectorIte": [BITVECTOR_OPERATOR, BITVECTOR_OPERATOR]
     },
 }
 
 # These operators are not invertible and thus not used in generation, but necessary
 # to define the inverse of some main operators
 fringe_operators: Dict[str, Dict[str, List[str]]] = {
-    "BooleanOperator": {},
-    "IntegerOperator": {
-        "IntegerDivision": ["IntegerOperator", "IntegerOperator"],
-        "StringLength": ["StringOperator"],
-        "StringIndexof": ["StringOperator", "StringOperator", "IntegerOperator"],
-        "RealToInteger": ["RealOperator"],
+    BOOLEAN_OPERATOR: {
+        "BooleanOr": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR],
+        "BooleanAnd": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR],
+        "BooleanImplies": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR],
+        "BooleanDistinct": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR],
+        "IntegerDistinct": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR],
+        "RealDistinct": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR],
+        "StringDistinct": [BOOLEAN_OPERATOR, BOOLEAN_OPERATOR],
+        "BitVectorDistinct": [BITVECTOR_OPERATOR, BITVECTOR_OPERATOR],
+        "IntegerLess": [INTEGER_OPERATOR, INTEGER_OPERATOR],
+        "IntegerLessOrEqual": [INTEGER_OPERATOR, INTEGER_OPERATOR],
+        "IntegerGreater": [INTEGER_OPERATOR, INTEGER_OPERATOR],
+        "IntegerGreaterOrEqual": [INTEGER_OPERATOR, INTEGER_OPERATOR],
+        "RealLess": [REAL_OPERATOR, REAL_OPERATOR],
+        "RealLessOrEqual": [REAL_OPERATOR, REAL_OPERATOR],
+        "RealGreater": [REAL_OPERATOR, REAL_OPERATOR],
+        "RealGreaterOrEqual": [REAL_OPERATOR, REAL_OPERATOR],
+        "StringLess": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringLessEqual": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringPrefixOf": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringSuffixOf": [STRING_OPERATOR, STRING_OPERATOR],
+        "StringContains": [STRING_OPERATOR, STRING_OPERATOR],
     },
-    "RealOperator": {
-        "RealDivision": ["RealOperator", "RealOperator"],
+    INTEGER_OPERATOR: {
+        "IntegerDivision": [INTEGER_OPERATOR, INTEGER_OPERATOR],
+        "StringLength": [STRING_OPERATOR],
+        "StringIndexof": [STRING_OPERATOR, STRING_OPERATOR, INTEGER_OPERATOR],
+        "RealToInteger": [REAL_OPERATOR],
     },
-    "StringOperator": {
-        "StringReplacement": ["StringOperator", "StringOperator", "StringOperator"],
-        "Substring": ["StringOperator", "IntegerOperator", "IntegerOperator"],
+    REAL_OPERATOR: {
+        "RealDivision": [REAL_OPERATOR, REAL_OPERATOR],
     },
-    "BitVectorOperator": {
-        "BitVectorExtraction": ["BitVectorOperator", "IntegerOperator", "IntegerOperator"],
+    STRING_OPERATOR: {
+        "StringReplacement": [STRING_OPERATOR, STRING_OPERATOR, STRING_OPERATOR],
+        "Substring": [STRING_OPERATOR, INTEGER_OPERATOR, INTEGER_OPERATOR],
+    },
+    BITVECTOR_OPERATOR: {
+        "BitVectorExtraction": [BITVECTOR_OPERATOR, INTEGER_OPERATOR, INTEGER_OPERATOR],
     },
 }
 
@@ -89,27 +122,27 @@ theory_declarations: Dict[str, Dict[str, List[str]]] = {
 }
 
 leaf_operators: Dict[str, Dict[str, str]] = {
-    "BooleanOperator": {
+    BOOLEAN_OPERATOR: {
         "const": "BooleanConstant",
         "var": "BooleanVariable",
         "lit": "BooleanLiteral"
     },
-    "IntegerOperator": {
+    INTEGER_OPERATOR: {
         "const": "IntegerConstant",
         "var": "IntegerVariable",
         "lit": "IntegerLiteral"
     },
-    "RealOperator": {
+    REAL_OPERATOR: {
         "const": "RealConstant",
         "var": "RealVariable",
         "lit": "RealLiteral"
     },
-    "StringOperator": {
+    STRING_OPERATOR: {
         "const": "StringConstant",
         "var": "StringVariable",
         "lit": "StringLiteral"
     },
-    "BitVectorOperator": {
+    BITVECTOR_OPERATOR: {
         "const": "BitVectorConstant",
         "var": "BitVectorVariable",
         "lit": "BitVectorLiteral"
@@ -117,11 +150,11 @@ leaf_operators: Dict[str, Dict[str, str]] = {
 }
 
 root_operators: Dict[str, str] = {
-    "BooleanOperator": "BooleanEquality",
-    "IntegerOperator": "IntegerEquality",
-    "RealOperator": "RealEquality",
-    "StringOperator": "StringEquality",
-    "BitVectorOperator": "BitVectorEquality",
+    BOOLEAN_OPERATOR: "BooleanEquality",
+    INTEGER_OPERATOR: "IntegerEquality",
+    REAL_OPERATOR: "RealEquality",
+    STRING_OPERATOR: "StringEquality",
+    BITVECTOR_OPERATOR: "BitVectorEquality",
 }
 
 BOOLEAN_OPTION = "bool"
@@ -133,11 +166,11 @@ BITVECTOR_OPTION = "bitvector"
 
 # A map from command line options to the internal representation.
 _option_to_operator_type: Dict[str, str] = {
-    BOOLEAN_OPTION: "BooleanOperator",
-    INT_OPTION: "IntegerOperator",
-    REAL_OPTION: "RealOperator",
-    STRING_OPTION: "StringOperator",
-    BITVECTOR_OPTION: "BitVectorOperator",
+    BOOLEAN_OPTION: BOOLEAN_OPERATOR,
+    INT_OPTION: INTEGER_OPERATOR,
+    REAL_OPTION: REAL_OPERATOR,
+    STRING_OPTION: STRING_OPERATOR,
+    BITVECTOR_OPTION: BITVECTOR_OPERATOR,
 }
 
 
@@ -211,6 +244,19 @@ def get_eligible_operators(theory: str, min_arity: int, max_arity: int) -> List[
         params = get_operator_parameters(theory, operator)
         if min_arity <= len(params) <= max_arity:
             if set(params).issubset(_available_theories):
+                operator_choices.append(operator)
+
+    return operator_choices
+
+
+def get_fringe_operators(theory: str, arity: int, params_type: List[str] = None) -> List[str]:
+    operator_choices = []
+    if (params_type == None):
+        params_type = _available_theories
+    for operator in fringe_operators[theory].keys():
+        params = get_operator_parameters(theory, operator)
+        if arity == len(params):
+            if set(params).issubset(params_type):
                 operator_choices.append(operator)
 
     return operator_choices

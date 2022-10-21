@@ -37,6 +37,72 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
     def visit_boolean_xor(self, operator: BooleanXor):
         return self._visit_operator("xor", operator, 2)
 
+    def visit_boolean_ite(self, operator: BooleanIte):
+        return self._visit_ite(operator)
+
+    def visit_boolean_or(self, operator: BooleanOr):
+        return self._visit_operator("or", operator, 2)
+
+    def visit_boolean_and(self, operator: BooleanAnd):
+        return self._visit_operator("and", operator, 2)
+
+    def visit_boolean_implies(self, operator: BooleanImplies):
+        return self._visit_operator("=>", operator, 2)
+
+    def visit_boolean_distinct(self, operator: BooleanDistinct):
+        return self._visit_operator("!=", operator, 2)
+
+    def visit_integer_distinct(self, operator: IntegerDistinct):
+        return self._visit_operator("!=", operator, 2)
+
+    def visit_real_distinct(self, operator: RealDistinct):
+        return self._visit_operator("!=", operator, 2)
+
+    def visit_string_distinct(self, operator: StringDistinct):
+        return self._visit_operator("!=", operator, 2)
+
+    def visit_bit_vector_distinct(self, operator: BitVectorDistinct):
+        return self._visit_operator("!=", operator, 2)
+
+    def visit_integer_less(self, operator: IntegerLess):
+        return self._visit_operator("<", operator, 2)
+
+    def visit_integer_less_or_equal(self, operator: IntegerLessOrEqual):
+        return self._visit_operator("<=", operator, 2)
+
+    def visit_integer_greater(self, operator: IntegerGreater):
+        return self._visit_operator(">", operator, 2)
+
+    def visit_integer_greater_or_equal(self, operator: IntegerGreaterOrEqual):
+        return self._visit_operator(">=", operator, 2)
+
+    def visit_real_less(self, operator: RealLess):
+        return self._visit_operator("<", operator, 2)
+
+    def visit_real_less_or_equal(self, operator: RealLessOrEqual):
+        return self._visit_operator("<=", operator, 2)
+
+    def visit_real_greater(self, operator: RealGreater):
+        return self._visit_operator(">", operator, 2)
+
+    def visit_real_greater_or_equal(self, operator: RealGreaterOrEqual):
+        return self._visit_operator(">=", operator, 2)
+
+    def visit_string_less(self, operator: StringLess):
+        return self._visit_operator("<", operator, 2)
+
+    def visit_string_less_equal(self, operator: StringLessEqual):
+        return self._visit_operator("<=", operator, 2)
+
+    def visit_string_prefix_of(self, operator: StringPrefixOf):
+        return self._visit_operator("str.prefixof", operator, 2)
+
+    def visit_string_suffix_of(self, operator: StringSuffixOf):
+        return self._visit_operator("str.suffixof", operator, 2)
+
+    def visit_string_contains(self, operator: StringContains):
+        return self._visit_operator("str.contains", operator, 2)
+
     def visit_boolean_constant(self, operator: BooleanConstant):
         return self._visit_constant(operator)
 
@@ -64,6 +130,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
 
     def visit_integer_division(self, operator: IntegerDivision):
         return self._visit_operator("div", operator, 2)
+
+    def visit_integer_ite(self, operator: IntegerIte):
+        return self._visit_ite(operator)
 
     def visit_integer_constant(self, operator: IntegerConstant):
         return self._visit_constant(operator)
@@ -95,6 +164,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
 
     def visit_integer_to_real(self, operator: IntegerToReal):
         return self._visit_operator("to_real", operator, 1)
+
+    def visit_real_ite(self, operator: RealIte):
+        return self._visit_ite(operator)
 
     def visit_real_constant(self, operator: RealConstant):
         return self._visit_constant(operator)
@@ -129,6 +201,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
 
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         return self._visit_string_concatenation(operator)
+
+    def visit_string_ite(self, operator: StringIte):
+        return self._visit_ite(operator)
 
     def visit_string_length(self, operator: StringLength):
         return self._visit_operator("str.len", operator, 1)
@@ -169,6 +244,9 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
 
     def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
         return self._visit_operator("concat", operator, 2)
+
+    def visit_bit_vector_ite(self, operator: BitVectorIte):
+        return self._visit_ite(operator)
 
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
         return self._visit_operator("extract", operator, 3)
@@ -225,3 +303,15 @@ class DotVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, Bit
     def _generate_node_name(self):
         self.id += 1
         return f"n{self.id}"
+
+    def _visit_ite(self, operator):
+        op_id, ops, edges = operator.fringe_operator_1.accept(self)
+        op_ids = [op_id]
+        for i in range(2):
+            op_id, op, sub_edges = getattr(
+                operator, f'operator_{i+1}').accept(self)
+            op_ids.append(op_id)
+            ops.update(op)
+            edges.update(sub_edges)
+        name = self._generate_node_name()
+        return name, {name: "ite", **ops}, {name: op_ids, **edges}

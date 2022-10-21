@@ -71,6 +71,15 @@ class IntegerToReal(RealOperator):
         return visitor.visit_integer_to_real(self)
 
 
+class RealIte(RealOperator):
+    def __init__(self, input_1: RealOperator, input_2: RealOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'RealVisitor'):
+        return visitor.visit_real_ite(self)
+
+
 class RealDivision(RealOperator):
     def __init__(self, input_1: RealOperator, input_2: RealOperator):
         self.operator_1 = input_1
@@ -132,6 +141,10 @@ class RealVisitor(ABC):
 
     @abstractmethod
     def visit_integer_to_real(self, operator: IntegerToReal):
+        pass
+
+    @abstractmethod
+    def visit_real_ite(self, operator: RealIte):
         pass
 
     @abstractmethod

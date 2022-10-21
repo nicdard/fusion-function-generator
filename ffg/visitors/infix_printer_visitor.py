@@ -38,6 +38,72 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_boolean_constant(self, operator: BooleanConstant):
         return operator.name
 
+    def visit_boolean_ite(self, operator: BooleanIte):
+        return self._visit_ite(operator)
+
+    def visit_boolean_or(self, operator: BooleanOr):
+        return f"({operator.operator_1.accept(self)} or {operator.operator_2.accept(self)})"
+
+    def visit_boolean_and(self, operator: BooleanAnd):
+        return f"({operator.operator_1.accept(self)} and {operator.operator_2.accept(self)})"
+
+    def visit_boolean_implies(self, operator: BooleanImplies):
+        return f"({operator.operator_1.accept(self)} => {operator.operator_2.accept(self)})"
+
+    def visit_boolean_distinct(self, operator: BooleanDistinct):
+        return f"({operator.operator_1.accept(self)} != {operator.operator_2.accept(self)})"
+
+    def visit_integer_distinct(self, operator: IntegerDistinct):
+        return f"({operator.operator_1.accept(self)} != {operator.operator_2.accept(self)})"
+
+    def visit_real_distinct(self, operator: RealDistinct):
+        return f"({operator.operator_1.accept(self)} != {operator.operator_2.accept(self)})"
+
+    def visit_string_distinct(self, operator: StringDistinct):
+        return f"({operator.operator_1.accept(self)} != {operator.operator_2.accept(self)})"
+
+    def visit_bit_vector_distinct(self, operator: BitVectorDistinct):
+        return f"({operator.operator_1.accept(self)} != {operator.operator_2.accept(self)})"
+
+    def visit_integer_less(self, operator: IntegerLess):
+        return f"({operator.operator_1.accept(self)} < {operator.operator_2.accept(self)})"
+
+    def visit_integer_less_or_equal(self, operator: IntegerLessOrEqual):
+        return f"({operator.operator_1.accept(self)} <= {operator.operator_2.accept(self)})"
+
+    def visit_integer_greater(self, operator: IntegerGreater):
+        return f"({operator.operator_1.accept(self)} > {operator.operator_2.accept(self)})"
+
+    def visit_integer_greater_or_equal(self, operator: IntegerGreaterOrEqual):
+        return f"({operator.operator_1.accept(self)} >= {operator.operator_2.accept(self)})"
+
+    def visit_real_less(self, operator: RealLess):
+        return f"({operator.operator_1.accept(self)} < {operator.operator_2.accept(self)})"
+
+    def visit_real_less_or_equal(self, operator: RealLessOrEqual):
+        return f"({operator.operator_1.accept(self)} <= {operator.operator_2.accept(self)})"
+
+    def visit_real_greater(self, operator: RealGreater):
+        return f"({operator.operator_1.accept(self)} > {operator.operator_2.accept(self)})"
+
+    def visit_real_greater_or_equal(self, operator: RealGreaterOrEqual):
+        return f"({operator.operator_1.accept(self)} >= {operator.operator_2.accept(self)})"
+
+    def visit_string_less(self, operator: StringLess):
+        return f"({operator.operator_1.accept(self)} < {operator.operator_2.accept(self)})"
+
+    def visit_string_less_equal(self, operator: StringLessEqual):
+        return f"({operator.operator_1.accept(self)} <= {operator.operator_2.accept(self)})"
+
+    def visit_string_prefix_of(self, operator: StringPrefixOf):
+        return f"({operator.operator_1.accept(self)}.prefixof {operator.operator_2.accept(self)})"
+
+    def visit_string_suffix_of(self, operator: StringSuffixOf):
+        return f"({operator.operator_1.accept(self)}.suffixof {operator.operator_2.accept(self)})"
+
+    def visit_string_contains(self, operator: StringContains):
+        return f"({operator.operator_1.accept(self)}.contains {operator.operator_2.accept(self)})"
+
     def visit_boolean_variable(self, operator: BooleanVariable):
         return operator.name
 
@@ -61,6 +127,9 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
 
     def visit_integer_division(self, operator: IntegerDivision):
         return f"({operator.operator_1.accept(self)} div {operator.operator_2.accept(self)})"
+
+    def visit_integer_ite(self, operator: IntegerIte):
+        return self._visit_ite(operator)
 
     def visit_integer_constant(self, operator: IntegerConstant):
         return operator.name
@@ -88,6 +157,9 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
 
     def visit_real_division(self, operator: RealDivision):
         return f"({operator.operator_1.accept(self)} / {operator.operator_2.accept(self)})"
+
+    def visit_real_ite(self, operator: RealIte):
+        return self._visit_ite(operator)
 
     def visit_integer_to_real(self, operator: IntegerToReal):
         return f"real({operator.operator_1.accept(self)})"
@@ -124,6 +196,9 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
 
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         return self._visit_string_concatenation(operator)
+
+    def visit_string_ite(self, operator: StringIte):
+        return self._visit_ite(operator)
 
     def visit_string_length(self, operator: StringLength):
         return f"len({operator.operator_1.accept(self)})"
@@ -167,6 +242,9 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
         return f"({operator.operator_1.accept(self)} || {operator.operator_2.accept(self)})"
 
+    def visit_bit_vector_ite(self, operator: BitVectorIte):
+        return self._visit_ite(operator)
+
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
         return f"{operator.operator_1.accept(self)}.extract" \
                f"({operator.operator_2.accept(self)}, {operator.operator_3.accept(self)})"
@@ -182,3 +260,8 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
 
     def visit_bit_vector_equality(self, operator: BitVectorEquality):
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
+
+    def _visit_ite(self, operator):
+        condition = operator.fringe_operator_1.accept(self)
+        return f"({condition} ? {operator.operator_1.accept(self)} " + \
+            f": {operator.operator_2.accept(self)})"

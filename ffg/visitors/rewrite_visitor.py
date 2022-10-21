@@ -47,6 +47,84 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
 
+    def visit_boolean_ite(self, operator: BooleanIte):
+        # z = ite P x y
+        output = self.output[operator]
+        # x = ite P z x
+        self.output[operator.operator_1] = BooleanIte(
+            output, operator.operator_1)
+        self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
+        # y = ite P y z
+        self.output[operator.operator_2] = BooleanIte(
+            operator.operator_2, output)
+        self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
+        inverse_1 = operator.operator_1.accept(self)
+        inverse_2 = operator.operator_2.accept(self)
+        return {**inverse_1, **inverse_2}
+
+    def visit_boolean_or(self, operator: BooleanOr):
+        return {}
+
+    def visit_boolean_and(self, operator: BooleanAnd):
+        return {}
+
+    def visit_boolean_implies(self, operator: BooleanImplies):
+        return {}
+
+    def visit_boolean_distinct(self, operator: BooleanDistinct):
+        return {}
+
+    def visit_integer_distinct(self, operator: IntegerDistinct):
+        return {}
+
+    def visit_real_distinct(self, operator: RealDistinct):
+        return {}
+
+    def visit_string_distinct(self, operator: StringDistinct):
+        return {}
+
+    def visit_bit_vector_distinct(self, operator: BitVectorDistinct):
+        return {}
+
+    def visit_integer_less(self, operator: IntegerLess):
+        return {}
+
+    def visit_integer_less_or_equal(self, operator: IntegerLessOrEqual):
+        return {}
+
+    def visit_integer_greater(self, operator: IntegerGreater):
+        return {}
+
+    def visit_integer_greater_or_equal(self, operator: IntegerGreaterOrEqual):
+        return {}
+
+    def visit_real_less(self, operator: RealLess):
+        return {}
+
+    def visit_real_less_or_equal(self, operator: RealLessOrEqual):
+        return {}
+
+    def visit_real_greater(self, operator: RealGreater):
+        return {}
+
+    def visit_real_greater_or_equal(self, operator: RealGreaterOrEqual):
+        return {}
+
+    def visit_string_less(self, operator: StringLess):
+        return {}
+
+    def visit_string_less_equal(self, operator: StringLessEqual):
+        return {}
+
+    def visit_string_prefix_of(self, operator: StringPrefixOf):
+        return {}
+
+    def visit_string_suffix_of(self, operator: StringSuffixOf):
+        return {}
+
+    def visit_string_contains(self, operator: StringContains):
+        return {}
+
     def visit_boolean_constant(self, operator: BooleanConstant):
         return {}
 
@@ -98,6 +176,21 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
 
     def visit_integer_division(self, operator: IntegerDivision):
         return {}
+
+    def visit_integer_ite(self, operator: IntegerIte):
+        # z = ite P x y
+        output = self.output[operator]
+        # x = ite P z x
+        self.output[operator.operator_1] = IntegerIte(
+            output, operator.operator_1)
+        self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
+        # y = ite P y z
+        self.output[operator.operator_2] = IntegerIte(
+            operator.operator_2, output)
+        self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
+        inverse_1 = operator.operator_1.accept(self)
+        inverse_2 = operator.operator_2.accept(self)
+        return {**inverse_1, **inverse_2}
 
     def visit_integer_constant(self, operator: IntegerConstant):
         return {}
@@ -156,6 +249,21 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
             output, operator.operator_2)
         self.output[operator.operator_2] = RealDivision(
             operator.operator_1, output)
+        inverse_1 = operator.operator_1.accept(self)
+        inverse_2 = operator.operator_2.accept(self)
+        return {**inverse_1, **inverse_2}
+
+    def visit_real_ite(self, operator: RealIte):
+        # z = ite P x y
+        output = self.output[operator]
+        # x = ite P z x
+        self.output[operator.operator_1] = RealIte(
+            output, operator.operator_1)
+        self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
+        # y = ite P y z
+        self.output[operator.operator_2] = RealIte(
+            operator.operator_2, output)
+        self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
         return {**inverse_1, **inverse_2}
@@ -232,6 +340,21 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         return self._visit_string_concatenation(operator, 2, 3)
 
+    def visit_string_ite(self, operator: StringIte):
+        # z = ite P x y
+        output = self.output[operator]
+        # x = ite P z x
+        self.output[operator.operator_1] = StringIte(
+            output, operator.operator_1)
+        self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
+        # y = ite P y z
+        self.output[operator.operator_2] = StringIte(
+            operator.operator_2, output)
+        self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
+        inverse_1 = operator.operator_1.accept(self)
+        inverse_2 = operator.operator_2.accept(self)
+        return {**inverse_1, **inverse_2}
+
     def visit_string_length(self, operator: StringLength):
         return {}
 
@@ -298,6 +421,23 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
             output, index_2, index_3)
         self.output[operator.operator_1].size = operator.operator_1.size
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
+
+    def visit_bit_vector_ite(self, operator: BitVectorIte):
+        # z = ite P x y
+        output = self.output[operator]
+        # x = ite P z x
+        self.output[operator.operator_1] = BitVectorIte(
+            output, operator.operator_1)
+        self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
+        self.output[operator.operator_1].size = operator.operator_1.size
+        # y = ite P y z
+        self.output[operator.operator_2] = BitVectorIte(
+            operator.operator_2, output)
+        self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
+        self.output[operator.operator_2].size = operator.operator_2.size
+        inverse_1 = operator.operator_1.accept(self)
+        inverse_2 = operator.operator_2.accept(self)
+        return {**inverse_1, **inverse_2}
 
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
         return {}

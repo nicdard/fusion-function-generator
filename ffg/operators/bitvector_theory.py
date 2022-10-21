@@ -62,6 +62,15 @@ class BitVectorConcatenation(BitVectorOperator):
         return visitor.visit_bit_vector_concatenation(self)
 
 
+class BitVectorIte(BitVectorOperator):
+    def __init__(self, input_1: BitVectorOperator, input_2: BitVectorOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'BitVectorVisitor'):
+        return visitor.visit_bit_vector_ite(self)
+
+
 class BitVectorExtraction(BitVectorOperator):
     def __init__(self, input_1: BitVectorOperator, input_2: IntegerOperator, input_3: IntegerOperator):
         self.operator_1 = input_1
@@ -120,6 +129,10 @@ class BitVectorVisitor(ABC):
 
     @abstractmethod
     def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
+        pass
+
+    @abstractmethod
+    def visit_bit_vector_ite(self, operator: BitVectorIte):
         pass
 
     @abstractmethod
