@@ -21,9 +21,8 @@
 # SOFTWARE.
 
 
-from ctypes.wintypes import BOOLEAN
 import importlib
-from typing import Dict, List, Union
+from typing import Dict, List
 
 BOOLEAN_OPERATOR = "BooleanOperator"
 INTEGER_OPERATOR = "IntegerOperator"
