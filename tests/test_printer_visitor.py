@@ -118,7 +118,7 @@ class TestSymbolicPrinterVisitor(unittest.TestCase):
                 Substring(
                     init_named(StringVariable, 'y'),
                     StringLength(init_named(StringConstant, 'c2')),
-                    StringIndexof(
+                    StringIndexOf(
                         init_named(StringVariable, 'z'),
                         init_named(StringVariable, 'y'),
                         init_named(IntegerConstant, 'c3'),

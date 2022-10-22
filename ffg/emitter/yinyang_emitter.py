@@ -27,6 +27,7 @@ from ffg.visitors.constant_visitor import ConstantVisitor
 from ffg.visitors.printer_visitor import PrinterVisitor
 from ffg.visitors.rewrite_visitor import RewriteVisitor
 from ffg.visitors.variable_visitor import VariableVisitor
+from ffg.visitors.compound_visitor import CompoundVisitor
 
 
 def emit(trees: List[Operator], file_path, args):
@@ -72,6 +73,7 @@ def emit_function(tree: Operator, file, wrap=True):
 
     rewriter = RewriteVisitor()
     printer = PrinterVisitor()
+    expander = CompoundVisitor()
     variables = tree.accept(VariableVisitor())
     constants = tree.accept(ConstantVisitor())
 
@@ -88,11 +90,11 @@ def emit_function(tree: Operator, file, wrap=True):
         print(f"(declare-const {constant} {type})", file=file)
 
     # Fusion function
-    print(f"(assert {tree.accept(printer)})", file=file)
+    print(f"(assert {tree.accept(expander).accept(printer)})", file=file)
 
     # Inverses
     for inverse_root in tree.accept(rewriter):
-        print(f"(assert {inverse_root.accept(printer)})", file=file)
+        print(f"(assert {inverse_root.accept(expander).accept(printer)})", file=file)
 
     if wrap:
         # Block end

@@ -25,7 +25,7 @@
 # Look at the README to learn more.
 
 from abc import ABC, abstractmethod
-from ffg.operators.generic import IntegerOperator, RealOperator, StringOperator
+from ffg.operators.generic import BitVectorOperator, IntegerOperator, RealOperator, StringOperator
 
 
 class IntegerNegation(IntegerOperator):
@@ -63,6 +63,14 @@ class IntegerMultiplication(IntegerOperator):
         return visitor.visit_integer_multiplication(self)
 
 
+class BitVectorToInteger(IntegerOperator):
+    def __init__(self, input_1: BitVectorOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_bit_vector_to_integer(self)
+
+
 class IntegerIte(IntegerOperator):
     def __init__(self, input_1: IntegerOperator, input_2: IntegerOperator):
         self.operator_1 = input_1
@@ -89,14 +97,14 @@ class StringLength(IntegerOperator):
         return visitor.visit_string_length(self)
 
 
-class StringIndexof(IntegerOperator):
+class StringIndexOf(IntegerOperator):
     def __init__(self, input_1: StringOperator, input_2: StringOperator, input_3: IntegerOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
         self.operator_3 = input_3
 
     def accept(self, visitor: 'IntegerVisitor'):
-        return visitor.visit_string_indexof(self)
+        return visitor.visit_string_index_of(self)
 
 
 class RealToInteger(IntegerOperator):
@@ -105,6 +113,22 @@ class RealToInteger(IntegerOperator):
 
     def accept(self, visitor: 'IntegerVisitor'):
         return visitor.visit_real_to_integer(self)
+
+
+class StringToInteger(IntegerOperator):
+    def __init__(self, input_1: StringOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_string_to_integer(self)
+
+
+class StringToIntegerBuiltIn(IntegerOperator):
+    def __init__(self, input_1: StringOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'IntegerVisitor'):
+        return visitor.visit_string_to_integer_built_in(self)
 
 
 class IntegerVariable(IntegerOperator):
@@ -158,6 +182,10 @@ class IntegerVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_bit_vector_to_integer(self, operator: BitVectorToInteger):
+        pass
+
+    @abstractmethod
     def visit_integer_ite(self, operator: IntegerIte):
         pass
 
@@ -170,11 +198,19 @@ class IntegerVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_string_indexof(self, operator: StringIndexof):
+    def visit_string_index_of(self, operator: StringIndexOf):
         pass
 
     @abstractmethod
     def visit_real_to_integer(self, operator: RealToInteger):
+        pass
+
+    @abstractmethod
+    def visit_string_to_integer(self, operator: StringToInteger):
+        pass
+
+    @abstractmethod
+    def visit_string_to_integer_built_in(self, operator: StringToIntegerBuiltIn):
         pass
 
     @abstractmethod

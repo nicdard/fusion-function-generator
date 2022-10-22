@@ -82,6 +82,14 @@ class StringConcatenation2n3(StringOperator):
         return visitor.visit_string_concatenation2n3(self)
 
 
+class IntegerToString(StringOperator):
+    def __init__(self, input_1: IntegerOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_integer_to_string(self)
+
+
 class StringIte(StringOperator):
     def __init__(self, input_1: StringOperator, input_2: StringOperator):
         self.operator_1 = input_1
@@ -109,6 +117,23 @@ class Substring(StringOperator):
 
     def accept(self, visitor: 'StringVisitor'):
         return visitor.visit_substring(self)
+
+
+class StringFromIntegerBuiltIn(StringOperator):
+    def __init__(self, input_1: IntegerOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_from_integer_built_in(self)
+
+
+class StringAt(StringOperator):
+    def __init__(self, input_1: StringOperator, input_2: IntegerOperator):
+        self.operator_1 = input_1
+        self.operator_2 = input_2
+
+    def accept(self, visitor: 'StringVisitor'):
+        return visitor.visit_string_at(self)
 
 
 class StringVariable(StringOperator):
@@ -170,6 +195,10 @@ class StringVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_integer_to_string(self, operator: IntegerToString):
+        pass
+
+    @abstractmethod
     def visit_string_ite(self, operator: StringIte):
         pass
 
@@ -179,6 +208,14 @@ class StringVisitor(ABC):
 
     @abstractmethod
     def visit_substring(self, operator: Substring):
+        pass
+
+    @abstractmethod
+    def visit_string_from_integer_built_in(self, operator: StringFromIntegerBuiltIn):
+        pass
+
+    @abstractmethod
+    def visit_string_at(self, operator: StringAt):
         pass
 
     @abstractmethod

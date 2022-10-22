@@ -329,7 +329,7 @@ class TestRewriteVisitor(unittest.TestCase):
             Substring(
                 init_named(StringVariable, 'z'),
                 init_named(IntegerConstant, '0'),
-                StringIndexof(
+                StringIndexOf(
                     init_named(StringVariable, 'z'),
                     StringConcatenation1n1(
                         StringReplacement(
@@ -353,7 +353,7 @@ class TestRewriteVisitor(unittest.TestCase):
                                 init_named(StringConstant, 'c1'),
                                 init_named(StringConstant, 'c2')),
                             init_named(StringVariable, 'y')))),
-                StringIndexof(
+                StringIndexOf(
                     Substring(
                         init_named(StringVariable, 'z'),
                         StringLength(init_named(StringVariable, 'x')),
