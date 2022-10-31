@@ -29,6 +29,11 @@ from ffg.operators.bitvector_theory import *
 
 
 class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, BitVectorVisitor):
+    class CompoundError(NotImplementedError):
+        def __init__(self):
+            msg = "Compound operation cannot be expressed in SMT syntax. Use CompoundVisitor for expansion."
+            super().__init__(msg)
+
     def visit_boolean_xor(self, operator: BooleanXor):
         return f"(xor {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
@@ -128,6 +133,15 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_integer_division(self, operator: IntegerDivision):
         return f"(div {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
+    def visit_bit_vector_to_integer(self, operator: BitVectorToInteger):
+        return f"(bv2nat {operator.operator_1.accept(self)})"
+
+    def visit_string_to_integer(self, operator: StringToInteger):
+        raise self.CompoundError()
+
+    def visit_string_to_integer_built_in(self, operator: StringToIntegerBuiltIn):
+        return f"(str.to_int {operator.operator_1.accept(self)})"
+
     def visit_integer_ite(self, operator: IntegerIte):
         return self._visit_ite(operator)
 
@@ -203,7 +217,7 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_string_length(self, operator: StringLength):
         return f"(str.len {operator.operator_1.accept(self)})"
 
-    def visit_string_indexof(self, operator: StringIndexof):
+    def visit_string_index_of(self, operator: StringIndexOf):
         return f"(str.indexof {operator.operator_1.accept(self)} " \
                f"{operator.operator_2.accept(self)} {operator.operator_3.accept(self)})"
 
@@ -217,6 +231,15 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_string_replacement(self, operator: StringReplacement):
         return f"(str.replace {operator.operator_1.accept(self)} " \
                f"{operator.operator_2.accept(self)} {operator.operator_3.accept(self)})"
+
+    def visit_integer_to_string(self, operator: IntegerToString):
+        raise self.CompoundError()
+
+    def visit_string_from_integer_built_in(self, operator: StringFromIntegerBuiltIn):
+        return f"(str.from_int {operator.operator_1.accept(self)})"
+
+    def visit_string_at(self, operator: StringAt):
+        return f"(str.at {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
     def visit_string_variable(self, operator: StringVariable):
         return operator.name
@@ -245,6 +268,9 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
         return f"((_ extract {operator.operator_3.accept(self)} {operator.operator_2.accept(self)}) " \
                f"{operator.operator_1.accept(self)})"
+
+    def visit_integer_to_bit_vector(self, operator: IntegerToBitVector):
+        return f"((_ nat2bv {operator.size}) {operator.operator_1.accept(self)})"
 
     def visit_bit_vector_ite(self, operator: BitVectorIte):
         return self._visit_ite(operator)

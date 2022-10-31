@@ -51,12 +51,10 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         # z = ite P x y
         output = self.output[operator]
         # x = ite P z x
-        self.output[operator.operator_1] = BooleanIte(
-            output, operator.operator_1)
+        self.output[operator.operator_1] = BooleanIte(output, operator.operator_1)
         self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
         # y = ite P y z
-        self.output[operator.operator_2] = BooleanIte(
-            operator.operator_2, output)
+        self.output[operator.operator_2] = BooleanIte(operator.operator_2, output)
         self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
@@ -177,16 +175,26 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_integer_division(self, operator: IntegerDivision):
         return {}
 
+    def visit_bit_vector_to_integer(self, operator: BitVectorToInteger):
+        output = self.output[operator]
+        self.output[operator.operator_1] = IntegerToBitVector(output)
+        self.output[operator.operator_1].size = operator.operator_1.size
+        return operator.operator_1.accept(self)
+
+    def visit_string_to_integer(self, operator: StringToInteger):
+        return {}
+
+    def visit_string_to_integer_built_in(self, operator: StringToIntegerBuiltIn):
+        return {}
+
     def visit_integer_ite(self, operator: IntegerIte):
         # z = ite P x y
         output = self.output[operator]
         # x = ite P z x
-        self.output[operator.operator_1] = IntegerIte(
-            output, operator.operator_1)
+        self.output[operator.operator_1] = IntegerIte(output, operator.operator_1)
         self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
         # y = ite P y z
-        self.output[operator.operator_2] = IntegerIte(
-            operator.operator_2, output)
+        self.output[operator.operator_2] = IntegerIte(operator.operator_2, output)
         self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
@@ -257,12 +265,10 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         # z = ite P x y
         output = self.output[operator]
         # x = ite P z x
-        self.output[operator.operator_1] = RealIte(
-            output, operator.operator_1)
+        self.output[operator.operator_1] = RealIte(output, operator.operator_1)
         self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
         # y = ite P y z
-        self.output[operator.operator_2] = RealIte(
-            operator.operator_2, output)
+        self.output[operator.operator_2] = RealIte(operator.operator_2, output)
         self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
         inverse_1 = operator.operator_1.accept(self)
         inverse_2 = operator.operator_2.accept(self)
@@ -297,14 +303,14 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
 
         def inv_1_rule_2():
             return Substring(output, IntegerLiteral(0),
-                             StringIndexof(output, operator.operator_2, StringLength(operator.operator_1)))
+                             StringIndexOf(output, operator.operator_2, StringLength(operator.operator_1)))
 
         def inv_2_rule_1():
             return Substring(output, StringLength(operator.operator_1), StringLength(operator.operator_2))
 
         def inv_2_rule_2():
             return Substring(output,
-                             StringIndexof(output, operator.operator_2, StringLength(
+                             StringIndexOf(output, operator.operator_2, StringLength(
                                  operator.operator_1)),
                              StringLength(operator.operator_2))
 
@@ -358,7 +364,7 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
     def visit_string_length(self, operator: StringLength):
         return {}
 
-    def visit_string_indexof(self, operator: StringIndexof):
+    def visit_string_index_of(self, operator: StringIndexOf):
         return {}
 
     def visit_real_to_integer(self, operator: RealToInteger):
@@ -368,6 +374,17 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         return {}
 
     def visit_string_replacement(self, operator: StringReplacement):
+        return {}
+
+    def visit_integer_to_string(self, operator: IntegerToString):
+        output = self.output[operator]
+        self.output[operator.operator_1] = StringToInteger(output)
+        return operator.operator_1.accept(self)
+
+    def visit_string_from_integer_built_in(self, operator: StringFromIntegerBuiltIn):
+        return {}
+
+    def visit_string_at(self, operator: StringAt):
         return {}
 
     def visit_string_variable(self, operator: StringVariable):
@@ -400,11 +417,9 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
 
     def visit_bit_vector_xor(self, operator: BitVectorXor):
         output = self.output[operator]
-        self.output[operator.operator_1] = BitVectorXor(
-            operator.operator_2, output)
+        self.output[operator.operator_1] = BitVectorXor(operator.operator_2, output)
         self.output[operator.operator_1].size = output.size
-        self.output[operator.operator_2] = BitVectorXor(
-            operator.operator_1, output)
+        self.output[operator.operator_2] = BitVectorXor(operator.operator_1, output)
         self.output[operator.operator_2].size = output.size
         return {**operator.operator_1.accept(self), **operator.operator_2.accept(self)}
 
@@ -426,13 +441,11 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         # z = ite P x y
         output = self.output[operator]
         # x = ite P z x
-        self.output[operator.operator_1] = BitVectorIte(
-            output, operator.operator_1)
+        self.output[operator.operator_1] = BitVectorIte(output, operator.operator_1)
         self.output[operator.operator_1].fringe_operator_1 = operator.fringe_operator_1
         self.output[operator.operator_1].size = operator.operator_1.size
         # y = ite P y z
-        self.output[operator.operator_2] = BitVectorIte(
-            operator.operator_2, output)
+        self.output[operator.operator_2] = BitVectorIte(operator.operator_2, output)
         self.output[operator.operator_2].fringe_operator_1 = operator.fringe_operator_1
         self.output[operator.operator_2].size = operator.operator_2.size
         inverse_1 = operator.operator_1.accept(self)
@@ -440,6 +453,9 @@ class RewriteVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         return {**inverse_1, **inverse_2}
 
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
+        return {}
+
+    def visit_integer_to_bit_vector(self, operator: IntegerToBitVector):
         return {}
 
     def visit_bit_vector_variable(self, operator: BitVectorVariable):

@@ -81,6 +81,14 @@ class BitVectorExtraction(BitVectorOperator):
         return visitor.visit_bit_vector_extraction(self)
 
 
+class IntegerToBitVector(BitVectorOperator):
+    def __init__(self, input_1: IntegerOperator):
+        self.operator_1 = input_1
+
+    def accept(self, visitor: 'BitVectorVisitor'):
+        return visitor.visit_integer_to_bit_vector(self)
+
+
 class BitVectorVariable(BitVectorOperator):
     def __init__(self):
         pass
@@ -137,6 +145,10 @@ class BitVectorVisitor(ABC):
 
     @abstractmethod
     def visit_bit_vector_extraction(self, operator: BitVectorExtraction):
+        pass
+
+    @abstractmethod
+    def visit_integer_to_bit_vector(self, operator: IntegerToBitVector):
         pass
 
     @abstractmethod

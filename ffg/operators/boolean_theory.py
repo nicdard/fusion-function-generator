@@ -25,7 +25,7 @@
 # Look at the README to learn more.
 
 from abc import ABC, abstractmethod
-from ffg.operators.generic import BooleanOperator, IntegerOperator, RealOperator, StringOperator
+from ffg.operators.generic import BitVectorOperator, BooleanOperator, IntegerOperator, RealOperator, StringOperator
 
 
 class BooleanNot(BooleanOperator):
@@ -118,7 +118,7 @@ class StringDistinct(BooleanOperator):
 
 
 class BitVectorDistinct(BooleanOperator):
-    def __init__(self, input_1: BooleanOperator, input_2: BooleanOperator):
+    def __init__(self, input_1: BitVectorOperator, input_2: BitVectorOperator):
         self.operator_1 = input_1
         self.operator_2 = input_2
 

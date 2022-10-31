@@ -174,7 +174,7 @@ class TestConstantVisitor(unittest.TestCase):
                 Substring(
                     StringVariable(),
                     StringLength(StringConstant()),
-                    StringIndexof(
+                    StringIndexOf(
                         StringVariable(),
                         StringVariable(),
                         IntegerConstant(),

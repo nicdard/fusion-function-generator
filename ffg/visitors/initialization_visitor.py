@@ -23,15 +23,15 @@
 
 import random
 from typing import List
-from ffg.gen.gen_configuration import get_operator_class, get_root
-from ffg.gen.gen_configuration import BITVECTOR_OPERATOR, BOOLEAN_OPERATOR, INTEGER_OPERATOR, REAL_OPERATOR, STRING_OPERATOR, get_fringe_operators
 
+from ffg.gen.gen_configuration import BITVECTOR, BOOLEAN, INTEGER, REAL, STRING
+from ffg.gen.gen_configuration import get_fringe_operators, get_operator_class
+from ffg.operators.bitvector_theory import *
 from ffg.operators.boolean_theory import *
 from ffg.operators.generic import Operator
 from ffg.operators.integer_theory import *
 from ffg.operators.real_theory import *
 from ffg.operators.string_theory import *
-from ffg.operators.bitvector_theory import *
 
 
 class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor, BitVectorVisitor):
@@ -53,7 +53,7 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         self._visit_operator(operator, 2)
 
     def visit_boolean_ite(self, operator: BooleanIte):
-        self._visit_ite(operator, BOOLEAN_OPERATOR)
+        self._visit_ite(operator, BOOLEAN)
 
     def visit_boolean_or(self, operator: BooleanOr):
         self._visit_operator(operator, 2)
@@ -151,13 +151,22 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
     def visit_integer_division(self, operator: IntegerDivision):
         self._visit_operator(operator, 2)
 
+    def visit_bit_vector_to_integer(self, operator: BitVectorToInteger):
+        self._visit_operator(operator, 1)
+
+    def visit_string_to_integer(self, operator: StringToInteger):
+        self._visit_operator(operator, 1)
+
+    def visit_string_to_integer_built_in(self, operator: StringToIntegerBuiltIn):
+        self._visit_operator(operator, 1)
+
     def visit_integer_ite(self, operator: IntegerIte):
-        self._visit_ite(operator, INTEGER_OPERATOR)
+        self._visit_ite(operator, INTEGER)
 
     def visit_string_length(self, operator: StringLength):
         self._visit_operator(operator, 1)
 
-    def visit_string_indexof(self, operator: StringIndexof):
+    def visit_string_index_of(self, operator: StringIndexOf):
         self._visit_operator(operator, 3)
 
     def visit_integer_variable(self, operator: IntegerVariable):
@@ -194,7 +203,7 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
         self._visit_operator(operator, 2)
 
     def visit_real_ite(self, operator: RealIte):
-        self._visit_ite(operator, REAL_OPERATOR)
+        self._visit_ite(operator, REAL)
 
     def visit_integer_to_real(self, operator: IntegerToReal):
         self._visit_operator(operator, 1)
@@ -238,8 +247,17 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         self._visit_string_concatenation(operator)
 
+    def visit_integer_to_string(self, operator: IntegerToString):
+        self._visit_operator(operator, 1)
+
+    def visit_string_from_integer_built_in(self, operator: StringFromIntegerBuiltIn):
+        self._visit_operator(operator, 1)
+
+    def visit_string_at(self, operator: StringAt):
+        self._visit_operator(operator, 2)
+
     def visit_string_ite(self, operator: StringIte):
-        self._visit_ite(operator, STRING_OPERATOR)
+        self._visit_ite(operator, STRING)
 
     def visit_string_replacement(self, operator: StringReplacement):
         self._visit_operator(operator, 3)
@@ -320,14 +338,19 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
             operator.size = operator.operator_1.size + operator.operator_2.size
             self._is_var[operator] = self._is_var[operator.operator_1] and self._is_var[operator.operator_2]
 
+    def visit_integer_to_bit_vector(self, operator: IntegerToBitVector):
+        if operator in self._size:
+            operator.size = self._size[operator]
+        self._visit_operator(operator, 1)
+
     def visit_bit_vector_ite(self, operator: BitVectorIte):
         if operator in self._size:
             operator.size = self._size[operator]
             self._size[operator.operator_1] = operator.size
             self._size[operator.operator_2] = operator.size
-            self._visit_ite(operator, BITVECTOR_OPERATOR)
+            self._visit_ite(operator, BITVECTOR)
         else:
-            self._visit_ite(operator, BITVECTOR_OPERATOR)
+            self._visit_ite(operator, BITVECTOR)
             operator.size = max(
                 [operator.operator_1.size, operator.operator_2.size])
             self._is_var[operator] = self._is_var[operator.operator_1] and self._is_var[operator.operator_2]
@@ -422,11 +445,8 @@ class InitializationVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringV
 
     def _visit_ite(self, operator: Operator, param_type):
         # Set the fringe operator to be used as condition
-        fringe_operators = get_fringe_operators(
-            BOOLEAN_OPERATOR, 2, [param_type])
+        fringe_operators = get_fringe_operators(BOOLEAN, 2, [param_type])
         op_name = random.choice(fringe_operators)
-        op = get_operator_class(BOOLEAN_OPERATOR, op_name)(
-            operator.operator_1, operator.operator_2)
-        # fringe_operators.append(get_root(type)) TODO: update rewriter
+        op = get_operator_class(BOOLEAN, op_name)(operator.operator_1, operator.operator_2)
         operator.fringe_operator_1 = op
         self._visit_operator(operator, 2)

@@ -185,8 +185,7 @@ def generate_tree(theory: str, size: int, in_variables: Union[int, List[str]], o
     operator_tree = generate_subtree(theory, gen_num_internal, gen_num_leaf)
     output_var = get_operator_class(theory, get_variable(theory))()
 
-    tree = get_operator_class(theory, get_root(theory))(
-        output_var, operator_tree)
+    tree = get_operator_class(theory, get_root(theory))(output_var, operator_tree)
     tree.accept(InitializationVisitor(in_variables, out_variable))
 
     return tree, tree_size

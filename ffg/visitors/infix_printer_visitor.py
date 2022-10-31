@@ -96,13 +96,13 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
         return f"({operator.operator_1.accept(self)} <= {operator.operator_2.accept(self)})"
 
     def visit_string_prefix_of(self, operator: StringPrefixOf):
-        return f"({operator.operator_1.accept(self)}.prefixof {operator.operator_2.accept(self)})"
+        return f"{operator.operator_1.accept(self)}.prefixof({operator.operator_2.accept(self)})"
 
     def visit_string_suffix_of(self, operator: StringSuffixOf):
-        return f"({operator.operator_1.accept(self)}.suffixof {operator.operator_2.accept(self)})"
+        return f"{operator.operator_1.accept(self)}.suffixof({operator.operator_2.accept(self)})"
 
     def visit_string_contains(self, operator: StringContains):
-        return f"({operator.operator_1.accept(self)}.contains {operator.operator_2.accept(self)})"
+        return f"{operator.operator_1.accept(self)}.contains({operator.operator_2.accept(self)})"
 
     def visit_boolean_variable(self, operator: BooleanVariable):
         return operator.name
@@ -127,6 +127,15 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
 
     def visit_integer_division(self, operator: IntegerDivision):
         return f"({operator.operator_1.accept(self)} div {operator.operator_2.accept(self)})"
+
+    def visit_bit_vector_to_integer(self, operator: BitVectorToInteger):
+        return f"int({operator.operator_1.accept(self)})"
+
+    def visit_string_to_integer(self, operator: StringToInteger):
+        return f"int({operator.operator_1.accept(self)})"
+
+    def visit_string_to_integer_built_in(self, operator: StringToIntegerBuiltIn):
+        return f"str.to_int({operator.operator_1.accept(self)})"
 
     def visit_integer_ite(self, operator: IntegerIte):
         return self._visit_ite(operator)
@@ -177,7 +186,7 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
         return f"({operator.operator_1.accept(self)} = {operator.operator_2.accept(self)})"
 
     def _visit_string_concatenation(self, operator: StringOperator):
-        return f"({operator.operator_1.accept(self)} || {operator.operator_2.accept(self)})"
+        return f"({operator.operator_1.accept(self)} ++ {operator.operator_2.accept(self)})"
 
     def visit_string_concatenation1n1(self, operator: StringConcatenation1n1):
         return self._visit_string_concatenation(operator)
@@ -197,13 +206,22 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         return self._visit_string_concatenation(operator)
 
+    def visit_integer_to_string(self, operator: IntegerToString):
+        return f"str({operator.operator_1.accept(self)})"
+
+    def visit_string_from_integer_built_in(self, operator: StringFromIntegerBuiltIn):
+        return f"str.from_int({operator.operator_1.accept(self)})"
+
+    def visit_string_at(self, operator: StringAt):
+        return f"{operator.operator_1.accept(self)}.at({operator.operator_2.accept(self)})"
+
     def visit_string_ite(self, operator: StringIte):
         return self._visit_ite(operator)
 
     def visit_string_length(self, operator: StringLength):
         return f"len({operator.operator_1.accept(self)})"
 
-    def visit_string_indexof(self, operator: StringIndexof):
+    def visit_string_index_of(self, operator: StringIndexOf):
         return f"{operator.operator_1.accept(self)}.indexof" \
                f"({operator.operator_2.accept(self)}, {operator.operator_3.accept(self)})"
 
@@ -240,7 +258,10 @@ class InfixPrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVis
         return f"({operator.operator_1.accept(self)} xor {operator.operator_2.accept(self)})"
 
     def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
-        return f"({operator.operator_1.accept(self)} || {operator.operator_2.accept(self)})"
+        return f"({operator.operator_1.accept(self)} ++ {operator.operator_2.accept(self)})"
+
+    def visit_integer_to_bit_vector(self, operator: IntegerToBitVector):
+        return f"bv({operator.operator_1.accept(self)})"
 
     def visit_bit_vector_ite(self, operator: BitVectorIte):
         return self._visit_ite(operator)

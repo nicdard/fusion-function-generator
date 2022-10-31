@@ -128,6 +128,15 @@ class ConstantVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
     def visit_integer_division(self, operator: IntegerDivision):
         return self._visit_operator(operator, 2)
 
+    def visit_bit_vector_to_integer(self, operator: BitVectorToInteger):
+        return self._visit_operator(operator, 1)
+
+    def visit_string_to_integer(self, operator: StringToInteger):
+        return self._visit_operator(operator, 1)
+
+    def visit_string_to_integer_built_in(self, operator: StringToIntegerBuiltIn):
+        return self._visit_operator(operator, 1)
+
     def visit_integer_ite(self, operator: IntegerIte):
         return self._visit_operator(operator, 2)
 
@@ -197,13 +206,22 @@ class ConstantVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
     def visit_string_concatenation2n3(self, operator: StringConcatenation2n3):
         return self._visit_string_concatenation(operator)
 
+    def visit_integer_to_string(self, operator: IntegerToString):
+        return self._visit_operator(operator, 1)
+
+    def visit_string_from_integer_built_in(self, operator: StringFromIntegerBuiltIn):
+        return self._visit_operator(operator, 1)
+
+    def visit_string_at(self, operator: StringAt):
+        return self._visit_operator(operator, 2)
+
     def visit_string_ite(self, operator: StringIte):
         return self._visit_operator(operator, 2)
 
     def visit_string_length(self, operator: StringLength):
         return self._visit_operator(operator, 1)
 
-    def visit_string_indexof(self, operator: StringIndexof):
+    def visit_string_index_of(self, operator: StringIndexOf):
         return self._visit_operator(operator, 3)
 
     def visit_real_to_integer(self, operator: RealToInteger):
@@ -238,6 +256,9 @@ class ConstantVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor
 
     def visit_bit_vector_concatenation(self, operator: BitVectorConcatenation):
         return self._visit_operator(operator, 2)
+
+    def visit_integer_to_bit_vector(self, operator: IntegerToBitVector):
+        return self._visit_operator(operator, 1)
 
     def visit_bit_vector_ite(self, operator: BitVectorIte):
         return self._visit_operator(operator, 2)
