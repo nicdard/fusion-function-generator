@@ -48,14 +48,10 @@ RUN cd cvc5 && \
     make && \
     make install
 
-# Get modified version of yinyang.
-RUN cd yinyang && \
-    git fetch origin pull/51/head:feat/bitvectors && \
-    git checkout feat/bitvectors
-
 # Fix missclassification bug.
 RUN mv semantic-fusion-seeds/LIA/unsat/NUM899-1.smt2 semantic-fusion-seeds/LIA/sat/NUM899-1.smt2 && \ 
     mv semantic-fusion-seeds/LIA/sat/NUM889-1.smt2  semantic-fusion-seeds/LIA/unsat/NUM889-1.smt2
 
 # Copy the project
 COPY . .
+RUN chmod +x scripts/* scripts/reduce/*
