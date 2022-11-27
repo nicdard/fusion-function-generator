@@ -92,10 +92,10 @@ class PrinterVisitor(BooleanVisitor, IntegerVisitor, RealVisitor, StringVisitor,
         return f"(>= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
     def visit_string_less(self, operator: StringLess):
-        return f"(< {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+        return f"(str.< {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
     def visit_string_less_equal(self, operator: StringLessEqual):
-        return f"(<= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
+        return f"(str.<= {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
 
     def visit_string_prefix_of(self, operator: StringPrefixOf):
         return f"(str.prefixof {operator.operator_1.accept(self)} {operator.operator_2.accept(self)})"
