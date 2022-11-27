@@ -36,7 +36,7 @@ Get the available theories:
 ffg.gen.gen_configuration.get_theories()
 ```
 
-Generate a fusion function of two vairables (as a tree):
+Generate a fusion function of two variables (as a tree):
 ```python
 tree, _ = ffg.gen.tree_generation.generate_tree(root_type, size, ['x', 'y'], 'z')
 ```
@@ -44,7 +44,7 @@ tree, _ = ffg.gen.tree_generation.generate_tree(root_type, size, ['x', 'y'], 'z'
 Emit the fusion function to YinYang format as a string:
 ```python
 output = io.StringIO()
-emit_function(tree, output, is_wrapped=False)
+emit_function(tree, output, wrap=False)
 ff = output.getvalue()
 ```
 
