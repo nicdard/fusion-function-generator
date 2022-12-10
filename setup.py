@@ -29,10 +29,14 @@ long_description = (this_directory / "ffg/README.md").read_text()
 setup(
     name='ffg',
     packages=find_packages(exclude=['tests']),
-    version='0.1.1',
+    version='0.1.2',
     description='A generator of fusion functions for Semantic Fusion (YinYang).',
     author='Nicola Dardanis, Lucas Weitzendorf',
     license='MIT',
     long_description=long_description,
     long_description_content_type='text/markdown',
+    project_urls={
+        'Source': 'https://github.com/nicdard/fusion-function-generator',
+        'Tracker': 'https://github.com/nicdard/fusion-function-generator/issues',
+    }
 )
