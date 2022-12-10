@@ -22,7 +22,7 @@
 
 
 import importlib
-from typing import Dict, List
+from typing import Dict, List, Set
 
 BOOLEAN = "BooleanOperator"
 INTEGER = "IntegerOperator"
@@ -187,16 +187,17 @@ _option_to_operator_type: Dict[str, str] = {
 THEORY_OPTIONS = list(_option_to_operator_type.keys())
 
 
-_available_theories: List[str] = list(theory_declarations.keys())
+_available_theories: Set[str] = set(theory_declarations.keys())
 
 
 def set_available_theories(theories) -> None:
     global _available_theories
-    _available_theories = [_option_to_operator_type[opt] for opt in theories]
+    _available_theories = set(
+        [_option_to_operator_type[opt] for opt in theories])
 
 
 def get_theories() -> List[str]:
-    return _available_theories
+    return list(_available_theories)
 
 
 def get_operators(theory: str) -> List[str]:
