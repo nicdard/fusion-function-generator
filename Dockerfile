@@ -11,6 +11,7 @@ RUN apt-get update && \
     curl \
     doxygen \
     default-jdk \
+    flex \
     g++ \
     git \
     graphviz \
